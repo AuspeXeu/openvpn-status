@@ -23,15 +23,15 @@ Moreover you might want to customise the footer inside the ``views``.
 
 ## Run
 
-In order to run the server you can either run it in the foreground using the simple node command
+In order to run the server you can either navigate to ``/node_modules/openvpn-status`` and run it in the foreground
 
 ``node server``
 
-or you want to run it like a deamon by using ``forever`` to do so we first need to install forever using either locally or globally whichever you prefer. For a local installation simply omit the -g flag.
+or run it like a deamon by using ``forever`` to do so we first need to install forever using either locally or globally whichever you prefer. For a local installation simply omit the -g flag.
 
 ``npm install forever -g``
 
-After that you can simply execute the bash script ``start.sh``. However you might need to make it executable using ``chmod``.
+After that you can execute the bash script ``start.sh``. However you might need to make it executable using ``chmod``.
 
 ``chmod +x start.sh``
 
@@ -52,3 +52,11 @@ server {
   }
 }
 ```
+
+## Screenshots
+
+### Status panel
+![Status panel](https://raw.githubusercontent.com/AuspeXeu/openvpn-status/master/screen1.png)
+
+### Event panel
+![Event panel](https://raw.githubusercontent.com/AuspeXeu/openvpn-status/master/screen2.png)
