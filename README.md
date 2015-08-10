@@ -16,7 +16,9 @@ The port under which the webinterface is available can be specified inside the `
 Moreover you might want to customise the footer inside the ``views``.
 
 ```
-<p class="text-center" style="font-size:smaller;">© [You], <a href="[Your Link Target]" target="_blank">[Your Link]</a></p> 
+<p class="text-center" style="font-size:smaller;">
+  © [You], <a href="[Your Link Target]" target="_blank">[Your Link]</a>
+</p> 
 ```
 
 ## Run
