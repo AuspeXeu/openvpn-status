@@ -1,9 +1,13 @@
 # openvpn-status
 A web-based application to monitor clients connected to a openvpn server
 ## Installation
-First you need to install the required node modules by issuing the respective npm command.
+In order to download a fresh copy you first need to issue the respective ``npm`` command.
 
-``npm install``
+``npm install openvpn-status``
+
+Afterwards you need to install the required node modules by issuing the respective npm command.
+
+``npm install .``
 
 ## Configuration
 
