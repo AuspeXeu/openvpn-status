@@ -1,2 +1,2 @@
 #!/bin/bash
-forever start server.js /opt/status/server.js
+forever start server.js server.js
