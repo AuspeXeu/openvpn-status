@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>VPN Client Status</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.3/handlebars.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js"></script>
+    <script src="/assets/js/jquery.markup.js"></script>
+    <script src="/assets/js/home.js"></script>
+    <link rel="icon" href="/assets/images/16x16.png" sizes="16x16">
+    <link rel="icon" href="/assets/images/32x32.png" sizes="32x32">
+    <link rel="stylesheet" href="/assets/css/home.css">
+    <link href="/assets/templates/status_entry.html" rel="markup" type="text/x-markup-handlebars"/>
+    <link href="/assets/templates/log_entry.html" rel="markup" type="text/x-markup-handlebars"/>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  </head>
+  <body>
+    <div class="container-fluid">
+
+      <div class="row">
+        <div class="container-fluid well col-md-offset-4 col-md-4" style="margin-top:20px;">
+          <div class="pull-right">
+            <button id="btn_refresh" type="button" class="btn btn-success"><i class="fa fa-refresh"></i><span id="txt_refresh"></span></button>
+          </div>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <td></td><td>Node</td><td>VPN IP</td><td>Last Seen</td>
+              </tr>
+            </thead>
+            <tbody id="nodes">
+            </tbody>
+          </table>
+          <% include footer %>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="container-fluid well col-md-offset-4 col-md-4" style="margin-top:20px;">
+          <div class="pull-right">
+            <button id="btn_clear_log" type="button" class="btn btn-success"><i class="fa fa-trash"></i></button>
+          </div>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <td></td><td>Time</td><td>Node</td><td>Event</td>
+              </tr>
+            </thead>
+            <tbody id="log">
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </body>
+</html>
