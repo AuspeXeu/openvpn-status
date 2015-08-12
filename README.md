@@ -1,4 +1,4 @@
-# openvpn-status [![NPM version](https://badge.fury.io/js/passport-access-token.png)](http://badge.fury.io/js/openvpn-status)
+# openvpn-status [![NPM version](https://badge.fury.io/js/openvpn-status.png)](http://badge.fury.io/js/openvpn-status)
 
 [![NPM](https://nodei.co/npm/openvpn-status.png?downloads=true&stars=true)](https://nodei.co/npm/openvpn-status/)
 
