@@ -1,4 +1,4 @@
-# openvpn-status [![NPM version](https://badge.fury.io/js/openvpn-status.png)](http://badge.fury.io/js/openvpn-status)
+# openvpn-status [![Version npm](https://img.shields.io/npm/v/openvpn-status.svg?style=flat-square)](https://www.npmjs.com/package/openvpn-status)[![Dependencies](https://img.shields.io/david/auspexeu/openvpn-status.svg?style=flat-square)](https://david-dm.org/auspexeu/openvpn-status)
 
 [![NPM](https://nodei.co/npm/openvpn-status.png?downloads=true&stars=true)](https://nodei.co/npm/openvpn-status/)
 
