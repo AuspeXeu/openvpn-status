@@ -23,10 +23,10 @@
   "dependencies" : {
     "ejs": "^2.3.3",
     "express": "^4.13.1",
-    "lodash": "^3.10.0",
+    "lodash": "^4.1.0",
     "moment": "^2.10.3",
     "morgan": "^1.6.1",
-    "nconf": "^0.7.1"
+    "nconf": "^0.8.2"
   },
   "engines": {
     "node": ">=0.12.0"
