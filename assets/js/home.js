@@ -12,7 +12,6 @@ $(document).ready(function () {
       return true
     } else if (nodes[val.vpn].timestamp !== val.timestamp) {
       nodes[val.vpn] = val
-      logEvent(val.name, 'refreshed')
       return true
     }
   }
@@ -30,9 +29,6 @@ $(document).ready(function () {
     } else if (event === 'disconnected') {
       data.help = 'This node just closed the connection to the server.'
       data.icon = 'fa-remove'
-    } else if (event === 'refreshed') {
-      data.icon = 'fa-history'
-      data.help = 'This node just send an alive package to the server.'
     }
     $('#log').prepend($.markup('log-entry', data))
   }
