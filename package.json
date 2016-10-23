@@ -10,17 +10,19 @@
     "url": "http://auspex.eu"
   },
   "keywords": [
-    "OpenVPN", "monitoring", "vpn"
+    "OpenVPN",
+    "monitoring",
+    "vpn"
   ],
   "repository": {
     "type": "git",
-    "url":  "git://github.com/AuspeXeu/openvpn-status.git"
+    "url": "git://github.com/AuspeXeu/openvpn-status.git"
   },
   "bugs": {
-    "url":  "https://github.com/AuspeXeu/openvpn-status"
+    "url": "https://github.com/AuspeXeu/openvpn-status"
   },
   "main": "./server.js",
-  "dependencies" : {
+  "dependencies": {
     "ejs": "^2.3.3",
     "express": "^4.13.1",
     "lodash": "^4.1.0",
@@ -30,5 +32,34 @@
   },
   "engines": {
     "node": ">=0.12.0"
-  }
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "gitHead": "e56b4c88ebe72255c5dc5c45450d49fb53be168b",
+  "_id": "openvpn-status@1.0.1",
+  "_shasum": "265a9125a2d107272b1d04ab0f076e5eaccb15b4",
+  "_from": "openvpn-status@*",
+  "_npmVersion": "2.14.20",
+  "_nodeVersion": "4.4.1",
+  "_npmUser": {
+    "name": "auspex",
+    "email": "auspex@auspex.eu"
+  },
+  "dist": {
+    "shasum": "265a9125a2d107272b1d04ab0f076e5eaccb15b4",
+    "tarball": "https://registry.npmjs.org/openvpn-status/-/openvpn-status-1.0.1.tgz"
+  },
+  "maintainers": [
+    {
+      "name": "auspex",
+      "email": "auspex@auspex.eu"
+    }
+  ],
+  "_npmOperationalInternal": {
+    "host": "packages-16-east.internal.npmjs.com",
+    "tmp": "tmp/openvpn-status-1.0.1.tgz_1465757369202_0.7212420131545514"
+  },
+  "directories": {},
+  "_resolved": "https://registry.npmjs.org/openvpn-status/-/openvpn-status-1.0.1.tgz"
 }
