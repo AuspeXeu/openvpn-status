@@ -1,5 +1,14 @@
+<script type="text/javascript">
+$( document ).ready(function() {
+  $.get('http://crossorigin.me/http://ip-api.com/json/{{pubIP}}?fields=3', func$
+    var data = JSON.stringify(res)
+    $("#flag-{{vpn}}").attr("src", "/assests/images/flagIcons/"+data['countryCo$
+    $("#flag-{{vpn}}").attr("alt", data['country'])
+  })
+})
+</script>
 <markup id="status-entry">
 <tr>
-  <td><i class="fa fa-cloud"></i></td><td class="text-nowrap">{{name}}</td><td class="text-nowrap">{{vpn}}</td><td class="{{changed}}">{{timestamp}}</td>
+  <td><img id="flag-{{vpn}}" src="/assets/images/flagIcons/unknown.jpg" alt="Unkown Country" />  <i class="fa fa-cloud"></i></td><td class="text-nowrap">{{name}}</td><td class="text-nowrap">{{vpn}}</td><td class="text-nowrap"><a href="http://ip-api.com/{{pubIP}}">{{pubIP}}</a></td><td class="{{changed}}">{{timestamp}}</td>
 </tr>
 </markup>
