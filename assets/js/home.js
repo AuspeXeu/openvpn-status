@@ -54,7 +54,10 @@ $(document).ready(function () {
       })
       $('#nodes > tr').remove()
       _.each(response, function (item) {
-        if (hasChanged(item) && !geoIpCache[item.pub])
+        item.timestamp = moment(item.timestamp * 1000).format('HH:mm - DD.MM.YYYY')
+        item.changed = hasChanged(item) ? 'highlight' : ''
+        $('#nodes').append($.markup('status-entry', item))
+        if (!geoIpCache[item.pub])
           $.get('https://crossorigin.me/https://freegeoip.net/json/' + item.pub)
             .done(function (data) {
               $('#flag_' + item.name).attr('src', '/assets/images/flags/' + data.country_code + '.png')
@@ -69,9 +72,6 @@ $(document).ready(function () {
           $('#flag_' + item.name).attr('src', '/assets/images/flags/' + geoIpCache[item.pub].country_code + '.png')
           $('#flag_' + item.name).attr('title', geoIpCache[item.pub].country_name)
         }
-        item.timestamp = moment(item.timestamp * 1000).format('HH:mm - DD.MM.YYYY')
-        item.changed = hasChanged(item) ? 'highlight' : ''
-        $('#nodes').append($.markup('status-entry', item))
       })
       enableAutoRefresh()
     })
