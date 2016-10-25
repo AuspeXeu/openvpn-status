@@ -11,17 +11,18 @@ In order to download a fresh copy you first need to issue the respective ``npm``
 
 ## Configuration
 
-The port under which the webinterface is available can be specified inside the ``config.json``
+The port under which the webinterface is available can be specified inside the ``config.json``, further the location of the openvpn log file can be declared.
 
 ``{
-  "port":3013
+  "port":3013,
+  "logFile": "/etc/openvpn/openvpn-status.log"
 }``
 
 Moreover you might want to customise the footer inside the ``views``.
 
 ```
 <p class="text-center" style="font-size:smaller;">
-  © [You], <a href="[Your Link Target]" target="_blank">[Your Link]</a>
+  ©2016 [You]
 </p> 
 ```
 
@@ -31,13 +32,11 @@ In order to run the server you can either navigate to ``/node_modules/openvpn-st
 
 ``node server``
 
-or run it like a deamon by using ``forever`` to do so we first need to install forever using either locally or globally whichever you prefer. For a local installation simply omit the -g flag.
+or run it like a deamon by using ``pm2`` to do so we first need to install forever using either locally or globally whichever you prefer. For a local installation simply omit the -g flag.
 
-``npm install forever -g``
+``npm install pm2 -g``
 
-After that you can execute the bash script ``start.sh``. However you might need to make it executable using ``chmod``.
-
-``chmod +x start.sh``
+After that you can execute the bash script ``pm2 start pm2.json`` inside the installation directory.
 
 ## Running the service behind nginx as a reverse proxy (optional)
 
