@@ -57,6 +57,12 @@ server {
 }
 ```
 
+## Special Thanks To
+
+### GoSquared
+
+[GoSquared](https://www.gosquared.com) provides the flag icons for this project. The source for the flag icons can be found [here](https://www.gosquared.com/resources/flag-icons/).
+
 ## Screenshots
 
 ### Status panel
