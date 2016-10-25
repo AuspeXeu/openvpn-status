@@ -32,7 +32,7 @@ In order to run the server you can either navigate to ``/node_modules/openvpn-st
 
 ``node server``
 
-or run it like a deamon by using ``pm2`` to do so we first need to install forever using either locally or globally whichever you prefer. For a local installation simply omit the -g flag.
+or run it like a deamon by using ``pm2`` to do so we first need to install pm2 using either locally or globally whichever you prefer. For a local installation simply omit the -g flag.
 
 ``npm install pm2 -g``
 
