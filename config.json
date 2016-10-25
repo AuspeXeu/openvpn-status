@@ -1,3 +1,4 @@
 {
-  "port":3013
+  'port': 3013,
+  'logFile': '/etc/openvpn/openvpn-status.log'
 }

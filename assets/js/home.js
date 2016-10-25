@@ -36,6 +36,10 @@ $(document).ready(function () {
     countdown = countdown_reset
     $('#txt_refresh').html('&nbsp;' + countdown)
     clearInterval(intervalId)
+    $.get('/updated', function (response) {
+      response = JSON.parse(response)
+      $('#lbl_updated').text(response.value)
+    })
     $.get('/entries', function (response) {
       response = JSON.parse(response)
       response = _.sortBy(response, function (itm) {
