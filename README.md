@@ -59,6 +59,10 @@ server {
 
 ## Special Thanks To
 
+### Freegeoip-API
+
+[Freegeoip-API](https://freegeoip.net) provides all of the IP information used in this project to determine where the VPN connection is connecting from.
+
 ### GoSquared
 
 [GoSquared](https://www.gosquared.com) provides the flag icons for this project. The source for the flag icons can be found [here](https://www.gosquared.com/resources/flag-icons/).
