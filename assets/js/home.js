@@ -3,7 +3,6 @@ $(document).ready(function () {
   var countdown_reset = 30
 
   var nodes = {}
-  var geoIpCache = {}
   var countdown = countdown_reset
   var intervalId = undefined
   var hasChanged = function (val) {
@@ -57,21 +56,16 @@ $(document).ready(function () {
         item.timestamp = moment(item.timestamp * 1000).format('HH:mm - DD.MM.YYYY')
         item.changed = hasChanged(item) ? 'highlight' : ''
         $('#nodes').append($.markup('status-entry', item))
-        if (!geoIpCache[item.pub])
-          $.get('https://crossorigin.me/https://freegeoip.net/json/' + item.pub)
+          $.get('/geoip/' + item.pub)
             .done(function (data) {
-              $('#flag_' + item.name).attr('src', '/assets/images/flags/' + data.country_code + '.png')
-              $('#flag_' + item.name).attr('title', data.country_name)
-              geoIpCache[item.pub] = data
+              data = JSON.parse(data)
+              $('#flag_' + item.name).attr('src', '/assets/images/flags/' + data.country.iso_code + '.png')
+              $('#flag_' + item.name).attr('title', data.country.names.en)
             })
             .error(function () {
               $('#flag_' + item.name).attr('src', '/assets/images/flags/unknown.jpg')
               $('#flag_' + item.name).attr('title', 'Unknown Country')
             })
-        else {
-          $('#flag_' + item.name).attr('src', '/assets/images/flags/' + geoIpCache[item.pub].country_code + '.png')
-          $('#flag_' + item.name).attr('title', geoIpCache[item.pub].country_name)
-        }
       })
       enableAutoRefresh()
     })

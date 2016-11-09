@@ -1,18 +1,31 @@
+const zlib = require('zlib')
+const fs = require('fs')
 const express = require('express')
 const app = express()
 const conf = require('nconf')
+const maxmind = require('maxmind')
 const _ = require('lodash')
 const process = require('child_process')
 const moment = require('moment')
-const morgan = require('morgan')
+const request = require('request')
+const CronJob = require('cron').CronJob
 const ejs = require('ejs')
 
 conf.file({ file: 'config.json' })
 
 app.set('views', __dirname + '/views')
 app.set('view engine', 'ejs')
-app.use(morgan('dev'))
 app.use('/assets', express.static(__dirname + '/assets'))
+
+new CronJob({
+  cronTime: '00 10 * 10 * *',
+  onTick: () => {
+    const out = fs.createWriteStream('./GeoLite2-City.mmdb')
+    request('http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz').pipe(zlib.createGunzip()).pipe(out)
+  },
+  runOnInit: true,
+  start: true
+})
 
 app.get('/', (req, res) => {
   res.render('home')
@@ -32,6 +45,18 @@ app.get('/updated', (req, res) => {
   })
   terminal.stdin.write('awk \'/OpenVPN/,/END/\' ' + conf.get('logFile'))
   terminal.stdin.end()
+})
+
+app.get('/geoip/:ip', (req, res) => {
+  const ip = req.params.ip
+  if (maxmind.validate(ip))
+    maxmind.open('./GeoLite2-City.mmdb', (err, cityLookup) => {
+      const city = cityLookup.get(ip)
+      city.ip = ip
+      res.send(JSON.stringify(city))
+    })
+  else
+    res.status(404).send('N/A')
 })
 
 app.get('/entries', (req, res) => {
