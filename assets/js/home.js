@@ -62,10 +62,6 @@ $(document).ready(function () {
               $('#flag_' + item.name).attr('src', '/assets/images/flags/' + data.country.iso_code + '.png')
               $('#flag_' + item.name).attr('title', data.country.names.en)
             })
-            .error(function () {
-              $('#flag_' + item.name).attr('src', '/assets/images/flags/unknown.jpg')
-              $('#flag_' + item.name).attr('title', 'Unknown Country')
-            })
       })
       enableAutoRefresh()
     })
