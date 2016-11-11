@@ -3,6 +3,6 @@
     name: 'openvpn-status',
     script: './server.js',
     watch: false,
-    max_memory_restart: '128M'
+    max_memory_restart: '256M'
   }]
 }
