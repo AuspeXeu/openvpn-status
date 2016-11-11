@@ -10,6 +10,7 @@ const moment = require('moment')
 const request = require('request')
 const CronJob = require('cron').CronJob
 const ejs = require('ejs')
+const log = console.log
 
 conf.file({ file: 'config.json' })
 
@@ -20,8 +21,18 @@ app.use('/assets', express.static(__dirname + '/assets'))
 new CronJob({
   cronTime: '00 10 * 10 * *',
   onTick: () => {
-    const out = fs.createWriteStream('./GeoLite2-City.mmdb')
-    request('http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz').pipe(zlib.createGunzip()).pipe(out)
+    const ipFile = './GeoLite2-City.mmdb'
+    fs.stat(ipFile, (err, stat) => {
+      const now = new Date().getTime()
+      const expire = new Date(stat.ctime).getTime() + 30 * 24 * 60 * 60 * 1000
+      if (err || now > expire) {
+        const req = request('http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz')
+        req.on('response', () => {
+          if(resp.statusCode === 200)
+            req.pipe(zlib.createGunzip()).pipe(fs.createWriteStream(ipFile))
+        })
+      }
+    })
   },
   runOnInit: true,
   start: true
