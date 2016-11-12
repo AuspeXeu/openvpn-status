@@ -13,25 +13,36 @@ const ejs = require('ejs')
 const log = console.log
 
 conf.file({ file: 'config.json' })
-
 app.set('views', __dirname + '/views')
 app.set('view engine', 'ejs')
 app.use('/assets', express.static(__dirname + '/assets'))
+const ipFile = conf.get('ipFile')
+let cityLookup = undefined
 
 new CronJob({
   cronTime: '00 10 * 10 * *',
   onTick: () => {
-    const ipFile = './GeoLite2-City.mmdb'
     fs.stat(ipFile, (err, stat) => {
       const now = new Date().getTime()
       const expire = new Date(stat.ctime).getTime() + 30 * 24 * 60 * 60 * 1000
       if (err || now > expire) {
         const req = request('http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz')
         req.on('response', () => {
-          if(resp.statusCode === 200)
+          if(resp.statusCode === 200) {
             req.pipe(zlib.createGunzip()).pipe(fs.createWriteStream(ipFile))
+              .on('finish', () => {
+                maxmind.open('./GeoLite2-City.mmdb', (err, lookup) => {
+                  cityLookup = lookup
+                })
+              })
+          }
         })
-      }
+      } else
+        maxmind.open('./GeoLite2-City.mmdb', (err, lookup) => {
+          if (err)
+            log(err)
+          cityLookup = lookup
+        })
     })
   },
   runOnInit: true,
@@ -60,13 +71,11 @@ app.get('/updated', (req, res) => {
 
 app.get('/geoip/:ip', (req, res) => {
   const ip = req.params.ip
-  if (maxmind.validate(ip))
-    maxmind.open('./GeoLite2-City.mmdb', (err, cityLookup) => {
-      const city = cityLookup.get(ip)
-      city.ip = ip
-      res.send(JSON.stringify(city))
-    })
-  else
+  if (maxmind.validate(ip)) {
+    const city = cityLookup.get(ip)
+    city.ip = ip
+    res.send(JSON.stringify(city))
+  } else
     res.status(404).send('N/A')
 })
 
