@@ -72,7 +72,9 @@ app.get('/updated', (req, res) => {
 app.get('/geoip/:ip', (req, res) => {
   const ip = req.params.ip
   if (maxmind.validate(ip)) {
-    const city = cityLookup.get(ip)
+    let city = cityLookup.get(ip)
+    if (!city)
+      city = {}
     city.ip = ip
     res.send(JSON.stringify(city))
   } else
