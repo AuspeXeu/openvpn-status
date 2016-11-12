@@ -1,4 +1,5 @@
 {
   "port": 3013,
-  "logFile": "/etc/openvpn/openvpn-status.log"
+  "logFile": "/etc/openvpn/openvpn-status.log",
+  "ipFile": "./GeoLite2-City.mmdb"
 }
