@@ -58,7 +58,7 @@ server {
 
 ## Special Thanks To
 
-### Freegeoip-API
+### Maxmind
 
 [Maxmind](http://dev.maxmind.com/geoip/geoip2/geolite2/) provides all of the IP information used in this project to determine where the VPN connection is connecting from.
 
