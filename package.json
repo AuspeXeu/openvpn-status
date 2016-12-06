@@ -32,6 +32,13 @@
     "nconf": "^0.8.4",
     "request": "^2.78.0"
   },
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-contrib-jshint": "^1.0.0",
+    "grunt-version-check": "^0.3.7",
+    "jshint": "^2.9.4",
+    "load-grunt-tasks": "^3.4.1"
+  },
   "engines": {
     "node": ">=4.4.1"
   },
