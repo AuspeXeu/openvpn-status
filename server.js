@@ -9,7 +9,6 @@ const process = require('child_process')
 const moment = require('moment')
 const request = require('request')
 const CronJob = require('cron').CronJob
-const ejs = require('ejs')
 const log = console.log
 
 conf.file({ file: 'config.json' })
@@ -17,7 +16,7 @@ app.set('views', __dirname + '/views')
 app.set('view engine', 'ejs')
 app.use('/assets', express.static(__dirname + '/assets'))
 const ipFile = conf.get('ipFile')
-let cityLookup = undefined
+let cityLookup
 
 new CronJob({
   cronTime: '00 10 * 10 * *',
@@ -27,7 +26,7 @@ new CronJob({
       const expire = new Date(stat.ctime).getTime() + 30 * 24 * 60 * 60 * 1000
       if (err || now > expire) {
         const req = request('http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz')
-        req.on('response', () => {
+        req.on('response', (resp) => {
           if(resp.statusCode === 200) {
             req.pipe(zlib.createGunzip()).pipe(fs.createWriteStream(ipFile))
               .on('finish', () => {
