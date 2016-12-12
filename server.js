@@ -23,7 +23,7 @@ new CronJob({
   onTick: () => {
     fs.stat(ipFile, (err, stat) => {
       const now = new Date().getTime()
-      const expire = new Date((stat ? stat.ctime : '')).getTime() + 30 * 24 * 60 * 60 * 1000)
+      const expire = new Date((stat ? stat.ctime : '')).getTime() + 30 * 24 * 60 * 60 * 1000
       if (err || now > expire) {
         const req = request('http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz')
         req.on('response', (resp) => {
