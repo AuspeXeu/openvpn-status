@@ -37,11 +37,9 @@ $(document).ready(function () {
     $('#txt_refresh').html('&nbsp;' + countdown)
     clearInterval(intervalId)
     $.get('/updated', function (response) {
-      response = JSON.parse(response)
       $('#lbl_updated').text(response.value)
     })
     $.get('/entries', function (response) {
-      response = JSON.parse(response)
       response = _.sortBy(response, function (itm) {
         return itm.pub
       })
@@ -58,7 +56,6 @@ $(document).ready(function () {
         $('#nodes').append($.markup('status-entry', item))
           $.get('/geoip/' + item.pub)
             .done(function (data) {
-              data = JSON.parse(data)
               $('#flag_' + item.name).attr('src', '/assets/images/flags/' + data.country.iso_code + '.png')
               $('#flag_' + item.name).attr('title', data.country.names.en)
             })
