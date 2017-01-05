@@ -62,7 +62,7 @@ app.get('/updated', (req, res) => {
       success: true,
       value: lastUpdate
     }
-    res.send(JSON.stringify(obj))
+    res.json(obj)
   })
   terminal.stdin.write('awk \'/OpenVPN/,/END/\' ' + conf.get('logFile'))
   terminal.stdin.end()
@@ -75,7 +75,7 @@ app.get('/geoip/:ip', (req, res) => {
     if (!city)
       city = {}
     city.ip = ip
-    res.send(JSON.stringify(city))
+    res.json(city)
   } else
     res.status(404).send('N/A')
 })
@@ -99,7 +99,7 @@ app.get('/entries', (req, res) => {
       }
       entries.push(itm)
     })
-    res.send(JSON.stringify(entries))
+    res.json(entries)
   })
   terminal.stdin.write('awk \'/Ref/,/GLOBAL/\' ' + conf.get('logFile'))
   terminal.stdin.end()
