@@ -5,7 +5,15 @@
 A web-based application to monitor clients connected to an openvpn server.
 
 ## Installation
-In order to download a fresh copy you first need to issue the respective ``npm`` command.
+You can either clone the code directly from the repository
+
+``git clone https://github.com/AuspeXeu/openvpn-status.git``
+
+or download it as a zip archive from
+
+[https://github.com/AuspeXeu/openvpn-status/archive/master.zip](https://github.com/AuspeXeu/openvpn-status/archive/master.zip)
+
+or get the latest version by executing the respective ``npm`` command.
 
 ``npm install openvpn-status``
 
