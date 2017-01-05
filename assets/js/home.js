@@ -43,7 +43,7 @@ $(document).ready(function () {
     $.get('/entries', function (response) {
       response = JSON.parse(response)
       response = _.sortBy(response, function (itm) {
-        return itm.name
+        return itm.pub
       })
       _.forIn(nodes, function (val, key) {
         if (!_.findWhere(response, { vpn: key })) {
