@@ -21,10 +21,14 @@ or get the latest version by executing the respective ``npm`` command.
 
 The port under which the webinterface is available can be specified inside the ``config.json``, further the location of the openvpn log file can be declared.
 
-``{
+```
+{
   "port":3013,
   "logFile": "/etc/openvpn/openvpn-status.log"
-}``
+}
+```
+
+_(Note: The user running the server needs to have read access to the log file.)_
 
 Moreover you might want to customise the footer inside the ``views``.
 
