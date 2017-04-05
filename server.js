@@ -34,6 +34,12 @@ new CronJob({
                   cityLookup = lookup
                 })
               })
+          } else {          
+            maxmind.open('./GeoLite2-City.mmdb', (err, lookup) => {
+              if (err)
+                log(err)
+              cityLookup = lookup
+            })
           }
         })
       } else
