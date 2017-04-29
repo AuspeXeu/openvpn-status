@@ -17,6 +17,10 @@ app.set('view engine', 'ejs')
 app.use('/assets', express.static(__dirname + '/assets'))
 const ipFile = conf.get('ipFile')
 let cityLookup
+let servers = conf.get('servers') || []
+
+if (conf.get('logFile'))
+  servers.push({name: 'unnamed', logFile: conf.get('logFile')})
 
 new CronJob({
   cronTime: '00 10 * 10 * *',
@@ -34,13 +38,12 @@ new CronJob({
                   cityLookup = lookup
                 })
               })
-          } else {          
+          } else
             maxmind.open('./GeoLite2-City.mmdb', (err, lookup) => {
               if (err)
                 log(err)
               cityLookup = lookup
             })
-          }
         })
       } else
         maxmind.open('./GeoLite2-City.mmdb', (err, lookup) => {
@@ -55,23 +58,7 @@ new CronJob({
 })
 
 app.get('/', (req, res) => {
-  res.render('home')
-})
-
-app.get('/updated', (req, res) => {
-  const terminal = process.spawn('bash')
-  terminal.stdout.on('data', (data) => {
-    data = data.toString()
-    const ary = data.split('\n')
-    const lastUpdate = ary[1].split(',')[1]
-    const obj = {
-      success: true,
-      value: lastUpdate
-    }
-    res.json(obj)
-  })
-  terminal.stdin.write('awk \'/OpenVPN/,/END/\' ' + conf.get('logFile'))
-  terminal.stdin.end()
+  res.render('home', {servers: servers.map((server) => ({name: server.name}))})
 })
 
 app.get('/geoip/:ip', (req, res) => {
@@ -86,7 +73,7 @@ app.get('/geoip/:ip', (req, res) => {
     res.status(404).send('N/A')
 })
 
-app.get('/entries', (req, res) => {
+app.get('/entries/:idx', (req, res) => {
   const terminal = process.spawn('bash')
   terminal.stdout.on('data', (data) => {
     data = data.toString()
@@ -107,7 +94,7 @@ app.get('/entries', (req, res) => {
     })
     res.json(entries)
   })
-  terminal.stdin.write('awk \'/Ref/,/GLOBAL/\' ' + conf.get('logFile'))
+  terminal.stdin.write('awk \'/Ref/,/GLOBAL/\' ' + servers[req.params.idx].logFile)
   terminal.stdin.end()
 })
 

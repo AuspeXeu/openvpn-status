@@ -2,20 +2,20 @@ $(document).ready(function () {
   //Configure countdown interval
   var countdown_reset = 30
 
-  var nodes = {}
+  var servers = {}
   var countdown = countdown_reset
   var intervalId = undefined
-  var hasChanged = function (val) {
-    if (!nodes[val.vpn]) {
-      nodes[val.vpn] = val
-      logEvent(val.name, 'connected')
+  var hasChanged = function (val, server) {
+    if (!servers[server].nodes[val.vpn]) {
+      servers[server].nodes[val.vpn] = val
+      logEvent(val.name, 'connected', server)
       return true
-    } else if (nodes[val.vpn].timestamp !== val.timestamp) {
-      nodes[val.vpn] = val
+    } else if (servers[server].nodes[val.vpn].timestamp !== val.timestamp) {
+      servers[server].nodes[val.vpn] = val
       return true
     }
   }
-  var logEvent = function (node, event) {
+  var logEvent = function (node, event, server) {
     var data = {
       event: event,
       node: node,
@@ -30,62 +30,69 @@ $(document).ready(function () {
       data.help = 'This node just closed the connection to the server.'
       data.icon = 'fa-remove'
     }
-    $('#log').prepend($.markup('log-entry', data))
+    $('#log_' + server).prepend($.markup('log-entry', data))
   }
-  var refreshData = function () {
+  var refreshData = function (server) {
     countdown = countdown_reset
     $('#txt_refresh').html('&nbsp;' + countdown)
     clearInterval(intervalId)
-    $.get('/updated', function (response) {
-      $('#lbl_updated').text(response.value)
-    })
-    $.get('/entries', function (response) {
+    $.get('/entries/' + server, function (response) {
       response = _.sortBy(response, function (itm) {
         return itm.pub
       })
-      _.forIn(nodes, function (val, key) {
+      if (!servers[server])
+        servers[server] = {nodes:[]}
+      _.forIn(servers[server].nodes, function (val, key) {
         if (!_.findWhere(response, { vpn: key })) {
-          logEvent(val.name, 'disconnected')
-          delete nodes[key]
+          logEvent(val.name, 'disconnected', server)
+          delete servers[server].nodes[key]
         }
       })
-      $('#nodes > tr').remove()
+      $('#nodes_' + server + ' > tr').remove()
       _.each(response, function (item) {
         item.timestamp = moment(item.timestamp * 1000).format('HH:mm - DD.MM.YYYY')
-        item.changed = hasChanged(item) ? 'highlight' : ''
-        $('#nodes').append($.markup('status-entry', item))
+        item.changed = hasChanged(item, server) ? 'highlight' : ''
+        $('#lbl_updated_' + server).text(moment().format('HH:mm - DD.MM.YYYY'))
+        $('#nodes_' + server).append($.markup('status-entry', item))
           $.get('/geoip/' + item.pub)
             .done(function (data) {
-              $('#flag_' + item.name).attr('src', '/assets/images/flags/' + data.country.iso_code + '.png')
-              $('#flag_' + item.name).attr('title', data.country.names.en)
+              $('.flag_' + item.name).attr('src', '/assets/images/flags/' + data.country.iso_code + '.png')
+              $('.flag_' + item.name).attr('title', data.country.names.en)
             })
       })
-      enableAutoRefresh()
+      enableAutoRefresh(server)
     })
   }
-  var enableAutoRefresh = function () {
+  var enableAutoRefresh = function (server) {
     intervalId = setInterval(function () {
       if (countdown === 0)
-        refreshData()
+        refreshData(server)
       else {
         countdown--
-        $('#txt_refresh').html('&nbsp;' + countdown)
+        $('.txt_refresh').html('&nbsp;' + countdown)
       }
     }, 1000)
   }
   $.markup.load(function () {
-    refreshData()
-    $('#txt_refresh').html('&nbsp;' + countdown)
-    $('#btn_refresh').click(function () {
-      refreshData()
+    refreshData(0)
+    $('.txt_refresh').html('&nbsp;' + countdown)
+    $('.btn_refresh').on('click', function (ev) {
+      var server = $(ev.target).closest('.tab-pane').data('server')
+      refreshData(server)
     })
-    $('#btn_clear_log').click(function () {
-      $('#log > tr').remove()
+    $('.btn_clear').on('click', function (ev) {
+      var server = $(ev.target).closest('.tab-pane').data('server')
+      $('#log_' + server + ' > tr').remove()
     })
-    $('#btn_refresh').hover(function () {
-      $('#btn_refresh > i').addClass('fa-spin')
+    $('.btn_refresh').hover(function () {
+      $('.btn_refresh > i').addClass('fa-spin')
     }, function () {
-      $('#btn_refresh > i').removeClass('fa-spin')
+      $('.btn_refresh > i').removeClass('fa-spin')
+    })
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+      var target = $(e.target).attr("href")
+      var server = parseInt(target.match(/[0-9]+/), 10)
+      refreshData(server)
     })
   })
 })
