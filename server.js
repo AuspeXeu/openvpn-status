@@ -79,7 +79,7 @@ app.get('/entries/:idx', (req, res) => {
     name: entry[2],
     pub: entry[3],
     timestamp: moment(new Date(entry[4])).unix()
-  }))
+  })).filter((entry) => entry.name !== 'UNDEF')
   res.json(entries)
 })
 
