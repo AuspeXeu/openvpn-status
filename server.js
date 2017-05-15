@@ -4,14 +4,12 @@ const express = require('express')
 const app = express()
 const conf = require('nconf')
 const maxmind = require('maxmind')
-const _ = require('lodash')
-const process = require('child_process')
 const moment = require('moment')
 const request = require('request')
 const CronJob = require('cron').CronJob
 const log = console.log
 
-conf.file({ file: 'config.json' })
+conf.file({file: 'config.json'})
 app.set('views', __dirname + '/views')
 app.set('view engine', 'ejs')
 app.use('/assets', express.static(__dirname + '/assets'))
@@ -74,28 +72,15 @@ app.get('/geoip/:ip', (req, res) => {
 })
 
 app.get('/entries/:idx', (req, res) => {
-  const terminal = process.spawn('bash')
-  terminal.stdout.on('data', (data) => {
-    data = data.toString()
-    const ary = data.split('\n')
-    ary.shift()
-    ary.pop()
-    ary.pop()
-    const entries = []
-    _.each(ary, (entry) => {
-      const split = entry.split(',')
-      const itm = {
-        vpn: split[0],
-        name: split[1],
-	      pub: split[2].split(':')[0],
-        timestamp: moment(new Date(split[3])).unix()
-      }
-      entries.push(itm)
-    })
-    res.json(entries)
-  })
-  terminal.stdin.write('awk \'/Ref/,/GLOBAL/\' ' + servers[req.params.idx].logFile)
-  terminal.stdin.end()
+  const content = fs.readFileSync(servers[req.params.idx].logFile, 'utf8').trim().split('\n')
+  const rawEntries = content.map((line) => line.match(/([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+),([^,]+),([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+):[0-9]+,([^,]+)/)).filter((itm) => itm)
+  const entries = rawEntries.map((entry) => ({
+    vpn: entry[1],
+    name: entry[2],
+    pub: entry[3],
+    timestamp: moment(new Date(entry[4])).unix()
+  }))
+  res.json(entries)
 })
 
 app.listen(conf.get('port'))
