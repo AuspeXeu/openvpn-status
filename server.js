@@ -109,7 +109,7 @@ app.get('/log/:page/:size', (req, res) => {
     res.json(data.map((item) => ({server: item.server, node: item.node, timestamp: item.timestamp, event: item.event})))
   })
 })
-app.ws('/wss/log', (ws, req) => {
+app.ws('/live/log', (ws, req) => {
   const id = uuid()
   clients.set(id, ws)
   ws.on('close', () => clients.delete(id))

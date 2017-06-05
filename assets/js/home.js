@@ -14,7 +14,7 @@ $(document).ready(function () {
       return true
     }
   }
-  var socket = new WebSocket(window.location.origin.replace('http','ws') + '/wss/log')
+  var socket = new WebSocket(window.location.origin.replace('http','ws') + '/live/log')
   socket.onmessage = function (event) {
     var data = JSON.parse(event.data)
     data.timestamp = moment(data.timestamp).format('HH:mm')
