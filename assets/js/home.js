@@ -8,29 +8,24 @@ $(document).ready(function () {
   var hasChanged = function (val, server) {
     if (!servers[server].nodes[val.vpn]) {
       servers[server].nodes[val.vpn] = val
-      logEvent(val.name, 'connected', server)
       return true
     } else if (servers[server].nodes[val.vpn].timestamp !== val.timestamp) {
       servers[server].nodes[val.vpn] = val
       return true
     }
   }
-  var logEvent = function (node, event, server) {
-    var data = {
-      event: event,
-      node: node,
-      help: '',
-      icon: '',
-      timestamp: moment().format('HH:mm')
-    }
-    if (event === 'connected') {
+  var socket = new WebSocket(window.location.origin.replace('http','ws') + '/wss/log')
+  socket.onmessage = function (event) {
+    var data = JSON.parse(event.data)
+    data.timestamp = moment(data.timestamp).format('HH:mm')
+    if (data.event === 'connect') {
       data.help = 'This node just established a connection to the server.'
       data.icon = 'fa-plug'
-    } else if (event === 'disconnected') {
+    } else if (data.event === 'disconnect') {
       data.help = 'This node just closed the connection to the server.'
       data.icon = 'fa-remove'
     }
-    $('#log_' + server).prepend($.markup('log-entry', data))
+    $('#log_' + data.server).prepend($.markup('log-entry', data))
   }
   var refreshData = function (server) {
     countdown = countdown_reset
@@ -43,10 +38,8 @@ $(document).ready(function () {
       if (!servers[server])
         servers[server] = {nodes:[]}
       _.forIn(servers[server].nodes, function (val, key) {
-        if (!_.findWhere(response, { vpn: key })) {
-          logEvent(val.name, 'disconnected', server)
+        if (!_.findWhere(response, { vpn: key }))
           delete servers[server].nodes[key]
-        }
       })
       $('#nodes_' + server + ' > tr').remove()
       _.each(response, function (item) {
