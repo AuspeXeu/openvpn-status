@@ -22,7 +22,7 @@ let cityLookup
 let servers = conf.get('servers') || []
 
 if (conf.get('logFile'))
-  servers.push({name: 'unnamed', logFile: conf.get('logFile')})
+  log('The "logFile" option is no longer supported. Please specify the server as described at https://github.com/AuspeXeu/openvpn-status')
 
 const logEvent = (server, name, event) => {
   const data = {server: server, node: name, event: event, timestamp: moment().unix()}

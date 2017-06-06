@@ -19,16 +19,7 @@ or get the latest version by executing the respective ``npm`` command.
 
 ## Configuration
 
-The port under which the webinterface is available can be specified inside the ``config.json``, further the location of the openvpn log file can be declared. The example below shows the configuration for a single server setup.
-
-```
-{
-  "port":3013,
-  "logFile": "/etc/openvpn/openvpn-status.log"
-}
-```
-
-In case you have multiple OpenVPN server instances and thus multiple log files, these can be specified as follows.
+The port under which the webinterface is available can be specified inside the ``config.json``, further the location of the openvpn log file can be declared. The example below shows an exemplary configuration. Multiple servers can be handled as well as a single server.
 
 ```
 {
