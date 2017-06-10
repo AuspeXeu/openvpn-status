@@ -13,20 +13,18 @@ const db = require('./database.js')
 const log = console.log
 
 conf.file({file: 'config.json'})
-app.set('views', __dirname + '/views')
-app.set('view engine', 'ejs')
-app.use('/assets', express.static(__dirname + '/assets'))
+app.use('/static', express.static(__dirname + '/static'))
 const ipFile = conf.get('ipFile')
-const clients = new Map()
 let cityLookup
 let servers = conf.get('servers') || []
+servers.forEach((srv) => srv.clients = new Map())
 
 if (conf.get('logFile'))
   log('The "logFile" option is no longer supported. Please specify the server as described at https://github.com/AuspeXeu/openvpn-status')
 
 const logEvent = (server, name, event) => {
   const data = {server: server, node: name, event: event, timestamp: moment().unix()}
-  clients.forEach((ws) => ws.send(JSON.stringify(data)))
+  servers[server].clients.forEach((ws) => ws.send(JSON.stringify(data)))
   db.Log.create(data)
 }
 
@@ -86,6 +84,7 @@ new CronJob({
   start: true
 })
 
+app.get('/', (req, res) => res.sendFile(__dirname + '/index.html'))
 app.get('/geoip/:ip', (req, res) => {
   const ip = req.params.ip
   if (maxmind.validate(ip)) {
@@ -97,22 +96,21 @@ app.get('/geoip/:ip', (req, res) => {
   } else
     res.status(404).send('N/A')
 })
-app.get('/', (req, res) => res.render('home', {servers: servers.map((server) => ({name: server.name}))}))
 app.get('/servers', (req, res) => res.json(servers.map((server, idx) => ({name: server.name, id: idx}))))
 app.get('/entries/:id', (req, res) => res.json(servers[req.params.id].entries))
-app.get('/log/size', (req, res) => db.Log.count().then((size) => res.json({value: size})))
-app.get('/log/:page/:size', (req, res) => {
+app.get('/log/:id/size', (req, res) => db.Log.count({where: {server: req.params.id}}).then((size) => res.json({value: size})))
+app.get('/log/:id/:page/:size', (req, res) => {
   const page = parseInt(req.params.page, 10)
   const size = parseInt(req.params.size, 10)
-  const query = db.Log.findAll({offset: (page - 1) * size, limit: size, order: 'timestamp DESC'})
+  const query = db.Log.findAll({where: {server: req.params.id}, offset: (page - 1) * size, limit: size, order: 'timestamp DESC'})
   query.then((data) => {
     res.json(data.map((item) => ({server: item.server, node: item.node, timestamp: item.timestamp, event: item.event})))
   })
 })
-app.ws('/live/log', (ws, req) => {
+app.ws('/log/:id/live', (ws, req) => {
   const id = uuid()
-  clients.set(id, ws)
-  ws.on('close', () => clients.delete(id))
+  servers[req.params.id].clients.set(id, ws)
+  ws.on('close', () => servers[req.params.id].clients.delete(id))
 })
 
 db.init().then(() => {
