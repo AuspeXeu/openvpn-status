@@ -4,7 +4,7 @@
 
    <md-table-card>
     <md-toolbar class="md-dense">
-      <md-button class="md-icon-button" @click.native.stop.prevent.capture="toggleLeftSidenav">
+      <md-button class="md-icon-button" @click.native="toggleLeftSidenav" v-show="servers.length > 1">
         <md-icon>menu</md-icon>
       </md-button>
 
