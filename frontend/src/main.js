@@ -4,7 +4,7 @@ import Vue from 'vue'
 import VueMaterial from 'vue-material'
 import 'vue-material/dist/vue-material.css'
 import Vuex from 'vuex'
-import $ from 'jquery'
+import axios from 'axios'
 import moment from 'moment'
 
 import App from './App'
@@ -58,35 +58,35 @@ const store = new Vuex.Store({
       context.dispatch('refresh')
     },
     changePage (context, opt) {
-      $.get(`/log/${store.state.server}/${opt.page}/${opt.size}`)
-      .done((data) => {
+      axios.get(`/log/${store.state.server}/${opt.page}/${opt.size}`)
+      .then((response) => {
         store.commit({
           type: 'updateEvents',
-          events: data
+          events: response.data
         })
       })
     },
     refresh (context) {
-      $.get(`/entries/${store.state.server}`)
-      .done((data) => {
-        var nodes = data.map(function(node) { 
-          node.link = 'https://freegeoip.net/?q='+node.pub
-          node.flagImg = '/static/images/flags/unknown.jpg'
-          node.flagTitle = 'Unknown Country'
-          
-          $.get('/geoip/' + node.pub)
-          .done(function (data) {
-            node.flagImg = '/static/images/flags/' + data.country.iso_code + '.png'
-            node.flagTitle = data.country.names.en
+      axios.get(`/entries/${store.state.server}`)
+        .then((response) => {
+          const nodes = response.data.map(function(node) { 
+            node.link = 'https://freegeoip.net/?q='+node.pub
+            node.flagImg = '/static/images/flags/unknown.jpg'
+            node.flagTitle = 'Unknown Country'
+            
+            axios.get(`/geoip/${node.pub}`)
+            .then((response) => {
+              node.flagImg = '/static/images/flags/' + response.data.country.iso_code + '.png'
+              node.flagTitle = response.data.country.names.en
+            })
+            
+            return node
           })
-          
-          return node
-        })
-        context.commit({
-          type: 'updateNodes',
-          nodes: nodes
-        })
-      })  
+          context.commit({
+            type: 'updateNodes',
+            nodes: nodes
+          })
+        })  
     }
   }
 })
@@ -102,22 +102,16 @@ new Vue({
     }
   },
   watch: {
-    'server': function (val) {
-      $.get(`/log/${val}/size`)
-      .done((data) => {
-        store.state.total = data.value
-      })
+    'server': (val) => {
+      axios.get(`/log/${val}/size`)
+        .then((response) => store.state.total = response.data.value)
     }
   },
   beforeMount: function() {
-    $.get(`/log/${store.state.server}/size`)
-    .done((data) => {
-      store.state.total = data.value
-    })
-    $.get(`/servers`)
-    .done((data) => {
-      store.state.servers = data
-    })
+    axios.get(`/log/${store.state.server}/size`)
+      .then((response) => store.state.total = response.data.value)
+    axios.get(`/servers`)
+      .then((response) => store.state.servers = response.data)
     const socket = new WebSocket(window.location.origin.replace('http','ws') + `/live/${store.state.server}/log`)
     socket.onmessage = (event) => {
       event = JSON.parse(event.data)
