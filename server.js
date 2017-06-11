@@ -97,7 +97,14 @@ app.get('/geoip/:ip', (req, res) => {
     res.status(404).send('N/A')
 })
 app.get('/servers', (req, res) => res.json(servers.map((server, idx) => ({name: server.name, id: idx}))))
-app.get('/entries/:id', (req, res) => res.json(servers[req.params.id].entries))
+const compare = (a,b) => {
+  if (a.pub < b.pub)
+    return -1
+  if (a.pub > b.pub)
+    return 1
+  return 0
+}
+app.get('/entries/:id', (req, res) => res.json(servers[req.params.id].entries.sort(compare)))
 app.get('/log/:id/size', (req, res) => db.Log.count({where: {server: req.params.id}}).then((size) => res.json({value: size})))
 app.get('/log/:id/:page/:size', (req, res) => {
   const page = parseInt(req.params.page, 10)
