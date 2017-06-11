@@ -2,6 +2,12 @@
 
 A web-based application to monitor clients connected to an openvpn server.
 
+Features
+* WebSocket based real-time event log
+* Persistent event log
+* Full material design
+* Multi server support
+
 ## Installation
 You can either clone the code directly from the repository
 
