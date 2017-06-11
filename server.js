@@ -109,7 +109,7 @@ app.get('/log/:id/size', (req, res) => db.Log.count({where: {server: req.params.
 app.get('/log/:id/:page/:size', (req, res) => {
   const page = parseInt(req.params.page, 10)
   const size = parseInt(req.params.size, 10)
-  const query = db.Log.findAll({where: {server: req.params.id}, offset: (page - 1) * size, limit: size, order: 'timestamp DESC'})
+  const query = db.Log.findAll({where: {server: req.params.id}, offset: (page - 1) * size, limit: size, order: [['timestamp', 'DESC']]})
   query.then((data) => {
     res.json(data.map((item) => ({server: item.server, node: item.node, timestamp: item.timestamp, event: item.event})))
   })
