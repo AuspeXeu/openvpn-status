@@ -13,10 +13,6 @@ or download it as a zip archive from
 
 [https://github.com/AuspeXeu/openvpn-status/archive/master.zip](https://github.com/AuspeXeu/openvpn-status/archive/master.zip)
 
-or get the latest version by executing the respective ``npm`` command.
-
-``npm install openvpn-status``
-
 ## Configuration
 
 The port under which the webinterface is available can be specified inside the ``config.json``, further the location of the openvpn log file can be declared. The example below shows an exemplary configuration. Multiple servers can be handled as well as a single server.
@@ -30,13 +26,19 @@ The port under which the webinterface is available can be specified inside the `
 
 _(Note: The user running the server needs to have read access to the log file.)_
 
+## Build
+
+Before the application is ready to run, the frontend needs to be build. This is done using npm.
+
+``npm run build``
+
 ## Run
 
-In order to run the server you can either navigate to ``/node_modules/openvpn-status`` and run it in the foreground
+In order to run the server you can either run it in foreground
 
 ``node server``
 
-or run it like a deamon by using ``pm2`` to do so we first need to install pm2 using either locally or globally whichever you prefer. For a local installation simply omit the -g flag.
+or run it like a deamon using ``pm2`` to do so we first need to install pm2 using either locally or globally whichever you prefer. For a local installation simply omit the -g flag.
 
 ``npm install pm2 -g``
 
@@ -55,7 +57,11 @@ server {
   auth_basic_user_file /etc/nginx/cred/.status;
 
   location / {
-    proxy_pass http://127.0.0.1:3013;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_read_timeout 86400;
   }
 }
 ```
