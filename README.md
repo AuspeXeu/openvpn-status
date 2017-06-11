@@ -30,14 +30,6 @@ The port under which the webinterface is available can be specified inside the `
 
 _(Note: The user running the server needs to have read access to the log file.)_
 
-Moreover you might want to customise the footer inside the ``views``.
-
-```
-<p class="text-center" style="font-size:smaller;">
-  ©2016 [You]
-</p> 
-```
-
 ## Run
 
 In order to run the server you can either navigate to ``/node_modules/openvpn-status`` and run it in the foreground
