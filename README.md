@@ -1,7 +1,5 @@
 # openvpn-status [![Version npm](https://img.shields.io/npm/v/openvpn-status.svg?style=flat-square)](https://www.npmjs.com/package/openvpn-status)[![Dependencies](https://img.shields.io/david/auspexeu/openvpn-status.svg?style=flat-square)](https://david-dm.org/auspexeu/openvpn-status)
 
-[![NPM](https://nodei.co/npm/openvpn-status.png?downloads=true&stars=true)](https://nodei.co/npm/openvpn-status/)
-
 A web-based application to monitor clients connected to an openvpn server.
 
 ## Installation
