@@ -2,6 +2,10 @@
   <div id="app">
     <clients></clients>
     <events></events>
+    <md-snackbar md-position="bottom center" ref="snackbar">
+      <span>{{message}}</span>
+      <md-button class="md-accent" md-theme="light-blue" @click.native="$refs.snackbar.close()">Dismiss</md-button>
+    </md-snackbar>
   </div>
 </template>
 
@@ -14,6 +18,22 @@ export default {
   components: {
     Clients,
     Events
+  },
+  computed: {
+    event () {
+      return this.$store.state.event
+    }
+  },
+  watch: {
+    'event': function (value) {
+      this.message = value.node + ' ' + value.event + 'ed'
+      this.$refs.snackbar.open()
+    }
+  },
+  data () {
+    return {
+      message: ''
+    }
   }
 }
 </script>

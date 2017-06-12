@@ -2,7 +2,7 @@ const zlib = require('zlib')
 const fs = require('fs')
 const express = require('express')
 const app = express()
-var expressWs = require('express-ws')(app)
+const expressWs = require('express-ws')(app)
 const conf = require('nconf')
 const maxmind = require('maxmind')
 const moment = require('moment')
@@ -16,15 +16,15 @@ conf.file({file: 'config.json'})
 app.use('/static', express.static(__dirname + '/static'))
 const ipFile = conf.get('ipFile')
 let cityLookup
+const clients = new Map()
 let servers = conf.get('servers') || []
-servers.forEach((srv) => srv.clients = new Map())
 
 if (conf.get('logFile'))
   log('The "logFile" option is no longer supported. Please specify the server as described at https://github.com/AuspeXeu/openvpn-status')
 
 const logEvent = (server, name, event) => {
   const data = {server: server, node: name, event: event, timestamp: moment().unix()}
-  servers[server].clients.forEach((ws) => ws.send(JSON.stringify(data)))
+  clients.forEach((ws) => ws.send(JSON.stringify(data)))
   db.Log.create(data)
 }
 
@@ -114,10 +114,10 @@ app.get('/log/:id/:page/:size', (req, res) => {
     res.json(data.map((item) => ({server: item.server, node: item.node, timestamp: item.timestamp, event: item.event})))
   })
 })
-app.ws('/log/:id/live', (ws, req) => {
+app.ws('/live/log', (ws, req) => {
   const id = uuid()
-  servers[req.params.id].clients.set(id, ws)
-  ws.on('close', () => servers[req.params.id].clients.delete(id))
+  clients.set(id, ws)
+  ws.on('close', () => clients.delete(id))
 })
 
 db.init().then(() => {

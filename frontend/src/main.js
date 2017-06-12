@@ -31,7 +31,8 @@ const store = new Vuex.Store({
     servers: [],
     total: 0,
     nodes: [],
-    events: []
+    events: [],
+    event: {}
   },
   mutations: {
     updateEvents (state, payload) {
@@ -45,6 +46,7 @@ const store = new Vuex.Store({
       state.events.unshift(event)
       store.state.total += 1
       state.events.pop()
+      state.event = event
     },
     changeServer (state, payload) {
       state.server = payload.server
@@ -112,13 +114,14 @@ new Vue({
       .then((response) => store.state.total = response.data.value)
     axios.get(`/servers`)
       .then((response) => store.state.servers = response.data)
-    const socket = new WebSocket(window.location.origin.replace('http','ws') + `/live/${store.state.server}/log`)
+    const socket = new WebSocket(window.location.origin.replace('http','ws') + `/live/log`)
     socket.onmessage = (event) => {
       event = JSON.parse(event.data)
-      store.commit({
-        type: 'addEvent',
-        event: event
-      })
+      if (event.server === store.state.server)
+        store.commit({
+          type: 'addEvent',
+          event: event
+        })
     }
   }
 })
