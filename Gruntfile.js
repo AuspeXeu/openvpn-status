@@ -11,6 +11,13 @@ module.exports = (grunt) => {
       all: {
         src: ['*.js']
       }
+    },
+    versioncheck: {
+      target: {
+        options: {
+          hideUpToDate: true
+        }
+      }
     }
   })
 
