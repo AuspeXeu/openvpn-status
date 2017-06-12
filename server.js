@@ -38,15 +38,17 @@ const updateServer = (server) => {
     timestamp: moment(new Date(entry[4])).unix()
   })).filter((entry) => entry.name !== 'UNDEF')
   entries.forEach((newEntry) => {
-    if (!server.entries.find((item) => item.name === newEntry.name))
-      logEvent(server.id, newEntry.name, 'connect')
+    db.Log.findOne({where: {server: server.id, node: newEntry.name}, order: [['timestamp', 'DESC']]})
+      .then((res) => {
+        if (!res || res.event === 'disconnect')
+          logEvent(server.id, newEntry.name, 'connect')
+      })
   })
   server.entries.forEach((oldEntry) => {
     if (!entries.find((item) => item.name === oldEntry.name))
       logEvent(server.id, oldEntry.name, 'disconnect')
   })
   server.entries = entries
-  fs.writeFileSync('./state.json', JSON.stringify(servers), 'utf-8')
 }
 
 new CronJob({
@@ -121,17 +123,11 @@ app.ws('/live/log', (ws, req) => {
 })
 
 db.init().then(() => {
-  fs.stat('./state.json', (err, stat) => {
-    let state = []
-    if (!err)
-      state = JSON.parse(fs.readFileSync('./state.json', 'utf-8'))
-    servers.forEach((server, idx) => {
-      const oldState = state.find((item) => item.name === server.name)
-      server.entries = (oldState ? oldState.entries : [])
-      server.id = idx
-      updateServer(server)
-      fs.watchFile(server.logFile, () => updateServer(server))
-    })
-    app.listen(conf.get('port'))
+  servers.forEach((server, idx) => {
+    server.entries = []
+    server.id = idx
+    updateServer(server)
+    fs.watchFile(server.logFile, () => updateServer(server))
   })
+  app.listen(conf.get('port'))
 })
