@@ -123,11 +123,16 @@ app.ws('/live/log', (ws, req) => {
 })
 
 db.init().then(() => {
-  servers.forEach((server, idx) => {
-    server.entries = []
-    server.id = idx
-    updateServer(server)
-    fs.watchFile(server.logFile, () => updateServer(server))
+  db.state().then((entries) => {  
+    servers.forEach((server, idx) => {
+      server.entries = entries.filter((entry) => entry.server === idx).map((entry) => ({
+        name: entry.node,
+        timestamp: entry.timestamp
+      }))
+      server.id = idx
+      updateServer(server)
+      fs.watchFile(server.logFile, () => updateServer(server))
+    })
+    app.listen(conf.get('port'))
   })
-  app.listen(conf.get('port'))
 })
