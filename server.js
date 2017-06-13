@@ -104,6 +104,10 @@ const compare = (a,b) => {
     return -1
   if (a.pub > b.pub)
     return 1
+  if (a.timestamp < b.timestamp)
+    return 1
+  if (a.timestamp > b.timestamp)
+    return -1
   return 0
 }
 app.get('/entries/:id', (req, res) => res.json(servers[req.params.id].entries.sort(compare)))
