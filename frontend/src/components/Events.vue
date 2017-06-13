@@ -2,7 +2,7 @@
 
   <md-layout md-align='center' md-flex='50'>
 
-   <md-table-card>
+   <md-table-card class="md-flex-50 md-flex-medium-90">
     <md-toolbar>
       <h1 class='md-title'>Event Log</h1>
     </md-toolbar>

@@ -1,8 +1,7 @@
 <template>
 
-  <md-layout md-align='center' md-flex='50'>
-
-   <md-table-card>
+  <md-layout md-align='center'>
+   <md-table-card class="md-flex-66 md-flex-medium-100">
     <md-toolbar class="md-dense">
       <md-button class="md-icon-button" @click.native="toggleLeftSidenav" v-show="servers.length > 1">
         <md-icon>menu</md-icon>
@@ -34,7 +33,7 @@
           <md-table-cell>{{node.name}}</md-table-cell>
           <md-table-cell>{{node.vpn}}</md-table-cell>
           <md-table-cell><a :href="node.link" target="_blank">{{node.pub}}</a></md-table-cell>
-          <md-table-cell>{{formatTimestamp(node.timestamp)}}</md-table-cell>
+          <md-table-cell>{{node.timestamp}}</md-table-cell>
         </md-table-row>
       </md-table-body>
     </md-table>
@@ -60,22 +59,19 @@
 
 <script>
   import moment from 'moment'
+  import axios from 'axios'
   export default {
     name: 'clients',
     created () {
       const vue = this
-      setInterval(function () {
+      setInterval(() => {
         vue.counter -= 1
-        if (vue.counter == 0) {
+        if (vue.counter === 0)
           vue.loadData()
-        }
       }, 1000)
       this.loadData()
     },
     methods: {
-      formatTimestamp(timestamp) {
-        return moment(timestamp * 1000).format('HH:mm - DD.MM.YYYY')
-      },
       loadData() {
         this.$store.dispatch('refresh')
         this.counter = 30
@@ -93,7 +89,16 @@
     },
     computed: {
       nodes () {
-        return this.$store.state.nodes
+        const nodes = this.$store.state.nodes
+        nodes.forEach((node) => {
+          axios.get(`/geoip/${node.pub}`)
+            .then((response) => {
+              node.flagImg = '/static/images/flags/' + response.data.country.iso_code + '.png'
+              node.flagTitle = response.data.country.names.en
+            })
+          node.timestamp = moment(node.timestamp * 1000).format('HH:mm - DD.MM.YYYY')
+        })
+        return nodes
       },
       server () {
         return this.$store.state.server
