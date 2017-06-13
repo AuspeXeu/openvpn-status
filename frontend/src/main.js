@@ -71,17 +71,10 @@ const store = new Vuex.Store({
     refresh (context) {
       axios.get(`/entries/${store.state.server}`)
         .then((response) => {
-          const nodes = response.data.map(function(node) { 
-            node.link = 'https://freegeoip.net/?q='+node.pub
+          const nodes = response.data.map((node) => {
+            node.link = 'https://freegeoip.net/?q=' + node.pub
             node.flagImg = '/static/images/flags/unknown.jpg'
             node.flagTitle = 'Unknown Country'
-            
-            axios.get(`/geoip/${node.pub}`)
-            .then((response) => {
-              node.flagImg = '/static/images/flags/' + response.data.country.iso_code + '.png'
-              node.flagTitle = response.data.country.names.en
-            })
-            
             return node
           })
           context.commit({
@@ -109,12 +102,12 @@ new Vue({
         .then((response) => store.state.total = response.data.value)
     }
   },
-  beforeMount: function() {
+  beforeMount () {
     axios.get(`/log/${store.state.server}/size`)
       .then((response) => store.state.total = response.data.value)
-    axios.get(`/servers`)
+    axios.get('/servers')
       .then((response) => store.state.servers = response.data)
-    const socket = new WebSocket(window.location.origin.replace('http','ws') + `/live/log`)
+    const socket = new WebSocket(window.location.origin.replace('http','ws') + '/live/log')
     socket.onmessage = (event) => {
       event = JSON.parse(event.data)
       if (event.server === store.state.server)
