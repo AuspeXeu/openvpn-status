@@ -116,10 +116,10 @@
 </script>
 
 <style scoped>
-  .md-table-card{
-    display: flex;
-    flex-flow: column;
-    position: relative;
+  img {
+    max-width: initial;
+  }
+  .md-table-card {
     overflow: hidden;
     z-index: 1;
   }
