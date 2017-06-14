@@ -1,7 +1,7 @@
 <template>
 
   <md-layout md-align='center'>
-   <md-table-card class="md-flex-66 md-flex-medium-100">
+   <md-table-card class="md-flex-66 md-flex-small-100">
     <md-toolbar class="md-dense">
       <md-button class="md-icon-button" @click.native="toggleLeftSidenav" v-show="servers.length > 1">
         <md-icon>menu</md-icon>
@@ -96,7 +96,7 @@
               node.flagImg = '/static/images/flags/' + response.data.country.iso_code + '.png'
               node.flagTitle = response.data.country.names.en
             })
-          node.timestamp = moment(node.timestamp * 1000).format('HH:mm - DD.MM.YYYY')
+          node.timestamp = moment(node.timestamp * 1000).format('HH:mm - DD.MM.YY')
         })
         return nodes
       },

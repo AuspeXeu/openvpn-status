@@ -1,8 +1,7 @@
 <template>
 
-  <md-layout md-align='center' md-flex='50'>
-
-   <md-table-card class="md-flex-50 md-flex-medium-90">
+  <md-layout md-align='center'>
+   <md-table-card class="md-flex-33 md-flex-small-66">
     <md-toolbar>
       <h1 class='md-title'>Event Log</h1>
     </md-toolbar>
@@ -11,20 +10,18 @@
       <md-table-header>
         <md-table-row>
           <md-table-head></md-table-head>
-          <md-table-head>Time</md-table-head>
           <md-table-head>Node</md-table-head>
-          <md-table-head>Event</md-table-head>
+          <md-table-head>Time</md-table-head>
         </md-table-row>
       </md-table-header>
 
       <md-table-body>
         <md-table-row v-for="event in events" :key="event.timestamp + event.node">
           <md-table-cell>
-            <md-icon>{{event.icon}}</md-icon>
+            <md-icon :title="event.event">{{event.icon}}</md-icon>
           </md-table-cell>
-          <md-table-cell>{{formatTimestamp(event.timestamp)}}</md-table-cell>
           <md-table-cell>{{event.node}}</md-table-cell>
-          <md-table-cell>{{event.event}}</md-table-cell>
+          <md-table-cell>{{event.timestamp}}</md-table-cell>
         </md-table-row>
       </md-table-body>
     </md-table>
@@ -53,7 +50,11 @@
     },
     computed: {
       events () {
-        return this.$store.state.events
+        const events = this.$store.state.events
+        events.forEach((ev) => {
+          ev.timestamp = moment(ev.timestamp * 1000).format('HH:mm - DD.MM.YY')
+        })
+        return events
       },
       total () {
         return this.$store.state.total
@@ -72,9 +73,6 @@
       this.$store.dispatch('changePage',{page:this.page,size:this.size})
     },
     methods: {
-      formatTimestamp(timestamp) {
-        return moment(timestamp * 1000).format('HH:mm')
-      },
       back() {
         this.page -= 1
         this.$store.dispatch('changePage',{page:this.page,size:this.size})
