@@ -39,17 +39,17 @@ export default {
 </script>
 
 <style>
-  .md-layout{
+  .md-layout {
     padding-top:20px;
   }
-  .md-table-cell{
+  .md-table-cell {
     height: auto !important;
   }
-  .md-table-head-container{
+  .md-table-head-container {
     height: auto !important;
     padding: 0px !important;
   }
   #app {
-    padding-bottom:20px;
+    padding-bottom: 20px;
   }
 </style>

@@ -27,7 +27,7 @@
     </md-table>
 
     <md-toolbar class="md-transparent">
-      <h2 class="md-title" style="flex: 1"></h2>
+      <h2 class="md-title" style="flex:1;"></h2>
       <span>{{(1+((page-1)*size)) + '-' + (page*size) + ' of ' + total}}</span>
       <md-button @click.native='back' class="md-icon-button md-table-pagination-next" :disabled="page < 2 ? true : false"><md-icon>keyboard_arrow_left</md-icon></md-button>
       <md-button @click.native='forward' class="md-icon-button md-table-pagination-next" :disabled="page == Math.ceil(total/size) ? true : false"><md-icon>keyboard_arrow_right</md-icon></md-button>

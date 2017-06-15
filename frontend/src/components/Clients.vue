@@ -7,7 +7,7 @@
         <md-icon>menu</md-icon>
       </md-button>
 
-      <h2 class="md-title" style="flex: 1">{{(servers.length > 0 ? servers[server].name : '')}}</h2>
+      <h2 class="md-title" style="flex:1;">{{(servers.length > 0 ? servers[server].name : '')}}</h2>
 
       <md-button @click.native='loadData' class='md-raised md-primary md-dense'>
         <md-icon>cached</md-icon> {{counter}}
