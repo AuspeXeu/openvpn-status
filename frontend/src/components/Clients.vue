@@ -59,7 +59,6 @@
 
 <script>
   import moment from 'moment'
-  import axios from 'axios'
   export default {
     name: 'clients',
     created () {
@@ -91,11 +90,8 @@
       nodes () {
         const nodes = this.$store.state.nodes
         nodes.forEach((node) => {
-          axios.get(`/geoip/${node.pub}`)
-            .then((response) => {
-              node.flagImg = '/static/images/flags/' + response.data.country.iso_code + '.png'
-              node.flagTitle = response.data.country.names.en
-            })
+          node.flagImg = '/static/images/flags/' + node.country_code + '.png'
+          node.flagTitle = node.country_name
           node.timestamp = moment(node.timestamp * 1000).format('HH:mm - DD.MM.YY')
         })
         return nodes

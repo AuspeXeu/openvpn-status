@@ -38,6 +38,9 @@ const updateServer = (server) => {
     timestamp: moment(new Date(entry[4])).unix()
   })).filter((entry) => entry.name !== 'UNDEF')
   entries.forEach((newEntry) => {
+    const loc = cityLookup.get(newEntry.pub)
+    newEntry.country_code = loc.country.iso_code
+    newEntry.country_name = loc.country.names.en
     db.Log.findOne({where: {server: server.id, node: newEntry.name}, order: [['timestamp', 'DESC']]})
       .then((res) => {
         if (!res || res.event === 'disconnect')
@@ -87,19 +90,12 @@ new CronJob({
 })
 
 app.get('/', (req, res) => res.sendFile(__dirname + '/index.html'))
-app.get('/geoip/:ip', (req, res) => {
-  const ip = req.params.ip
-  if (maxmind.validate(ip)) {
-    let city = cityLookup.get(ip)
-    if (!city)
-      city = {}
-    city.ip = ip
-    res.json(city)
-  } else
-    res.status(404).send('N/A')
-})
 app.get('/servers', (req, res) => res.json(servers.map((server, idx) => ({name: server.name, id: idx}))))
 const compare = (a,b) => {
+  if (a.country_code < b.country_code)
+    return -1
+  if (a.country_code > b.country_code)
+    return 1
   if (a.pub < b.pub)
     return -1
   if (a.pub > b.pub)
