@@ -16,12 +16,12 @@
       </md-table-header>
 
       <md-table-body>
-        <md-table-row v-for="event in events" :key="event.timestamp + event.node">
+        <md-table-row v-for="event in events" :key="event.time + event.node">
           <md-table-cell>
             <md-icon :title="event.event">{{event.icon}}</md-icon>
           </md-table-cell>
           <md-table-cell>{{event.node}}</md-table-cell>
-          <md-table-cell>{{event.timestamp}}</md-table-cell>
+          <md-table-cell>{{event.time}}</md-table-cell>
         </md-table-row>
       </md-table-body>
     </md-table>
@@ -52,7 +52,7 @@
       events () {
         const events = this.$store.state.events
         events.forEach((ev) => {
-          ev.timestamp = moment(ev.timestamp * 1000).format('HH:mm - DD.MM.YY')
+          ev.time = moment(ev.timestamp * 1000).format('HH:mm - DD.MM.YY')
         })
         return events
       },
