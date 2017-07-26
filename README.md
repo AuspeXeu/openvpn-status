@@ -17,6 +17,13 @@ or download it as a zip archive from
 
 [https://github.com/AuspeXeu/openvpn-status/archive/master.zip](https://github.com/AuspeXeu/openvpn-status/archive/master.zip)
 
+Afterwards the dependencies have to be installed inside the installation directiory.
+
+```
+cd openvpn-status
+npm install
+```
+
 ## Configuration
 
 The port under which the webinterface is available can be specified inside the ``config.json``, further the location of the openvpn log file can be declared. The example below shows an exemplary configuration. Multiple servers can be handled as well as a single server.
@@ -45,6 +52,10 @@ In order to run the server you can either run it in foreground
 or run it like a deamon using ``pm2`` to do so we first need to install pm2 using either locally or globally whichever you prefer. For a local installation simply omit the -g flag.
 
 ``npm install pm2 -g``
+
+In case you are on a Linux machine you most likely have to run.
+
+``sudo npm install pm2 -g``
 
 After that you can execute the bash script ``pm2 start pm2.json`` inside the installation directory.
 
