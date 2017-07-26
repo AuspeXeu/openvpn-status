@@ -13,6 +13,10 @@ const db = require('./database.js')
 const log = console.log
 
 conf.file({file: 'config.json'})
+conf.defaults({
+  port: 3013,
+  bind: '127.0.0.1'
+})
 app.use('/static', express.static(__dirname + '/static'))
 const ipFile = conf.get('ipFile')
 let cityLookup
@@ -54,9 +58,8 @@ const updateServer = (server) => {
   server.entries = entries
 }
 
-new CronJob({
-  cronTime: '00 10 * 10 * *',
-  onTick: () => {
+const loadIPdatabase = () => {
+  return new Promise((resolve) => {
     fs.stat(ipFile, (err, stat) => {
       const now = new Date().getTime()
       const expire = new Date((stat ? stat.ctime : '')).getTime() + 30 * 24 * 60 * 60 * 1000
@@ -68,6 +71,7 @@ new CronJob({
               .on('finish', () => {
                 maxmind.open('./GeoLite2-City.mmdb', (err, lookup) => {
                   cityLookup = lookup
+                  resolve(cityLookup)
                 })
               })
           } else
@@ -75,6 +79,7 @@ new CronJob({
               if (err)
                 log(err)
               cityLookup = lookup
+              resolve(cityLookup)
             })
         })
       } else
@@ -82,10 +87,15 @@ new CronJob({
           if (err)
             log(err)
           cityLookup = lookup
+          resolve(cityLookup)
         })
     })
-  },
-  runOnInit: true,
+  })
+}
+
+new CronJob({
+  cronTime: '00 10 * 10 * *',
+  onTick: loadIPdatabase,
   start: true
 })
 
@@ -123,16 +133,18 @@ app.ws('/live/log', (ws, req) => {
 })
 
 db.init().then(() => {
-  db.state().then((entries) => {  
-    servers.forEach((server, idx) => {
-      server.entries = entries.filter((entry) => entry.server === idx).map((entry) => ({
-        name: entry.node,
-        timestamp: entry.timestamp
-      }))
-      server.id = idx
-      updateServer(server)
-      fs.watchFile(server.logFile, () => updateServer(server))
+  db.state().then((entries) => {
+    loadIPdatabase().then(() => {
+      servers.forEach((server, idx) => {
+        server.entries = entries.filter((entry) => entry.server === idx).map((entry) => ({
+          name: entry.node,
+          timestamp: entry.timestamp
+        }))
+        server.id = idx
+        updateServer(server)
+        fs.watchFile(server.logFile, () => updateServer(server))
+      })
+      app.listen(conf.get('port'), conf.get('bind'))
     })
-    app.listen(conf.get('port'))
   })
 })
