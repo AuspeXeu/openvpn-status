@@ -26,11 +26,12 @@ npm install
 
 ## Configuration
 
-The port under which the webinterface is available can be specified inside the ``config.json``, further the location of the openvpn log file can be declared. The example below shows an exemplary configuration. Multiple servers can be handled as well as a single server.
+The ``port`` and ``bind`` address under which the webinterface is available can be specified inside the ``config.json``, further the location of the openvpn log file can be declared. The example below shows an exemplary configuration. Multiple servers can be handled as well as a single server.
 
 ```
 {
-  "port":3013,
+  "port": 3013,
+  "bind": "127.0.0.1",
   "servers": [{"name": "Server A", "logFile": "/etc/openvpn/openvpn-status-A.log"},{"name": "Server B", "logFile": "/etc/openvpn/openvpn-status-B.log"}]
 }
 ```
