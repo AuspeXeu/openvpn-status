@@ -1,6 +1,6 @@
 # openvpn-status [![Version npm](https://img.shields.io/npm/v/openvpn-status.svg?style=flat-square)](https://www.npmjs.com/package/openvpn-status)[![Dependencies](https://img.shields.io/david/auspexeu/openvpn-status.svg?style=flat-square)](https://david-dm.org/auspexeu/openvpn-status)
 
-A web-based application to monitor clients connected to an openvpn server.
+A web-based application to monitor multiple [OpenVPN](https://openvpn.net/index.php/open-source/overview.html) servers.
 
 Features
 * WebSocket based real-time event log
@@ -8,26 +8,35 @@ Features
 * Full material design
 * Multi server support
 
+## Pre-requisites
+
+\- [x] [NodeJS](https://nodejs.org/en/download/package-manager/) 6 or higher
+\- [x] npm package manager
+
 ## Installation
-You can either clone the code directly from the repository
+1. Get the source
 
 ``git clone https://github.com/AuspeXeu/openvpn-status.git``
 
-or download it as a zip archive from
-
-[https://github.com/AuspeXeu/openvpn-status/archive/master.zip](https://github.com/AuspeXeu/openvpn-status/archive/master.zip)
-
-Afterwards the dependencies have to be installed inside the installation directiory.
+2. Install dependencies _(the last step might need ``sudo``)_
 
 ```
 cd openvpn-status
 npm install
+npm install pm2 -g
 ```
 
 ## Configuration
 
-The ``port`` and ``bind`` address under which the webinterface is available can be specified inside the ``config.json``, further the location of the openvpn log file can be declared. The example below shows an exemplary configuration. Multiple servers can be handled as well as a single server.
+The configuration is handled in the ``config.json`` file.
 
+| Option  | Default       | Description  |
+| ------- |:-------------:| ------------ |
+| port    | ``3013``      | Port on which the server will be listening. |
+| bind    | ``127.0.0.1`` | Address to which the server will bind to. Change to ``0.0.0.0`` to make available on all addresses. |
+| servers | ``[]``        | Array of servers. The location of this file is specified with the ``status`` option in your server [configuration](https://openvpn.net/index.php/open-source/documentation/howto.html). _Example:_ ``[{"name": "Server", "logFile": "/etc/openvpn/openvpn-status.log"}]`` |
+
+Example:
 ```
 {
   "port": 3013,
@@ -36,7 +45,7 @@ The ``port`` and ``bind`` address under which the webinterface is available can 
 }
 ```
 
-_(Note: The user running the server needs to have read access to the log file.)_
+_(Note: The user running the application needs to have read access to the log file.)_
 
 ## Build
 
@@ -46,21 +55,11 @@ Before the application is ready to run, the frontend needs to be build. This is 
 
 ## Run
 
-In order to run the server you can either run it in foreground
+``pm2 start pm2.json``
 
-``node server``
+This makes the application available on http://localhost:3013.
 
-or run it like a deamon using ``pm2`` to do so we first need to install pm2 using either locally or globally whichever you prefer. For a local installation simply omit the -g flag.
-
-``npm install pm2 -g``
-
-In case you are on a Linux machine you most likely have to run.
-
-``sudo npm install pm2 -g``
-
-After that you can execute the bash script ``pm2 start pm2.json`` inside the installation directory.
-
-## Running the service behind nginx as a reverse proxy (optional)
+## (optional) Running the service behind nginx as a reverse proxy
 
 In order to integrate the service into your webserver you might want to use nginx as a reverse proxy. The following configuration assumes that the port is set to *3013* as it is by default. The example also contains basic HTTP authentication to protect the service from unauthorised access.
 
