@@ -10,8 +10,8 @@ Features
 
 ## Pre-requisites
 
-\- [x] [NodeJS](https://nodejs.org/en/download/package-manager/) 6 or higher
-\- [x] npm package manager
+- [x] [NodeJS](https://nodejs.org/en/download/package-manager/) 6 or higher
+- [x] npm package manager
 
 ## Installation
 1. Get the source
@@ -49,7 +49,7 @@ _(Note: The user running the application needs to have read access to the log fi
 
 ## Build
 
-Before the application is ready to run, the frontend needs to be build. This is done using npm.
+Before the application is ready to run, the frontend needs to be built. This is done using npm.
 
 ``npm run build``
 
@@ -67,9 +67,6 @@ In order to integrate the service into your webserver you might want to use ngin
 server {
   listen 80;
   server_name [domain];
-
-  auth_basic "Restricted";
-  auth_basic_user_file /etc/nginx/cred/.status;
 
   location / {
     proxy_set_header X-Forwarded-Proto $scheme;
