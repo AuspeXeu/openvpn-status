@@ -41,7 +41,10 @@ Example:
 {
   "port": 3013,
   "bind": "127.0.0.1",
-  "servers": [{"name": "Server A", "logFile": "/etc/openvpn/openvpn-status-A.log"},{"name": "Server B", "logFile": "/etc/openvpn/openvpn-status-B.log"}]
+  "servers": [
+    {"name": "Server A", "logFile": "/etc/openvpn/openvpn-status-A.log"},
+    {"name": "Server B", "logFile": "/etc/openvpn/openvpn-status-B.log"}
+  ]
 }
 ```
 
