@@ -42,9 +42,10 @@ const store = new Vuex.Store({
       state.nodes = payload.nodes
     },
     addEvent (state, payload) {
+      store.dispatch('refresh')
       const event = eventHelper(payload.event)
       state.events.unshift(event)
-      store.state.total += 1
+      state.total += 1
       state.events.pop()
       state.event = event
     },
