@@ -18,15 +18,15 @@ Features
 
 ``git clone https://github.com/AuspeXeu/openvpn-status.git``
 
-2. Install dependencies _(the last step might need ``sudo``)_
+2. Install dependencies
 
 ```
 cd openvpn-status
 npm install
-npm install pm2 -g
+sudo npm install pm2 -g
 ```
 
-## Configuration
+3. Configuration
 
 The configuration is handled in the ``config.json`` file.
 
@@ -50,7 +50,7 @@ Example:
 
 _(Note: The user running the application needs to have read access to the log file.)_
 
-## Build
+4. Build
 
 Before the application is ready to run, the frontend needs to be built. This is done using npm.
 
@@ -58,7 +58,10 @@ Before the application is ready to run, the frontend needs to be built. This is 
 
 ## Run
 
-``pm2 start pm2.json``
+```
+pm2 start pm2.json
+pm2 save
+```
 
 This makes the application available on http://localhost:3013.
 
