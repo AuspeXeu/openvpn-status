@@ -90,8 +90,13 @@
       nodes () {
         const nodes = this.$store.state.nodes
         nodes.forEach((node) => {
-          node.flagImg = '/static/images/flags/' + node.country_code + '.png'
-          node.flagTitle = node.country_name
+          if (node.country_code) {
+            node.flagImg = '/static/images/flags/' + node.country_code + '.png'
+            node.flagTitle = node.country_name
+          } else {
+            node.flagImg = '/static/images/flags/unknown.jpg'
+            node.flagTitle = 'N/A'
+          }
           node.timestamp = moment(node.timestamp * 1000).format('HH:mm - DD.MM.YY')
         })
         return nodes

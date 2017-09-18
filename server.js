@@ -43,8 +43,10 @@ const updateServer = (server) => {
   })).filter((entry) => entry.name !== 'UNDEF')
   entries.forEach((newEntry) => {
     const loc = cityLookup.get(newEntry.pub)
-    newEntry.country_code = loc.country.iso_code
-    newEntry.country_name = loc.country.names.en
+    if (loc) {
+      newEntry.country_code = loc.country.iso_code
+      newEntry.country_name = loc.country.names.en
+    }
     db.Log.findOne({where: {server: server.id, node: newEntry.name}, order: [['timestamp', 'DESC']]})
       .then((res) => {
         if (!res || res.event === 'disconnect')
