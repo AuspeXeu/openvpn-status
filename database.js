@@ -21,7 +21,7 @@ const init = () => {
       event     : {type: Sequelize.STRING}
     },{
       freezeTableName: true,
-      paranoid: true,
+      timestamps: false,
       tableName: 'Log'
     })
 
