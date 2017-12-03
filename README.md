@@ -13,12 +13,12 @@ Features
 - [x] [NodeJS](https://nodejs.org/en/download/package-manager/) 6 or higher
 - [x] npm package manager
 
-## Installation
-1. Get the source
+# Installation
+### 1. Get the source
 
 ``git clone https://github.com/AuspeXeu/openvpn-status.git``
 
-2. Install dependencies
+### 2. Install dependencies
 
 ```
 cd openvpn-status
@@ -26,7 +26,7 @@ npm install
 sudo npm install pm2 -g
 ```
 
-3. Configuration
+### 3. Configuration
 
 The configuration is handled in the ``config.json`` file.
 
@@ -50,13 +50,13 @@ Example:
 
 _(Note: The user running the application needs to have read access to the log file.)_
 
-4. Build
+### 4. Build
 
 Before the application is ready to run, the frontend needs to be built. This is done using npm.
 
 ``npm run build``
 
-## Run
+# Run
 
 ```
 pm2 start pm2.json
@@ -84,7 +84,7 @@ server {
 }
 ```
 
-## Special Thanks To
+# Special Thanks To
 
 ### Maxmind
 
@@ -94,7 +94,7 @@ server {
 
 [GoSquared](https://www.gosquared.com) provides the flag icons for this project. The source for the flag icons can be found [here](https://www.gosquared.com/resources/flag-icons/).
 
-## Screenshots
+# Screenshots
 
 ### Status panel
 ![Status panel](https://raw.githubusercontent.com/AuspeXeu/openvpn-status/master/screen1.png)
