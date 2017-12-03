@@ -33,7 +33,7 @@ The configuration is handled in the ``config.json`` file.
 | Option  | Default       | Description  |
 | ------- |:-------------:| ------------ |
 | port    | ``3013``      | Port on which the server will be listening. |
-| bind    | ``127.0.0.1`` | Address to which the server will bind to. Change to ``0.0.0.0`` to make available on all addresses. |
+| bind    | ``127.0.0.1`` | Address to which the server will bind to. Change to ``0.0.0.0`` to make available on all interfaces. |
 | servers | ``[]``        | Array of servers. The location of this file is specified with the ``status`` option in your server [configuration](https://openvpn.net/index.php/open-source/documentation/howto.html). _Example:_ ``[{"name": "Server", "logFile": "/etc/openvpn/openvpn-status.log"}]`` |
 
 Example:
