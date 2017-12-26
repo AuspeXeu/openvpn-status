@@ -33,5 +33,6 @@ const init = () => {
 }
 
 module.exports = {
-  init: init
+  init: init,
+  op: Sequelize.Op
 }
