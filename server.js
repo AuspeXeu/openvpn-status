@@ -35,11 +35,11 @@ const logEvent = (server, name, event) => {
 
 const updateServer = (server) => {
   const content = fs.readFileSync(server.logFile, 'utf8').trim().split('\n')
-  const rawEntries = content.map((line) => line.match(/([[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+]|[^,\t]+)[,\t]([^(,\t)]+)[,\t]([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+):[0-9]+[,\t]([^(,\t)]+)/)).filter((itm) => itm)
+  const rawEntries = content.map((line) => line.match(/CLIENT_LIST,([a-zA-Z]+),([0-9]+.[0-9]+.[0-9]+.[0-9]+):[0-9]+,([0-9]+.[0-9]+.[0-9]+.[0-9]+),.*,.*,.*,(.*),.*,.*,.*,.*/)).filter((itm) => itm)
   const entries = rawEntries.map((entry) => ({
-    vpn: entry[1],
-    name: entry[2],
-    pub: entry[3],
+    name: entry[1],
+    pub: entry[2],
+    vpn: entry[3],
     timestamp: moment(new Date(entry[4])).unix()
   })).filter((entry) => entry.name !== 'UNDEF')
   entries.forEach((newEntry) => {
