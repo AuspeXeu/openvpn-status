@@ -34,11 +34,13 @@ const logEvent = (server, name, event) => {
 }
 
 const updateServer = (server) => {
-  const IPv4 = "(?:(?:[01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5]])\.(?:[01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\.(?:[01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\.(?:[01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5]))"
-  const IPv6 = "(?:[\[])(?:(?:[0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|(?:[0-9a-fA-F]{1,4}:){1,7}:|(?:[0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|(?:[0-9a-fA-F]{1,4}:){1,5}(?::[0-9a-fA-F]{1,4}){1,2}|(?:[0-9a-fA-F]{1,4}:){1,4}(?::[0-9a-fA-F]{1,4}){1,3}|(?:[0-9a-fA-F]{1,4}:){1,3}(?::[0-9a-fA-F]{1,4}){1,4}|(?:[0-9a-fA-F]{1,4}:){1,2}(?::[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:(?:(?::[0-9a-fA-F]{1,4}){1,6})|:(?:(?::[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(?::[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(?:ffff(?::0{1,4}){0,1}:){0,1}(?:(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9])|(?:[0-9a-fA-F]{1,4}:){1,4}:(?:(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9]))(?:[\]])"
-  const IPv4_or_IPv6 = "(" + IPv6 + "|" + IPv4 + ")"
-  const IPv4_or_IPv6_with_port = IPv4_or_IPv6 + ":[0-9]{1,5}"
-  var regex = new RegExp("^CLIENT_LIST,([a-zA-Z]+)," + IPv4_or_IPv6_with_port + ",(" + IPv4 + "),.*,.*,.*,(.*),.*,.*,.*,.*$");
+  const IPv4_uncaptured = "(?:(?:[01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5]])\.(?:[01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\.(?:[01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\.(?:[01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5]))"
+  const IPv6_uncaptured = "(?:[\[])(?:(?:[0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|(?:[0-9a-fA-F]{1,4}:){1,7}:|(?:[0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|(?:[0-9a-fA-F]{1,4}:){1,5}(?::[0-9a-fA-F]{1,4}){1,2}|(?:[0-9a-fA-F]{1,4}:){1,4}(?::[0-9a-fA-F]{1,4}){1,3}|(?:[0-9a-fA-F]{1,4}:){1,3}(?::[0-9a-fA-F]{1,4}){1,4}|(?:[0-9a-fA-F]{1,4}:){1,2}(?::[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:(?:(?::[0-9a-fA-F]{1,4}){1,6})|:(?:(?::[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(?::[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(?:ffff(?::0{1,4}){0,1}:){0,1}(?:(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9])|(?:[0-9a-fA-F]{1,4}:){1,4}:(?:(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9]))(?:[\]])"
+  const IPv4_captured = "(" + IPv4_uncaptured + ")"
+  const IPv6_captured = "(" + IPv6_uncaptured + ")"
+  const IPv4_or_IPv6_captured = "(" + IPv6_uncaptured + "|" + IPv4_uncaptured + ")"
+  const IPv4_or_IPv6_captured_with_port = IPv4_or_IPv6_captured + ":[0-9]{1,5}"
+  var regex = new RegExp("^CLIENT_LIST,([a-zA-Z]+)," + IPv4_or_IPv6_captured_with_port + "," + IPv4_captured + "," + IPv6_captured + "{0,1},.*,.*,(.*),.*,.*,.*,.*$");
   console.log(regex)
   const content = fs.readFileSync(server.logFile, 'utf8').trim().split('\n')
   const rawEntries = content.map((line) => line.match(regex)).filter((itm) => itm)
@@ -46,7 +48,8 @@ const updateServer = (server) => {
     name: entry[1],
     pub: entry[2],
     vpn: entry[3],
-    timestamp: moment(new Date(entry[4])).unix()
+    vpn_ipv6: entry[4],
+    timestamp: moment(new Date(entry[5])).unix()
   })).filter((entry) => entry.name !== 'UNDEF')
   entries.forEach((newEntry) => {
     const loc = cityLookup.get(newEntry.pub)
