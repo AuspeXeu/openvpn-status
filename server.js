@@ -96,7 +96,6 @@ function setRegexAndEntryIndexes (server) {
     regexString = regexString.replace(/.$/,"$")
     server.regex = new RegExp(regexString)
   }
-  console.log(JSON.stringify(server) + '\n\n')
 }
 
 const updateServer = (server) => {
@@ -122,7 +121,6 @@ const updateServer = (server) => {
           logEvent(server.id, newEntry.name, 'connect')
       })
   })
-  console.log(entries)
   server.entries.forEach((oldEntry) => {
     if (!entries.find((item) => item.name === oldEntry.name))
       logEvent(server.id, oldEntry.name, 'disconnect')
