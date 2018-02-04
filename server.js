@@ -23,6 +23,7 @@ const ipFile = conf.get('ipFile')
 let cityLookup
 const clients = new Map()
 let servers = conf.get('servers') || []
+servers.forEach((server) => server.regex = getRegex(server.logFile))
 
 if (conf.get('logFile'))
   log('The "logFile" option is no longer supported. Please specify the server as described at https://github.com/AuspeXeu/openvpn-status')
@@ -33,18 +34,61 @@ const logEvent = (server, name, event) => {
   db.Log.create(data)
 }
 
+function getRegex (logFile) {
+  const content = fs.readFileSync(logFile, 'utf8').trim().split('\n')
+  const logFormatLine = content.find((line) => line.startsWith("HEADER,CLIENT_LIST"))
+  if (logFormatLine === undefined) {
+    // There is no format line -> return the regex used on debian
+    return  new RegExp('([[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+]|[^,\t]+)[,\t]([^(,\t)]+)[,\t]([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+):[0-9]+[,\t]([^(,\t)]+)')
+  } else {
+    //parse the Header line and construct regex
+    const IPv4_uncaptured = "(?:(?:[01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5]])\.(?:[01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\.(?:[01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\.(?:[01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5]))"
+    const IPv6_uncaptured = "(?:[\[])(?:(?:[0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|(?:[0-9a-fA-F]{1,4}:){1,7}:|(?:[0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|(?:[0-9a-fA-F]{1,4}:){1,5}(?::[0-9a-fA-F]{1,4}){1,2}|(?:[0-9a-fA-F]{1,4}:){1,4}(?::[0-9a-fA-F]{1,4}){1,3}|(?:[0-9a-fA-F]{1,4}:){1,3}(?::[0-9a-fA-F]{1,4}){1,4}|(?:[0-9a-fA-F]{1,4}:){1,2}(?::[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:(?:(?::[0-9a-fA-F]{1,4}){1,6})|:(?:(?::[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(?::[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(?:ffff(?::0{1,4}){0,1}:){0,1}(?:(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9])|(?:[0-9a-fA-F]{1,4}:){1,4}:(?:(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9]))(?:[\]])"
+    const IPv4_captured = "(" + IPv4_uncaptured + ")"
+    const IPv6_captured = "(" + IPv6_uncaptured + ")"
+    const IPv4_or_IPv6_captured = "(" + IPv6_uncaptured + "|" + IPv4_uncaptured + ")"
+    const IPv4_or_IPv6_captured_with_port = IPv4_or_IPv6_captured + ":[0-9]{1,5}"
+    const common_name_captured = "([a-zA-Z]+)"
+    const connected_since_captured = '(.*)'
+    regexString = ""
+    formatEntries = logFormatLine.split(",")
+    formatEntries.forEach((field) => {
+      switch(field) {
+        case "HEADER":
+          break;
+        case "CLIENT_LIST":
+          regexString += "^CLIENT_LIST,";
+          break;
+        case "Common Name":
+          regexString += common_name_captured + ",";
+          break;
+        case 'Real Address':
+          regexString += IPv4_or_IPv6_captured_with_port + ",";
+          break;
+        case 'Virtual Address':
+          regexString += IPv4_captured + ',';
+          break;
+        case 'Virtual IPv6 Address':
+          regexString += IPv6_captured + '{0,1},';
+          break;
+        case 'Connected Since':
+          regexString += connected_since_captured + ',';
+          break;
+        default:
+          regexString += '.*,'
+      }
+    })
+    regexString = regexString.replace(/.$/,"$")
+    return new RegExp(regexString)
+  }
+}
+
 const updateServer = (server) => {
-  const IPv4_uncaptured = "(?:(?:[01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5]])\.(?:[01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\.(?:[01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\.(?:[01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5]))"
-  const IPv6_uncaptured = "(?:[\[])(?:(?:[0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|(?:[0-9a-fA-F]{1,4}:){1,7}:|(?:[0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|(?:[0-9a-fA-F]{1,4}:){1,5}(?::[0-9a-fA-F]{1,4}){1,2}|(?:[0-9a-fA-F]{1,4}:){1,4}(?::[0-9a-fA-F]{1,4}){1,3}|(?:[0-9a-fA-F]{1,4}:){1,3}(?::[0-9a-fA-F]{1,4}){1,4}|(?:[0-9a-fA-F]{1,4}:){1,2}(?::[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:(?:(?::[0-9a-fA-F]{1,4}){1,6})|:(?:(?::[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(?::[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(?:ffff(?::0{1,4}){0,1}:){0,1}(?:(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9])|(?:[0-9a-fA-F]{1,4}:){1,4}:(?:(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9]))(?:[\]])"
-  const IPv4_captured = "(" + IPv4_uncaptured + ")"
-  const IPv6_captured = "(" + IPv6_uncaptured + ")"
-  const IPv4_or_IPv6_captured = "(" + IPv6_uncaptured + "|" + IPv4_uncaptured + ")"
-  const IPv4_or_IPv6_captured_with_port = IPv4_or_IPv6_captured + ":[0-9]{1,5}"
-  var regex = new RegExp("^CLIENT_LIST,([a-zA-Z]+)," + IPv4_or_IPv6_captured_with_port + "," + IPv4_captured + "," + IPv6_captured + "{0,1},.*,.*,(.*),.*,.*,.*,.*$");
-  console.log(regex)
   const content = fs.readFileSync(server.logFile, 'utf8').trim().split('\n')
-  const rawEntries = content.map((line) => line.match(regex)).filter((itm) => itm)
+  const rawEntries = content.map((line) => line.match(server.regex)).filter((itm) => itm)
   const entries = rawEntries.map((entry) => ({
+    //TODO: per server matching depending on regex
+    //TODO: support for debian style log
     name: entry[1],
     pub: entry[2],
     vpn: entry[3],
