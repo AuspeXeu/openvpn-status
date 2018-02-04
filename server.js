@@ -23,6 +23,7 @@ const ipFile = conf.get('ipFile')
 let cityLookup
 const clients = new Map()
 let servers = conf.get('servers') || []
+servers.forEach((server) => setRegexAndEntryIndexes(server))
 
 if (conf.get('logFile'))
   log('The "logFile" option is no longer supported. Please specify the server as described at https://github.com/AuspeXeu/openvpn-status')
@@ -33,14 +34,80 @@ const logEvent = (server, name, event) => {
   db.Log.create(data)
 }
 
+function setRegexAndEntryIndexes (server) {
+  const content = fs.readFileSync(server.logFile, 'utf8').trim().split('\n')
+  const logFormatLine = content.find((line) => line.startsWith("HEADER,CLIENT_LIST"))
+  if (logFormatLine === undefined) {
+    // There is no format line -> return the regex used on debian
+    server.regex = new RegExp('([[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+]|[^,\t]+)[,\t]([^(,\t)]+)[,\t]([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+):[0-9]+[,\t]([^(,\t)]+)')
+    server.index_of_name = 2
+    server.index_of_vpn_ip4 = 1
+    server.index_of_public_ip = 3
+    server.index_of_timestamp = 4    
+  } else {
+    //parse the Header line and construct regex
+    const IPv4_uncaptured = "(?:(?:[01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5]])\.(?:[01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\.(?:[01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\.(?:[01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5]))"
+    const IPv6_uncaptured = "(?:[\[])(?:(?:[0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|(?:[0-9a-fA-F]{1,4}:){1,7}:|(?:[0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|(?:[0-9a-fA-F]{1,4}:){1,5}(?::[0-9a-fA-F]{1,4}){1,2}|(?:[0-9a-fA-F]{1,4}:){1,4}(?::[0-9a-fA-F]{1,4}){1,3}|(?:[0-9a-fA-F]{1,4}:){1,3}(?::[0-9a-fA-F]{1,4}){1,4}|(?:[0-9a-fA-F]{1,4}:){1,2}(?::[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:(?:(?::[0-9a-fA-F]{1,4}){1,6})|:(?:(?::[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(?::[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(?:ffff(?::0{1,4}){0,1}:){0,1}(?:(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9])|(?:[0-9a-fA-F]{1,4}:){1,4}:(?:(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9]))(?:[\]])"
+    const IPv4_captured = "(" + IPv4_uncaptured + ")"
+    const IPv6_captured = "(" + IPv6_uncaptured + ")"
+    const IPv4_or_IPv6_captured = "(" + IPv6_uncaptured + "|" + IPv4_uncaptured + ")"
+    const IPv4_or_IPv6_captured_with_port = IPv4_or_IPv6_captured + ":[0-9]{1,5}"
+    const common_name_captured = "([a-zA-Z]+)"
+    const connected_since_captured = '(.*)'
+    regexString = ""
+    formatEntries = logFormatLine.split(",")
+    var captureGroupCounter = 1
+    formatEntries.forEach((field) => {
+      switch(field) {
+        case "HEADER":
+          break;
+        case "CLIENT_LIST":
+          regexString += "^CLIENT_LIST,";
+          break;
+        case "Common Name":
+          server.index_of_name = captureGroupCounter
+          captureGroupCounter++
+          regexString += common_name_captured + ",";
+          break;
+        case 'Real Address':
+          server.index_of_public_ip = captureGroupCounter
+          captureGroupCounter++
+          regexString += IPv4_or_IPv6_captured_with_port + ",";
+          break;
+        case 'Virtual Address':
+          server.index_of_vpn_ip4 = captureGroupCounter
+          captureGroupCounter++
+          regexString += IPv4_captured + ',';
+          break;
+        case 'Virtual IPv6 Address':
+          server.index_of_vpn_ip6 = captureGroupCounter
+          captureGroupCounter++
+          regexString += IPv6_captured + '{0,1},';
+          break;
+        case 'Connected Since':
+          server.index_of_timestamp = captureGroupCounter
+          captureGroupCounter++
+          regexString += connected_since_captured + ',';
+          break;
+        default:
+          regexString += '.*,'
+      }
+    })
+    regexString = regexString.replace(/.$/,"$")
+    server.regex = new RegExp(regexString)
+  }
+}
+
 const updateServer = (server) => {
   const content = fs.readFileSync(server.logFile, 'utf8').trim().split('\n')
-  const rawEntries = content.map((line) => line.match(/([[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+]|[^,\t]+)[,\t]([^(,\t)]+)[,\t]([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+):[0-9]+[,\t]([^(,\t)]+)/)).filter((itm) => itm)
+  const rawEntries = content.map((line) => line.match(server.regex)).filter((itm) => itm)
   const entries = rawEntries.map((entry) => ({
-    vpn: entry[1],
-    name: entry[2],
-    pub: entry[3],
-    timestamp: moment(new Date(entry[4])).unix()
+    name: entry[server.index_of_name],
+    pub: entry[server.index_of_public_ip],
+    vpn: entry[server.index_of_vpn_ip4],
+    //This could be unavailable
+    //vpn_ipv6: entry[index_of_vpn_ip6],
+    timestamp: moment(new Date(entry[server.index_of_timestamp])).unix()
   })).filter((entry) => entry.name !== 'UNDEF')
   entries.forEach((newEntry) => {
     const loc = cityLookup.get(newEntry.pub)
