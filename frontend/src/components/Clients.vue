@@ -35,18 +35,6 @@
       </md-table-body>
     </md-table>
 
-    <md-sidenav class="md-left" ref="leftSidenav" @open="open('Left')" @close="close('Left')">
-      <md-toolbar>
-        <div class="md-toolbar-container">
-          <h3 class="md-title">Servers</h3>
-        </div>
-      </md-toolbar>
-      <md-list>
-        <md-list-item v-for="srv in servers" :key="srv.id" @click.native="changeServer(srv.id)">
-          <md-icon>storage</md-icon> <span>{{srv.name}}</span>
-        </md-list-item>  
-      </md-list>
-    </md-sidenav>
 
   </md-table-card>
 
@@ -66,13 +54,7 @@
         this.$store.dispatch('refresh')
       },
       toggleLeftSidenav() {
-        this.$refs.leftSidenav.toggle()
-      },
-      changeServer(newServer) {
-        this.$store.dispatch('changeServer', {
-          server: newServer
-        })
-        this.toggleLeftSidenav()
+        this.$emit('toggle-sidenav')
       }
     },
     computed: {
