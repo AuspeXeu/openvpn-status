@@ -19,16 +19,18 @@ conf.defaults({
   bind: '127.0.0.1',
   ipFile: './GeoLite2-City.mmdb'
 })
-app.use('/static', express.static(__dirname + '/static'))
+app.use('/static', express.static(`${__dirname}/static`))
 app.use(bodyParser.json())
 const ipFile = conf.get('ipFile')
-let cityLookup
+const cityLookup = {}
 const clients = new Map()
 let servers = conf.get('servers') || []
 
 const logEvent = (server, data, event) => {
   const record = {server: server, node: data.name, event: event, timestamp: moment().unix()}
   if (event === 'connect') {
+    record.pub = data.pub
+    record.vpn = data.vpn
     record.country_code = data.country_code
     record.country_name = data.country_name
     clients.forEach((ws) => ws.send(JSON.stringify(record)))
@@ -49,7 +51,7 @@ const loadIPdatabase = () => {
             req.pipe(zlib.createGunzip()).pipe(fs.createWriteStream(ipFile))
               .on('finish', () => {
                 maxmind.open('./GeoLite2-City.mmdb', (err, lookup) => {
-                  cityLookup = lookup
+                  cityLookup.get = (ip) => (ip ? lookup.get(ip) : false)
                   resolve(cityLookup)
                 })
               })
@@ -57,7 +59,7 @@ const loadIPdatabase = () => {
             maxmind.open('./GeoLite2-City.mmdb', (err, lookup) => {
               if (err)
                 log(err)
-              cityLookup = lookup
+              cityLookup.get = (ip) => (ip ? lookup.get(ip) : false)
               resolve(cityLookup)
             })
         })
@@ -65,7 +67,7 @@ const loadIPdatabase = () => {
         maxmind.open('./GeoLite2-City.mmdb', (err, lookup) => {
           if (err)
             log(err)
-          cityLookup = lookup
+          cityLookup.get = (ip) => (ip ? lookup.get(ip) : false)
           resolve(cityLookup)
         })
     })
@@ -133,14 +135,25 @@ app.ws('/live/log', (ws, req) => {
   ws.on('close', () => clients.delete(id))
 })
 
-db.init().then(() => {
-  db.state().then((entries) => {
-    loadIPdatabase().then(() => {
-      servers.forEach((server, idx) => {
-        server.entries = []
-        server.id = idx
+db.init().then(() => db.state()).then((entries) => {
+  loadIPdatabase().then(() => {
+    servers.forEach((server, idx) => {
+      server.entries = entries.filter((entry) => entry.server === idx).map((entry) => {
+        const data = {
+          name: entry.node,
+          timestamp: entry.timestamp,
+          pub: entry.pub,
+          vpn: entry.vpn
+        }
+        const loc = cityLookup.get(entry.pub)
+        if (entry.pub && loc) {
+          data.country_code = loc.country.iso_code
+          data.country_name = loc.country.names.en
+        }
+        return data
       })
-      app.listen(conf.get('port'), conf.get('bind'))
+      server.id = idx
     })
+    app.listen(conf.get('port'), conf.get('bind'))
   })
 })
