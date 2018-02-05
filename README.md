@@ -58,6 +58,12 @@ client-connect ./status.sh
 client-disconnect ./status.sh
 ```
 
+Make sure the script is executable by the OpenVPN daemon.
+
+```
+[root@server ~]# chmod +x status.sh
+```
+
 ### 5. Build
 
 Before the application is ready to run, the frontend needs to be built. This is done using npm.
