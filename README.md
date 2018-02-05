@@ -71,7 +71,7 @@ pm2 start pm2.json
 pm2 save
 ```
 
-This makes the application available on http://localhost:3013.
+This makes the application available on http://127.0.0.1:3013.
 
 ## (optional) Running the service behind nginx as a reverse proxy
 
