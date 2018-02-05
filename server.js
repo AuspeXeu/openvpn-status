@@ -4,6 +4,7 @@ const express = require('express')
 const app = express()
 const expressWs = require('express-ws')(app)
 const conf = require('nconf')
+const bodyParser = require('body-parser')
 const maxmind = require('maxmind')
 const moment = require('moment')
 const request = require('request')
@@ -19,46 +20,21 @@ conf.defaults({
   ipFile: './GeoLite2-City.mmdb'
 })
 app.use('/static', express.static(__dirname + '/static'))
+app.use(bodyParser.json())
 const ipFile = conf.get('ipFile')
 let cityLookup
 const clients = new Map()
 let servers = conf.get('servers') || []
 
-if (conf.get('logFile'))
-  log('The "logFile" option is no longer supported. Please specify the server as described at https://github.com/AuspeXeu/openvpn-status')
-
-const logEvent = (server, name, event) => {
-  const data = {server: server, node: name, event: event, timestamp: moment().unix()}
-  clients.forEach((ws) => ws.send(JSON.stringify(data)))
-  db.Log.create(data)
-}
-
-const updateServer = (server) => {
-  const content = fs.readFileSync(server.logFile, 'utf8').trim().split('\n')
-  const rawEntries = content.map((line) => line.match(/([[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+]|[^,\t]+)[,\t]([^(,\t)]+)[,\t]([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+):[0-9]+[,\t]([^(,\t)]+)/)).filter((itm) => itm)
-  const entries = rawEntries.map((entry) => ({
-    vpn: entry[1],
-    name: entry[2],
-    pub: entry[3],
-    timestamp: moment(new Date(entry[4])).unix()
-  })).filter((entry) => entry.name !== 'UNDEF')
-  entries.forEach((newEntry) => {
-    const loc = cityLookup.get(newEntry.pub)
-    if (loc) {
-      newEntry.country_code = loc.country.iso_code
-      newEntry.country_name = loc.country.names.en
-    }
-    db.Log.findOne({where: {server: server.id, node: newEntry.name}, order: [['timestamp', 'DESC']]})
-      .then((res) => {
-        if (!res || res.event === 'disconnect')
-          logEvent(server.id, newEntry.name, 'connect')
-      })
-  })
-  server.entries.forEach((oldEntry) => {
-    if (!entries.find((item) => item.name === oldEntry.name))
-      logEvent(server.id, oldEntry.name, 'disconnect')
-  })
-  server.entries = entries
+const logEvent = (server, data, event) => {
+  const record = {server: server, node: data.name, event: event, timestamp: moment().unix()}
+  if (event === 'connect') {
+    record.country_code = data.country_code
+    record.country_name = data.country_name
+    clients.forEach((ws) => ws.send(JSON.stringify(record)))
+  } else
+    clients.forEach((ws) => ws.send(JSON.stringify(record)))
+  db.Log.create(record)
 }
 
 const loadIPdatabase = () => {
@@ -119,6 +95,28 @@ const compare = (a,b) => {
     return -1
   return 0
 }
+app.post('/server/:id/connect', (req, res) => {
+  const serverId = parseInt(req.params.id, 10)
+  const pub = req.body.pub
+  const cn = req.body.cn
+  const vpn = req.body.vpn
+  const loc = cityLookup.get(pub)
+  const entry = {name: cn, pub: pub, vpn: vpn, timestamp: moment().unix()}
+  if (loc) {
+    entry.country_code = loc.country.iso_code
+    entry.country_name = loc.country.names.en
+  }
+  logEvent(serverId, entry, 'connect')
+  servers[serverId].entries.push(entry)
+  res.sendStatus(200)
+})
+app.post('/server/:id/disconnect', (req, res) => {
+  const serverId = parseInt(req.params.id, 10)
+  const cn = req.body.cn
+  logEvent(serverId, {name: cn}, 'disconnect')
+  servers[serverId].entries = servers[serverId].entries.filter((itm) => itm.name !== cn)
+  res.sendStatus(200)
+})
 app.get('/entries/:id', (req, res) => res.json(servers[req.params.id].entries.sort(compare)))
 app.get('/log/:id/size', (req, res) => db.Log.count({where: {server: req.params.id}}).then((size) => res.json({value: size})))
 app.get('/log/:id/:page/:size', (req, res) => {
@@ -139,13 +137,8 @@ db.init().then(() => {
   db.state().then((entries) => {
     loadIPdatabase().then(() => {
       servers.forEach((server, idx) => {
-        server.entries = entries.filter((entry) => entry.server === idx).map((entry) => ({
-          name: entry.node,
-          timestamp: entry.timestamp
-        }))
+        server.entries = []
         server.id = idx
-        updateServer(server)
-        fs.watchFile(server.logFile, () => updateServer(server))
       })
       app.listen(conf.get('port'), conf.get('bind'))
     })
