@@ -50,7 +50,7 @@ Example:
 
 ### 4. OpenVPN configuration
 
-Copy the `status.sh` file to the folder containing your OpenVPN configuration (e.g. `server.conf`). Then add the following lines to your configuration file. This will intall the `client-connect` and `client-disconnect` hooks to provide the data to the web interface.
+Copy the `status.sh` file to the folder containing your OpenVPN configuration (e.g. `server.conf`). Then add the following lines to your configuration file. This will intall the `client-connect` and `client-disconnect` hooks to provide the data to the web interface. Make sure to adjust the port and ip address as you have specified in your `config.json`.
 
 ```
 script-security 2
@@ -58,7 +58,7 @@ client-connect ./status.sh
 client-disconnect ./status.sh
 ```
 
-### 5. Build
+### 5. Build
 
 Before the application is ready to run, the frontend needs to be built. This is done using npm.
 
