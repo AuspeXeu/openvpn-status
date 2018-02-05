@@ -26,6 +26,7 @@ const cityLookup = {}
 const clients = new Map()
 let servers = conf.get('servers') || []
 
+const logBuffer = {}
 const logEvent = (server, data, event) => {
   const record = {server: server, node: data.name, event: event, timestamp: moment().unix()}
   if (event === 'connect') {
@@ -33,10 +34,17 @@ const logEvent = (server, data, event) => {
     record.vpn = data.vpn
     record.country_code = data.country_code
     record.country_name = data.country_name
-    clients.forEach((ws) => ws.send(JSON.stringify(record)))
-  } else
-    clients.forEach((ws) => ws.send(JSON.stringify(record)))
-  db.Log.create(record)
+  }
+  if (!logBuffer[data.name])
+    logBuffer[data.name] = setTimeout(() => {
+      logBuffer[data.name] = false
+      clients.forEach((ws) => ws.send(JSON.stringify(record)))
+      db.Log.create(record)
+    }, 1500)
+  else {
+    clearTimeout(logBuffer[data.name])
+    logBuffer[data.name] = false
+  }
 }
 
 const loadIPdatabase = () => {
