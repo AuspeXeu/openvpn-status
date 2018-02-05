@@ -26,7 +26,7 @@ npm install
 sudo npm install pm2 -g
 ```
 
-### 3. Configuration
+### 3. Configuration
 
 The configuration is handled in the ``config.json`` file.
 
