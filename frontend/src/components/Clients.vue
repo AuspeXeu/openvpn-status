@@ -9,9 +9,6 @@
 
       <h2 class="md-title" style="flex:1;">{{(servers.length > 0 ? servers[server].name : '')}}</h2>
 
-      <md-button @click.native='loadData' class='md-raised md-primary md-dense'>
-        <md-icon>cached</md-icon> {{counter}}
-      </md-button>
     </md-toolbar>
 
     <md-table>
@@ -62,24 +59,16 @@
   export default {
     name: 'clients',
     created () {
-      const vue = this
-      setInterval(() => {
-        vue.counter -= 1
-        if (vue.counter === 0)
-          vue.loadData()
-      }, 1000)
       this.loadData()
     },
     methods: {
       loadData() {
         this.$store.dispatch('refresh')
-        this.counter = 30
       },
       toggleLeftSidenav() {
         this.$refs.leftSidenav.toggle()
       },
       changeServer(newServer) {
-        this.counter = 30
         this.$store.dispatch('changeServer', {
           server: newServer
         })
@@ -106,11 +95,6 @@
       },
       servers () {
         return this.$store.state.servers
-      }
-    },
-    data () {
-      return {
-        counter: 30
       }
     }
   }

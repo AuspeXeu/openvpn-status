@@ -26,7 +26,7 @@ export default {
   },
   watch: {
     'event': function (value) {
-      this.message = value.node + ' ' + value.event + 'ed'
+      this.message = `${value.node} ${value.event}ed`
       this.$refs.snackbar.open()
     }
   },
