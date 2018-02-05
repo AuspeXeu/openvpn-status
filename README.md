@@ -34,7 +34,7 @@ The configuration is handled in the ``config.json`` file.
 | ------- |:-------------:| ------------ |
 | port    | ``3013``      | Port on which the server will be listening. |
 | bind    | ``127.0.0.1`` | Address to which the server will bind to. Change to ``0.0.0.0`` to make available on all interfaces. |
-| servers | ``[]``        | Array of servers. The location of this file is specified with the ``status`` option in your server [configuration](https://openvpn.net/index.php/open-source/documentation/howto.html). _Example:_ ``[{"name": "Server", "logFile": "/etc/openvpn/openvpn-status.log"}]`` |
+| servers | ``[]``        | Array of servers. _Example:_ ``[{"name": "Server"}]`` |
 
 Example:
 ```
@@ -42,15 +42,23 @@ Example:
   "port": 3013,
   "bind": "127.0.0.1",
   "servers": [
-    {"name": "Server A", "logFile": "/etc/openvpn/openvpn-status-A.log"},
-    {"name": "Server B", "logFile": "/etc/openvpn/openvpn-status-B.log"}
+    {"name": "Server A"},
+    {"name": "Server B"}
   ]
 }
 ```
 
-_(Note: The user running the application needs to have read access to the log file.)_
+### 4. OpenVPN configuration
 
-### 4. Build
+Copy the `status.sh` file to the folder containing your OpenVPN configuration (e.g. `server.conf`). Then add the following lines to your configuration file. This will intall the `client-connect` and `client-disconnect` hooks to provide the data to the web interface.
+
+```
+script-security 2
+client-connect ./status.sh
+client-disconnect ./status.sh
+```
+
+### 5. Build
 
 Before the application is ready to run, the frontend needs to be built. This is done using npm.
 
