@@ -17,7 +17,7 @@ conf.file({file: 'config.json'})
 conf.defaults({
   port: 3013,
   bind: '127.0.0.1',
-  servers: [{name: 'Server'}],
+  servers: [{id: 0, name: 'Server'}],
   ipFile: './GeoLite2-City.mmdb'
 })
 app.use('/static', express.static(`${__dirname}/static`))
@@ -169,7 +169,6 @@ db.init().then(() => db.state()).then((entries) => {
         }
         return data
       })
-      server.id = idx
     })
     app.listen(conf.get('port'), conf.get('bind'))
   })
