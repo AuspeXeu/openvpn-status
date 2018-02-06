@@ -34,7 +34,7 @@ The configuration is handled in the ``config.json`` file.
 | ------- |:-------------:| ------------ |
 | port    | ``3013``      | Port on which the server will be listening. |
 | bind    | ``127.0.0.1`` | Address to which the server will bind to. Change to ``0.0.0.0`` to make available on all interfaces. |
-| servers | ``[]``        | Array of servers. _Example:_ ``[{"name": "Server"}]`` |
+| servers | ``[{"name": "Server"}]``        | Array of servers. _Example:_ ``[{"name": "Server A"},{"name": "Server B"}]`` |
 
 Example:
 ```
