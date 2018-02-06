@@ -34,7 +34,7 @@ The configuration is handled in the ``config.json`` file.
 | ------- |:-------------:| ------------ |
 | port    | ``3013``      | Port on which the server will be listening. |
 | bind    | ``127.0.0.1`` | Address to which the server will bind to. Change to ``0.0.0.0`` to make available on all interfaces. |
-| servers | ``[{"name": "Server"}]``        | Array of servers. _Example:_ ``[{"name": "Server A"},{"name": "Server B"}]`` |
+| servers | ``[{"id": 0, "name": "Server"}]``        | Array of servers. |
 
 Example:
 ```
@@ -42,8 +42,8 @@ Example:
   "port": 3013,
   "bind": "127.0.0.1",
   "servers": [
-    {"name": "Server A"},
-    {"name": "Server B"}
+    {"id": 0, "name": "Server A"},
+    {"id": 1, "name": "Server B"}
   ]
 }
 ```
@@ -62,6 +62,14 @@ Make sure the script is executable by the OpenVPN daemon.
 
 ```
 [root@server ~]# chmod +x status.sh
+```
+
+And adjust the variables inside the `status.sh` script to match your configuration.
+
+```
+HOST="127.0.0.1"
+PORT="3013"
+SERVER="0"
 ```
 
 ### 5. Build
