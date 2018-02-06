@@ -3,7 +3,7 @@
 A web-based application to monitor multiple [OpenVPN](https://openvpn.net/index.php/open-source/overview.html) servers.
 
 Features
-* WebSocket based real-time event log
+* WebSocket based real-time events
 * Persistent event log
 * Full material design
 * Multi server support
