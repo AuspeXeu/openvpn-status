@@ -18,7 +18,7 @@
           <md-table-head>Node</md-table-head>
           <md-table-head>VPN IP</md-table-head>
           <md-table-head>Public IP</md-table-head>
-          <md-table-head>Last Seen</md-table-head>
+          <md-table-head>Connected</md-table-head>
         </md-table-row>
       </md-table-header>
 
