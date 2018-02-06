@@ -47,7 +47,7 @@ const logEvent = (server, data, event) => {
     logBuffer[data.name] = false
   }
 }
-
+const validateIPaddress = (ipaddress) => /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ipaddress.toString())
 const loadIPdatabase = () => {
   return new Promise((resolve) => {
     fs.stat(ipFile, (err, stat) => {
@@ -109,24 +109,32 @@ const compare = (a,b) => {
 app.post('/server/:id/connect', (req, res) => {
   const serverId = parseInt(req.params.id, 10)
   const pub = req.body.pub
-  const cn = req.body.cn
+  const cn = (req.body.cn || '').trim()
   const vpn = req.body.vpn
-  const loc = cityLookup.get(pub)
-  const entry = {name: cn, pub: pub, vpn: vpn, timestamp: moment().unix()}
-  if (loc) {
-    entry.country_code = loc.country.iso_code
-    entry.country_name = loc.country.names.en
+  if (!validateIPaddress(pub) || !validateIPaddress(vpn) || !cn.length)
+    res.sendStatus(400)
+  else {
+    const loc = cityLookup.get(pub)
+    const entry = {name: cn, pub: pub, vpn: vpn, timestamp: moment().unix()}
+    if (loc) {
+      entry.country_code = loc.country.iso_code
+      entry.country_name = loc.country.names.en
+    }
+    logEvent(serverId, entry, 'connect')
+    servers[serverId].entries.push(entry)
+    res.sendStatus(200)
   }
-  logEvent(serverId, entry, 'connect')
-  servers[serverId].entries.push(entry)
-  res.sendStatus(200)
 })
 app.post('/server/:id/disconnect', (req, res) => {
   const serverId = parseInt(req.params.id, 10)
-  const cn = req.body.cn
-  logEvent(serverId, {name: cn}, 'disconnect')
-  servers[serverId].entries = servers[serverId].entries.filter((itm) => itm.name !== cn)
-  res.sendStatus(200)
+  const cn = (req.body.cn || '').trim()
+  if (!cn.length)
+    res.sendStatus(400)
+  else {
+    logEvent(serverId, {name: cn}, 'disconnect')
+    servers[serverId].entries = servers[serverId].entries.filter((itm) => itm.name !== cn)
+    res.sendStatus(200)
+  }
 })
 app.get('/entries/:id', (req, res) => res.json(servers[req.params.id].entries.sort(compare)))
 app.get('/log/:id/size', (req, res) => db.Log.count({where: {server: req.params.id}}).then((size) => res.json({value: size})))
