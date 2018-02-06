@@ -17,6 +17,7 @@ conf.file({file: 'config.json'})
 conf.defaults({
   port: 3013,
   bind: '127.0.0.1',
+  servers: [{name: 'Server'}],
   ipFile: './GeoLite2-City.mmdb'
 })
 app.use('/static', express.static(`${__dirname}/static`))
