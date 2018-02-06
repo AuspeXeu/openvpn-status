@@ -58,12 +58,6 @@ client-connect ./status.sh
 client-disconnect ./status.sh
 ```
 
-Make sure the script is executable by the OpenVPN daemon.
-
-```
-[root@server ~]# chmod +x status.sh
-```
-
 And adjust the variables inside the `status.sh` script to match your configuration.
 
 ```
@@ -71,6 +65,14 @@ HOST="127.0.0.1"
 PORT="3013"
 SERVER="0"
 ```
+
+Make sure the script is executable by the OpenVPN daemon.
+
+```
+[root@server ~]# chmod +x status.sh
+```
+
+Afterwards restart your OpenVPN server.
 
 ### 5. Build
 
