@@ -1,5 +1,6 @@
 const zlib = require('zlib')
 const fs = require('fs')
+const http = require('http')
 const express = require('express')
 const app = express()
 const WebSocket = require('ws')
