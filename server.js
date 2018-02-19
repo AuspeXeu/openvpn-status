@@ -2,7 +2,7 @@ const zlib = require('zlib')
 const fs = require('fs')
 const express = require('express')
 const app = express()
-const expressWs = require('express-ws')(app)
+const WebSocket = require('ws')
 const conf = require('nconf')
 const bodyParser = require('body-parser')
 const maxmind = require('maxmind')
@@ -146,10 +146,18 @@ app.get('/log/:id/:page/:size', (req, res) => {
     res.json(data.map((item) => ({server: item.server, node: item.node, timestamp: item.timestamp, event: item.event})))
   })
 })
-app.ws('/live/log', (ws, req) => {
+
+const server = http.createServer(app)
+const wss = new WebSocket.Server({server})
+
+wss.on('connection', (ws) => {
   const id = uuid()
   clients.set(id, ws)
   ws.on('close', () => clients.delete(id))
+  ws.on('error', (err) => {
+    log(err)
+    clients.delete(id)
+  })
 })
 
 db.init().then(() => db.state()).then((entries) => {
@@ -170,6 +178,6 @@ db.init().then(() => db.state()).then((entries) => {
         return data
       })
     })
-    app.listen(conf.get('port'), conf.get('bind'))
+    server.listen({host: conf.get('bind'),port: conf.get('port'),exclusive: true})
   })
 })

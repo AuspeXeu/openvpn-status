@@ -33,12 +33,12 @@
     "cron": "^1.1.1",
     "body-parser": "^1.18.2",
     "express": "^4.14.0",
-    "express-ws": "^3.0.0",
     "maxmind": "^2.0.3",
     "moment": "^2.20.1",
     "nconf": "^0.10.0",
     "request": "^2.78.0",
     "vue": "^2.3.4",
+    "ws": "^4.0.0",
     "vue-material": "^0.8.1",
     "vuex": "^3.0.1"
   },
