@@ -14,7 +14,7 @@ const CronJob = require('cron').CronJob
 const db = require('./database.js')
 const log = console.log
 
-conf.file({file: 'config.json'})
+conf.file({file: 'cfg.json'})
 conf.defaults({
   port: 3013,
   bind: '127.0.0.1',

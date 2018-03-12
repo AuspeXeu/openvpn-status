@@ -28,7 +28,7 @@ sudo npm install pm2 -g
 
 ### 3. Configuration
 
-The configuration is handled in the ``config.json`` file.
+The configuration is handled in the ``cfg.json`` file.
 
 | Option  | Default       | Description  |
 | ------- |:-------------:| ------------ |
@@ -50,7 +50,7 @@ Example:
 
 ### 4. OpenVPN configuration
 
-Copy the `status.sh` file to the folder containing your OpenVPN configuration (e.g. `server.conf`). Then add the following lines to your configuration file. This will intall the `client-connect` and `client-disconnect` hooks to provide the data to the web interface. Make sure to adjust the port and ip address as you have specified in your `config.json`.
+Copy the `status.sh` file to the folder containing your OpenVPN configuration (e.g. `server.conf`). Then add the following lines to your configuration file. This will intall the `client-connect` and `client-disconnect` hooks to provide the data to the web interface. Make sure to adjust the port and ip address as you have specified in your `cfg.json`.
 
 ```
 script-security 2
