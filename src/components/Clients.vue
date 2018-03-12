@@ -26,7 +26,7 @@
     },
     methods: {
       formatTime(ts) {
-        moment(ts * 1000).format('HH:mm - DD.MM.YY')
+        return moment(ts * 1000).format('HH:mm - DD.MM.YY')
       },
       flagTitle(node) {
         return (node.country_code ? node.country_name : 'N/A')
