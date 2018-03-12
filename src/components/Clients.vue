@@ -39,17 +39,17 @@
       nodes () {
         return this.$store.state.nodes
       },
-      server () {
-        return this.$store.state.server
-      },
       servers () {
         return this.$store.state.servers
       }
     },
     data () {
       return {
-        headers: [
-        {sortable: true, value: 'country_name',width: '50px'},{
+        headers: [{
+          sortable: true,
+          value: 'country_name',
+          width: '50px'
+        },{
           text: 'Node',
           align: 'center',
           sortable: true,

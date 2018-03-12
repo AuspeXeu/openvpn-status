@@ -30,17 +30,19 @@
     data() { 
       return {
         pagination: {},
-        headers: [
-          {sortable: false,width: '50px'},{
-            text: 'Node',
-            align: 'center',
-            sortable: false,
-            value: 'node'
-          },{
-            text: 'Time',
-            align: 'center',
-            sortable: false,
-            value: 'time'
+        headers: [{
+          sortable: false,
+          width: '50px'
+        },{
+          text: 'Node',
+          align: 'center',
+          sortable: false,
+          value: 'node'
+        },{
+          text: 'Time',
+          align: 'center',
+          sortable: false,
+          value: 'time'
         }]
       }
     },
