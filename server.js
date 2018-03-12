@@ -21,7 +21,7 @@ conf.defaults({
   servers: [{id: 0, name: 'Server'}],
   ipFile: './GeoLite2-City.mmdb'
 })
-app.use('/static', express.static(`${__dirname}/static`))
+app.use('/static', express.static(`${__dirname}/dist/static`))
 app.use(bodyParser.json())
 const ipFile = conf.get('ipFile')
 const cityLookup = {}
@@ -90,7 +90,7 @@ new CronJob({
   start: true
 })
 
-app.get('/', (req, res) => res.sendFile(__dirname + '/index.html'))
+app.get('/', (req, res) => res.sendFile(`${__dirname}/dist/index.html`))
 app.get('/servers', (req, res) => res.json(servers.map((server, idx) => ({name: server.name, id: idx}))))
 const compare = (a,b) => {
   if (a.country_code < b.country_code)
