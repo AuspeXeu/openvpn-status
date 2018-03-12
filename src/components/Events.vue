@@ -1,21 +1,25 @@
 <template>
   <v-container>
-    <v-data-table
-      :headers="headers"
-      :items="events"
-      :rows-per-page-items="[10,25,{text:'All',value:-1}]"
-      :total-items="total"
-      :pagination.sync="pagination"
-      class="elevation-1"
-      >
-      <template slot="items" slot-scope="props">
-        <td>
-          <v-icon :title="props.item.event" :style="`color:${eventColor(props.item)};`">{{ eventIcon(props.item) }}</v-icon>
-        </td>
-        <td class="text-xs-center">{{ props.item.node }}</td>
-        <td class="text-xs-center">{{ props.item.time }}</td>
-      </template>
-    </v-data-table>
+    <v-layout row>
+      <v-flex lg8 offset-lg2 md10 offset-md1 xs10 offset-xs1>
+        <v-data-table
+          :headers="headers"
+          :items="events"
+          :rows-per-page-items="[10,25,{text:'All',value:-1}]"
+          :total-items="total"
+          :pagination.sync="pagination"
+          class="elevation-1"
+          >
+          <template slot="items" slot-scope="props">
+            <td>
+              <v-icon :title="props.item.event" :style="`color:${eventColor(props.item)};`">{{ eventIcon(props.item) }}</v-icon>
+            </td>
+            <td class="text-xs-center">{{ props.item.node }}</td>
+            <td class="text-xs-center">{{ props.item.time }}</td>
+          </template>
+        </v-data-table>
+      </v-flex>
+    </v-layout>
   </v-container>
 </template>
 
