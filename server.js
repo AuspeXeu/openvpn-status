@@ -93,21 +93,6 @@ new CronJob({
 
 app.get('/', (req, res) => res.sendFile(`${__dirname}/dist/index.html`))
 app.get('/servers', (req, res) => res.json(servers.map((server, idx) => ({name: server.name, id: idx}))))
-const compare = (a,b) => {
-  if (a.country_code < b.country_code)
-    return -1
-  if (a.country_code > b.country_code)
-    return 1
-  if (a.pub < b.pub)
-    return -1
-  if (a.pub > b.pub)
-    return 1
-  if (a.timestamp < b.timestamp)
-    return 1
-  if (a.timestamp > b.timestamp)
-    return -1
-  return 0
-}
 const validateServer = (req, res, next) => {
   if (!validateNumber(req.params.id))
     return res.sendStatus(400)
@@ -141,7 +126,7 @@ app.post('/server/:id/disconnect', validateServer, (req, res) => {
   servers[serverId].entries = servers[serverId].entries.filter((itm) => itm.name !== cn)
   res.sendStatus(200)
 })
-app.get('/entries/:id', validateServer, (req, res) => res.json(servers[req.params.id].entries.sort(compare)))
+app.get('/entries/:id', validateServer, (req, res) => res.json(servers[req.params.id].entries))
 app.get('/log/:id/size', validateServer, (req, res) => db.Log.count({where: {server: req.params.id}}).then((size) => res.json({value: size})))
 app.get('/log/:id/:page/:size', validateServer, (req, res) => {
   if (!validateNumber(req.params.page) || !validateNumber(req.params.size))
