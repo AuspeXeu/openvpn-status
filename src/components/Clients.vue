@@ -7,11 +7,11 @@
       class="elevation-1"
       >
       <template slot="items" slot-scope="props">
-        <td><img :src='props.item.flagImg' :title='props.item.flagTitle' /></td>
+        <td><img :src="flagImg(props.item)" :title="flagTitle(props.item)" /></td>
         <td class="text-xs-center">{{ props.item.name }}</td>
         <td class="text-xs-center">{{ props.item.vpn }}</td>
         <td class="text-xs-center"><a :href="props.item.link" target="_blank">{{ props.item.pub }}</a></td>
-        <td class="text-xs-center">{{ props.item.timestamp }}</td>
+        <td class="text-xs-center">{{ formatTime(props.item.timestamp) }}</td>
       </template>
     </v-data-table>
   </v-container>
@@ -24,20 +24,20 @@
     created () {
       this.$store.dispatch('refresh')
     },
+    methods: {
+      formatTime(ts) {
+        moment(ts * 1000).format('HH:mm - DD.MM.YY')
+      },
+      flagTitle(node) {
+        return (node.country_code ? node.country_name : 'N/A')
+      },
+      flagImg(node) {
+        return (node.country_code ? `/static/images/flags/${node.country_code}.png` : '/static/images/flags/unknown.jpg')
+      }
+    },
     computed: {
       nodes () {
-        const nodes = this.$store.state.nodes
-        nodes.forEach((node) => {
-          if (node.country_code) {
-            node.flagImg = '/static/images/flags/' + node.country_code + '.png'
-            node.flagTitle = node.country_name
-          } else {
-            node.flagImg = '/static/images/flags/unknown.jpg'
-            node.flagTitle = 'N/A'
-          }
-          node.timestamp = moment(node.timestamp * 1000).format('HH:mm - DD.MM.YY')
-        })
-        return nodes
+        return this.$store.state.nodes
       },
       server () {
         return this.$store.state.server
@@ -49,7 +49,7 @@
     data () {
       return {
         headers: [
-        {sortable: true, value: 'country_name'},{
+        {sortable: true, value: 'country_name',width: '50px'},{
           text: 'Node',
           align: 'center',
           sortable: true,

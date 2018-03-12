@@ -31,7 +31,7 @@
       return {
         pagination: {},
         headers: [
-          {sortable: false},{
+          {sortable: false,width: '50px'},{
             text: 'Node',
             align: 'center',
             sortable: false,
