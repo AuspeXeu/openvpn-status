@@ -75,9 +75,6 @@
         this.pagination.page = 1
         this.$store.dispatch('changePage',{page:page,size:rowsPerPage})
       }
-    },
-    beforeMount() {
-      this.$store.dispatch('changePage',{page:this.page,size:this.size})
     }
   }
 </script>
