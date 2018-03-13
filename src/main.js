@@ -70,7 +70,7 @@ const store = new Vuex.Store({
         })
       })
     },
-    refresh (context) {
+    refresh(context) {
       axios.get(`/entries/${store.state.server}`)
         .then((response) => {
           const nodes = response.data.map((node) => {
