@@ -18,7 +18,7 @@
     <v-toolbar fixed app dense>
       <v-toolbar-title style="margin-left:15px;">
         <v-toolbar-side-icon @click.native="drawer = !drawer" v-if="servers.length > 1"></v-toolbar-side-icon>
-        <span class="hidden-sm-and-down">{{(server ? server.name : '')}}</span>
+        <span>{{(server ? server.name : '')}}</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items>
