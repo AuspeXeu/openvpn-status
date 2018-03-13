@@ -25,20 +25,29 @@ const store = new Vuex.Store({
     event: {}
   },
   mutations: {
-    updateEvents (state, payload) {
+    updateEvents(state, payload) {
       state.events = payload.events
     },
-    updateNodes (state, payload) {  
+    updateNodes(state, payload) {
       state.nodes = payload.nodes
     },
-    addEvent (state, payload) {
-      store.dispatch('refresh')
-      state.events.unshift(payload.event)
-      state.total += 1
+    addEvent(state, payload) {
+      const event = payload.event
+      state.nodes = state.nodes.filter((node) => node.name !== event.node)
+      if (event.event === 'connect')
+        state.nodes.push({
+          country_code: event.country_code,
+          country_name: event.country_name,
+          name: event.node,
+          pub: event.pub,
+          timestamp: event.timestamp,
+          vpn: event.vpn
+        })
+      state.events.unshift(event)
       state.events.pop()
       state.event = event
     },
-    changeServer (state, payload) {
+    changeServer(state, payload) {
       state.server = payload.server
     },
     changeSearch(state, payload) {
@@ -46,13 +55,13 @@ const store = new Vuex.Store({
     }
   },
   actions: {
-    changeServer (context, payload) {
+    changeServer(context, payload) {
       context.commit('changeServer', {
         server: payload.server
       })
       context.dispatch('refresh')
     },
-    changePage (context, opt) {
+    changePage(context, opt) {
       axios.get(`/log/${store.state.server}/${opt.page}/${opt.size}/${store.state.search}`)
       .then((response) => {
         store.commit({

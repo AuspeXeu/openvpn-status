@@ -74,7 +74,7 @@ export default {
     },
   },
   computed: {
-    event () {
+    event() {
       return this.$store.state.event
     },
     server() {
