@@ -1,7 +1,11 @@
 <template>
 <div id="app">
   <v-app>
-    <v-content>
+    <v-content
+     v-touch="{
+      left: () => drawer = false,
+      right: () => drawer = true
+    }">
       <clients></clients>
       <events></events>
     </v-content>
