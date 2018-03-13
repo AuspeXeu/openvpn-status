@@ -129,7 +129,7 @@ app.post('/server/:id/disconnect', validateServer, (req, res) => {
 app.get('/entries/:id', validateServer, (req, res) => res.json(servers[req.params.id].entries))
 app.get('/log/:id/size/:search', validateServer, (req, res) => {
   const needle = `%${(req.params.search.trim() || '')}%`
-  db.Log.count({where: {server: req.params.id, node {[db.op.like]: needle}}}).then((size) => res.json({value: size}))
+  db.Log.count({where: {server: req.params.id, node: {[db.op.like]: needle}}}).then((size) => res.json({value: size}))
 })
 app.get('/log/:id/:page/:size/:search', validateServer, (req, res) => {
   if (!validateNumber(req.params.page) || !validateNumber(req.params.size))
