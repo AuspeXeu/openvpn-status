@@ -15,7 +15,7 @@
               <v-icon :title="props.item.event" :style="`color:${eventColor(props.item)};`">{{ eventIcon(props.item) }}</v-icon>
             </td>
             <td class="text-xs-center">{{ props.item.node }}</td>
-            <td class="text-xs-center">{{ props.item.time }}</td>
+            <td class="text-xs-center">{{ eventTime(props.item) }}</td>
           </template>
         </v-data-table>
       </v-flex>
@@ -29,6 +29,7 @@
     name: 'events',
     data() { 
       return {
+        debounce: false,
         pagination: {},
         headers: [{
           sortable: false,
@@ -47,12 +48,11 @@
       }
     },
     computed: {
+      search() {
+        return this.$store.state.search
+      },
       events () {
-        const events = this.$store.state.events
-        events.forEach((ev) => {
-          ev.time = moment(ev.timestamp * 1000).format('HH:mm - DD.MM.YY')
-        })
-        return events
+        return this.$store.state.events
       },
       total () {
         return this.$store.state.total
@@ -62,6 +62,9 @@
       }
     },
     methods: {
+      eventTime(event) {
+        return moment(event.timestamp * 1000).format('HH:mm - DD.MM.YY')
+      },
       eventIcon(event) {
         return (event.event === 'connect' ? 'fa-plug' : 'fa-times')
       },
@@ -72,13 +75,24 @@
     watch: {
       pagination: {
         handler () {
+          console.log(JSON.stringify(this.pagination))
           const { page, rowsPerPage } = this.pagination
           this.$store.dispatch('changePage',{page:page,size:rowsPerPage})
         },
         deep: true
       },
-      'server': function (value) {
+      search(value) {
+        if (this.debounce)
+          clearTimeout(this.debounce)
+        this.debounce = setTimeout(() => {
+          const { page, rowsPerPage } = this.pagination
+          this.$store.dispatch('changePage',{page:page,size:rowsPerPage})
+          this.debounce = false
+        }, 300)
+      },
+      server: function (value) {
         this.pagination.page = 1
+        const { page, rowsPerPage } = this.pagination
         this.$store.dispatch('changePage',{page:page,size:rowsPerPage})
       }
     }

@@ -16,6 +16,16 @@
         <v-toolbar-side-icon @click.native="drawer = !drawer" v-if="servers.length > 1"></v-toolbar-side-icon>
         <span class="hidden-sm-and-down">{{(server ? server.name : '')}}</span>
       </v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-toolbar-items>
+        <v-text-field
+        append-icon="search"
+        single-line
+        clearable
+        hide-details
+        v-model="search"
+      ></v-text-field>
+      </v-toolbar-items>
     </v-toolbar>
     <v-navigation-drawer temporary hide-overlay fixed v-model="drawer" class="text-xs-center" app>
       <v-list class="pt-0" dense>
@@ -50,6 +60,7 @@ export default {
     changeServer(newServer) {
       this.$store.dispatch('changeServer', {server: newServer})
       this.drawer = false
+      this.search = ''
     },
     notify(text, type) {
       this.snack.text = text
@@ -70,8 +81,11 @@ export default {
     }
   },
   watch: {
-    'event': function (value) {
+    event: function (value) {
       this.notify(`${value.node} ${value.event}ed`, (value.event === 'connect' ? 'success' : 'error'))
+    },
+    search: function (value) {
+      this.$store.commit('changeSearch', {text: value || ''})
     }
   },
   data () {
@@ -82,6 +96,7 @@ export default {
         color: 'success',
         text: ''
       },
+      search: '',
       drawer: false
     }
   }

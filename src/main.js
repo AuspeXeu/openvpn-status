@@ -19,6 +19,7 @@ const store = new Vuex.Store({
     server: 0,
     servers: [],
     total: 0,
+    search: '',
     nodes: [],
     events: [],
     event: {}
@@ -39,6 +40,9 @@ const store = new Vuex.Store({
     },
     changeServer (state, payload) {
       state.server = payload.server
+    },
+    changeSearch(state, payload) {
+      state.search = payload.text
     }
   },
   actions: {
@@ -49,7 +53,7 @@ const store = new Vuex.Store({
       context.dispatch('refresh')
     },
     changePage (context, opt) {
-      axios.get(`/log/${store.state.server}/${opt.page}/${opt.size}`)
+      axios.get(`/log/${store.state.server}/${opt.page}/${opt.size}/${store.state.search}`)
       .then((response) => {
         store.commit({
           type: 'updateEvents',
@@ -87,15 +91,20 @@ new Vue({
   },
   watch: {
     'server': (val) => {
-      axios.get(`/log/${val}/size`)
+      axios.get(`/log/${val}/size/${store.state.search}`)
         .then((response) => store.state.total = response.data.value)
     }
   },
   beforeMount () {
-    axios.get(`/log/${store.state.server}/size`)
-      .then((response) => store.state.total = response.data.value)
     axios.get('/servers')
-      .then((response) => store.state.servers = response.data)
+      .then((response) => {
+        store.state.servers = response.data
+        store.commit('changeServer', {
+          server: response.data[0].id
+        })
+        axios.get(`/log/${store.state.server}/size/${store.state.search}`)
+          .then((response) => store.state.total = response.data.value)
+      })
     const socket = new WebSocket(window.location.origin.replace('http','ws') + '/live/log')
     socket.onmessage = (event) => {
       event = JSON.parse(event.data)

@@ -3,6 +3,7 @@
     <v-data-table
       :headers="headers"
       :items="nodes"
+      :search="search"
       hide-actions
       class="elevation-1"
       >
@@ -36,14 +37,17 @@
       }
     },
     computed: {
-      nodes () {
+      search() {
+        return this.$store.state.search
+      },
+      nodes() {
         return this.$store.state.nodes
       },
-      servers () {
+      servers() {
         return this.$store.state.servers
       }
     },
-    data () {
+    data() {
       return {
         headers: [{
           sortable: true,
