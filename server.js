@@ -12,7 +12,7 @@ const request = require('request')
 const uuid = require('uuid/v1')
 const CronJob = require('cron').CronJob
 const db = require('./database.js')
-const log = console.log
+const log = (...args) => console.log(...[moment().format('HH:mm - DD.MM.YY'), ...args])
 
 conf.file({file: 'cfg.json'})
 conf.defaults({
@@ -28,7 +28,6 @@ const cityLookup = {}
 const clients = new Map()
 let servers = conf.get('servers') || []
 
-const logBuffer = {}
 const logEvent = (server, data, event) => {
   const record = {server: server, node: data.name, event: event, timestamp: moment().unix()}
   if (event === 'connect') {
@@ -37,16 +36,8 @@ const logEvent = (server, data, event) => {
     record.country_code = data.country_code
     record.country_name = data.country_name
   }
-  if (!logBuffer[data.name])
-    logBuffer[data.name] = setTimeout(() => {
-      logBuffer[data.name] = false
-      clients.forEach((ws) => ws.send(JSON.stringify(record)))
-      db.Log.create(record)
-    }, 1500)
-  else {
-    clearTimeout(logBuffer[data.name])
-    logBuffer[data.name] = false
-  }
+  clients.forEach((ws) => ws.send(JSON.stringify(record)))
+  db.Log.create(record)
 }
 const validateIPaddress = (ipaddress) => /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ipaddress.toString())
 const validateNumber = (n) => !isNaN(parseFloat(n)) && isFinite(n)
@@ -120,11 +111,17 @@ app.post('/server/:id/script', validateServer, (req, res) => {
       entry.country_code = loc.country.iso_code
       entry.country_name = loc.country.names.en
     }
-    logEvent(serverId, entry, 'connect')
-    servers[serverId].entries.push(entry)
-  } else if (script === 'client-disconnect') {
-    logEvent(serverId, {name: cn}, 'disconnect')
+    const oLen = servers[serverId].entries.length
     servers[serverId].entries = servers[serverId].entries.filter((itm) => itm.name !== cn)
+    if (oLen === servers[serverId].entries.length) {
+      logEvent(serverId, entry, 'connect')
+      servers[serverId].entries.push(entry)
+    }
+  } else if (script === 'client-disconnect') {
+    const oLen = servers[serverId].entries.length
+    servers[serverId].entries = servers[serverId].entries.filter((itm) => itm.name !== cn)
+    if (oLen !== servers[serverId].entries.length)
+      logEvent(serverId, {name: cn}, 'disconnect')
   }
   res.sendStatus(200)
 })
