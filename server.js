@@ -111,12 +111,9 @@ app.post('/server/:id/script', validateServer, (req, res) => {
       entry.country_code = loc.country.iso_code
       entry.country_name = loc.country.names.en
     }
-    const oLen = servers[serverId].entries.length
     servers[serverId].entries = servers[serverId].entries.filter((itm) => itm.name !== cn)
-    if (oLen === servers[serverId].entries.length) {
-      logEvent(serverId, entry, 'connect')
-      servers[serverId].entries.push(entry)
-    }
+    logEvent(serverId, entry, 'connect')
+    servers[serverId].entries.push(entry)
   } else if (script === 'client-disconnect') {
     const oLen = servers[serverId].entries.length
     servers[serverId].entries = servers[serverId].entries.filter((itm) => itm.name !== cn)
