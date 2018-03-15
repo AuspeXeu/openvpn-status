@@ -4,7 +4,7 @@
     <v-content
      v-touch="{
       left: () => drawer = false,
-      right: () => drawer = true
+      right: () => drawer = servers.length > 1
     }">
       <clients></clients>
       <events></events>
