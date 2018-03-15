@@ -117,6 +117,7 @@ new Vue({
     const socket = new ReconnectingWebSocket(`${window.location.origin.replace('http','ws')}/live/log`)
     socket.onmessage = (event) => {
       event = JSON.parse(event.data)
+      console.log(event)
       if (event.server === store.state.server)
         store.commit({
           type: 'addEvent',

@@ -66,16 +66,25 @@
         return moment(event.timestamp * 1000).format('HH:mm - DD.MM.YY')
       },
       eventIcon(event) {
-        return (event.event === 'connect' ? 'fa-plug' : 'fa-times')
+        switch (event.event) {
+          case 'connect': return 'fa-plug'
+          case 'disconnect': return 'fa-times'
+          case 'reconnect': return 'fa-repeat'
+          default: return 'fa-question'
+        }
       },
       eventColor(event) {
-        return (event.event === 'connect' ? '#28ba0e' : '#c11919')
+        switch (event.event) {
+          case 'connect': return '#28ba0e'
+          case 'disconnect': return '#c11919'
+          case 'reconnect': return '#4221a5'
+          default: return '#f27609'
+        }
       }
     },
     watch: {
       pagination: {
         handler () {
-          console.log(JSON.stringify(this.pagination))
           const { page, rowsPerPage } = this.pagination
           this.$store.dispatch('changePage',{page:page,size:rowsPerPage})
         },
