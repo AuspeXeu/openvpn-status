@@ -130,7 +130,7 @@ app.get(/\/log\/([0-9]*)\/size\/(.*)/, validateServer, (req, res) => {
   db.Log.count({where: {server: req.params[0], node: {[db.op.like]: needle}}}).then((size) => res.json({value: size}))
 })
 // /log/:id/:page/:size/:search
-app.get(/\/log\/([0-9]*)\/([0-9]*)\/([0-9]*)\/(.*)/, validateServer, (req, res) => {
+app.get(/\/log\/([0-9]*)\/([0-9]*)\/([-0-9]*)\/(.*)/, validateServer, (req, res) => {
   if (!validateNumber(req.params[1]) || !validateNumber(req.params[2]))
     return res.sendStatus(400)
   const needle = `%${(req.params[3].trim() || '')}%`
