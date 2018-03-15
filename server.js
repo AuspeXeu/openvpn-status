@@ -34,16 +34,15 @@ const logEvent = (server, data, event) => {
   if (event === 'connect') {
     record.pub = data.pub
     record.vpn = data.vpn
-    db.Log.findOne({where: {server: record.server, node: record.name, timestamp: record.timestamp}})
-      .then((entry) => {
-        if (entry) {
-          entry.event = 'reconnect'
-          entry.save().then(() => broadcast(Object.assign(entry, record)))
-        } else
-          db.Log.create(record).then((entry) => broadcast(Object.assign(entry, record)))
-      })
-  } else if (event === 'disconnect')
-    db.Log.create(record).then((entry) => broadcast(Object.assign(entry, record)))
+  }
+  db.Log.findOne({where: {server: record.server, node: record.name, timestamp: record.timestamp}})
+    .then((entry) => {
+      if (entry) {
+        entry.event = 'reconnect'
+        entry.save().then(() => broadcast(Object.assign(entry, record)))
+      } else
+        db.Log.create(record).then((entry) => broadcast(Object.assign(entry, record)))
+    })
 }
 const validateIPaddress = (ipaddress) => /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ipaddress.toString())
 const validateNumber = (n) => !isNaN(parseFloat(n)) && isFinite(n)
