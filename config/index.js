@@ -23,6 +23,10 @@ module.exports = {
       target: 'https://status.auspex.eu',
       changeOrigin: true
     },
+    '/country': {
+      target: 'https://status.auspex.eu',
+      changeOrigin: true
+    },
     '/log': {
       target: 'https://status.auspex.eu',
       changeOrigin: true

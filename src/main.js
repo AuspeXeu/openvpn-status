@@ -36,10 +36,10 @@ const store = new Vuex.Store({
       state.nodes = state.nodes.filter((node) => node.name !== event.node)
       if (event.event !== 'disconnect')
         state.nodes.push({
-          country_code: event.country_code,
-          country_name: event.country_name,
           name: event.node,
           pub: event.pub,
+          flag: false,
+          country_name: '',
           timestamp: event.timestamp,
           vpn: event.vpn
         })
@@ -76,8 +76,8 @@ const store = new Vuex.Store({
         .then((response) => {
           const nodes = response.data.map((node) => {
             node.link = 'https://freegeoip.net/?q=' + node.pub
-            node.flagImg = '/static/images/flags/unknown.jpg'
-            node.flagTitle = 'Unknown Country'
+            node.flag = false
+            node.country_name = ''
             return node
           })
           context.commit({

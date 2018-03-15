@@ -31,7 +31,7 @@
         return moment(ts * 1000).format('HH:mm - DD.MM.YY')
       },
       flagTitle(node) {
-        return (node.country_code ? node.country_name : 'N/A')
+        return (node.country_code ? node.country_name : 'Unknown Country')
       }
     },
     computed: {
@@ -43,7 +43,10 @@
           if (!node.flag) {
             node.flag = '/static/images/flags/unknown.jpg'
             axios.get(`/country/${node.pub}`)
-              .then((response) => node.flag = `/static/images/flags/${response.data.country_code}.png`)
+              .then((response) => {
+                node.country_name = response.data.country_name
+                node.flag = `/static/images/flags/${response.data.country_code}.png`
+              })
           }
           return node
         })
