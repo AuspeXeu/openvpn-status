@@ -28,6 +28,7 @@ const cityLookup = {}
 const clients = new Map()
 let servers = conf.get('servers') || []
 
+const broadcast = (data) => clients.forEach((ws) => ws.send(JSON.stringify(data)))
 const logEvent = (server, data, event) => {
   const record = {server: server, node: data.name, event: event, timestamp: moment().unix()}
   if (event === 'connect') {
@@ -35,10 +36,16 @@ const logEvent = (server, data, event) => {
     record.vpn = data.vpn
     record.country_code = data.country_code
     record.country_name = data.country_name
-  } else
-    record.timestamp -= 1
-  clients.forEach((ws) => ws.send(JSON.stringify(record)))
-  db.Log.create(record)
+    db.Log.findOne({where: {server: record.server, node: record.name, timestamp: record.timestamp}})
+      .then((entry) => {
+        if (entry) {
+          entry.event = 'reconnect'
+          entry.save().then(() => broadcast(entry))
+        } else
+          db.Log.create(record).then((entry) => broadcast(entry))
+      })
+  } else if (event === 'disconnect')
+    db.Log.create(record).then((entry) => broadcast(entry))
 }
 const validateIPaddress = (ipaddress) => /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ipaddress.toString())
 const validateNumber = (n) => !isNaN(parseFloat(n)) && isFinite(n)
