@@ -34,8 +34,6 @@ const logEvent = (server, data, event) => {
   if (event === 'connect') {
     record.pub = data.pub
     record.vpn = data.vpn
-    record.country_code = data.country_code
-    record.country_name = data.country_name
     db.Log.findOne({where: {server: record.server, node: record.name, timestamp: record.timestamp}})
       .then((entry) => {
         if (entry) {
@@ -113,12 +111,7 @@ app.post('/server/:id/script', validateServer, (req, res) => {
   if (script === 'client-connect') {
     if (!validateIPaddress(pub) || !validateIPaddress(vpn))
       return res.sendStatus(400)
-    const loc = cityLookup.get(pub)
     const entry = {name: cn, pub: pub, vpn: vpn, timestamp: moment().unix()}
-    if (loc) {
-      entry.country_code = loc.country.iso_code
-      entry.country_name = loc.country.names.en
-    }
     servers[serverId].entries = servers[serverId].entries.filter((itm) => itm.name !== cn)
     logEvent(serverId, entry, 'connect')
     servers[serverId].entries.push(entry)
@@ -129,6 +122,17 @@ app.post('/server/:id/script', validateServer, (req, res) => {
       logEvent(serverId, {name: cn}, 'disconnect')
   }
   res.sendStatus(200)
+})
+app.get('/country/:ip', (req, res) => {
+  if (!validateIPaddress(req.params.ip))
+    return res.sendStatus(400)
+  const loc = cityLookup.get(req.params.ip)
+  let geo = {}
+  if (loc) {
+    geo.country_code = loc.country.iso_code
+    geo.country_name = loc.country.names.en
+  }
+  res.json(geo)
 })
 app.get('/entries/:id', validateServer, (req, res) => res.json(servers[req.params.id].entries))
 // /log/:id/size/:search
@@ -169,11 +173,6 @@ db.init().then(() => db.state()).then((entries) => {
           timestamp: entry.timestamp,
           pub: entry.pub,
           vpn: entry.vpn
-        }
-        const loc = cityLookup.get(entry.pub)
-        if (entry.pub && loc) {
-          data.country_code = loc.country.iso_code
-          data.country_name = loc.country.names.en
         }
         return data
       })

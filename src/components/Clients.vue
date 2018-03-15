@@ -8,7 +8,7 @@
       class="elevation-1"
       >
       <template slot="items" slot-scope="props">
-        <td><img :src="flagImg(props.item)" :title="flagTitle(props.item)" /></td>
+        <td><img :src="props.item.flag" :title="flagTitle(props.item)" /></td>
         <td class="text-xs-center">{{ props.item.name }}</td>
         <td class="text-xs-center">{{ props.item.vpn }}</td>
         <td class="text-xs-center"><a :href="props.item.link" target="_blank">{{ props.item.pub }}</a></td>
@@ -20,6 +20,7 @@
 
 <script>
   import moment from 'moment'
+  import axios from 'axios'
   export default {
     name: 'clients',
     created () {
@@ -31,9 +32,6 @@
       },
       flagTitle(node) {
         return (node.country_code ? node.country_name : 'N/A')
-      },
-      flagImg(node) {
-        return (node.country_code ? `/static/images/flags/${node.country_code}.png` : '/static/images/flags/unknown.jpg')
       }
     },
     computed: {
@@ -41,7 +39,14 @@
         return this.$store.state.search
       },
       nodes() {
-        return this.$store.state.nodes
+        return this.$store.state.nodes.map((node) => {
+          if (!node.flag) {
+            node.flag = '/static/images/flags/unknown.jpg'
+            axios.get(`/country/${node.pub}`)
+              .then((response) => node.flag = `/static/images/flags/${response.data.country_code}.png`)
+          }
+          return node
+        })
       },
       servers() {
         return this.$store.state.servers
