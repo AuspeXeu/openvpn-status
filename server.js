@@ -35,7 +35,8 @@ const logEvent = (server, data, event) => {
     record.vpn = data.vpn
     record.country_code = data.country_code
     record.country_name = data.country_name
-  }
+  } else
+    record.timestamp -= 1
   clients.forEach((ws) => ws.send(JSON.stringify(record)))
   db.Log.create(record)
 }
