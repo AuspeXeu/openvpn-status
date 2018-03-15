@@ -86,6 +86,21 @@ export default {
   },
   watch: {
     event: function (value) {
+      let type = 'error'
+      switch (value.event) {
+          case 'connect':
+            type = 'success'
+            break
+          case 'disconnect':
+            type = 'error'
+            break
+          case 'reconnect':
+            type = 'info'
+            break
+          default:
+            type = 'cyan darken-2'
+            break
+        }
       this.notify(`${value.node} ${value.event}ed`, (value.event === 'connect' ? 'success' : 'error'))
     },
     search: function (value) {

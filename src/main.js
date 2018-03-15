@@ -34,7 +34,7 @@ const store = new Vuex.Store({
     addEvent(state, payload) {
       const event = payload.event
       state.nodes = state.nodes.filter((node) => node.name !== event.node)
-      if (event.event === 'connect')
+      if (event.event !== 'disconnect')
         state.nodes.push({
           country_code: event.country_code,
           country_name: event.country_name,
@@ -43,6 +43,7 @@ const store = new Vuex.Store({
           timestamp: event.timestamp,
           vpn: event.vpn
         })
+      state.events = state.events.filter((itm) => itm.id !== event.id)
       state.events.unshift(event)
       state.events.pop()
       state.event = event
@@ -117,7 +118,6 @@ new Vue({
     const socket = new ReconnectingWebSocket(`${window.location.origin.replace('http','ws')}/live/log`)
     socket.onmessage = (event) => {
       event = JSON.parse(event.data)
-      console.log(event)
       if (event.server === store.state.server)
         store.commit({
           type: 'addEvent',
