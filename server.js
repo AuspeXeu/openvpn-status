@@ -31,7 +31,7 @@ let servers = conf.get('servers') || []
 const broadcast = (data) => clients.forEach((ws) => ws.send(JSON.stringify(data)))
 const logEvent = (data) => {
   data.timestamp = moment().unix()
-  db.Log.findOne({where: {server: data.server, node: data.node, timestamp: {[db.Op.between]: [data.timestamp - 30, data.timestamp + 30]}}})
+  db.Log.findOne({where: {server: data.server, node: data.node, timestamp: {[db.op.between]: [data.timestamp - 30, data.timestamp + 30]}}})
     .then((entry) => {
       if (entry) {
         Object.assign(entry, data)
@@ -47,6 +47,7 @@ const loadIPdatabase = () => {
   return new Promise((resolve) => {
     fs.stat(ipFile, (err, stat) => {
       const now = new Date().getTime()
+      //Cached version to expire after a month from file date
       const expire = new Date((stat ? stat.ctime : '')).getTime() + 30 * 24 * 60 * 60 * 1000
       if (err || now > expire) {
         const req = request('http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz')
