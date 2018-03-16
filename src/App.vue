@@ -95,6 +95,7 @@ export default {
             type = 'error'
             break
           case 'reconnect':
+            console.log('info')
             type = 'info'
             break
           default:

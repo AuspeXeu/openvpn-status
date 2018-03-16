@@ -29,19 +29,15 @@ const clients = new Map()
 let servers = conf.get('servers') || []
 
 const broadcast = (data) => clients.forEach((ws) => ws.send(JSON.stringify(data)))
-const logEvent = (server, data, event) => {
-  const record = {server: server, node: data.name, event: event, timestamp: moment().unix()}
-  if (event === 'connect') {
-    record.pub = data.pub
-    record.vpn = data.vpn
-  }
-  db.Log.findOne({where: {server: record.server, node: record.name, timestamp: record.timestamp}})
+const logEvent = (data) => {
+  data.timestamp = moment().unix()
+  db.Log.findOne({where: {server: data.server, node: data.node, timestamp: data.timestamp}})
     .then((entry) => {
       if (entry) {
         entry.event = 'reconnect'
-        entry.save().then(() => broadcast(Object.assign(entry, record)))
+        entry.save().then(() => broadcast(entry))
       } else
-        db.Log.create(record).then((entry) => broadcast(Object.assign(entry, record)))
+        db.Log.create(data).then((entry) => broadcast(entry))
     })
 }
 const validateIPaddress = (ipaddress) => /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ipaddress.toString())
@@ -110,15 +106,15 @@ app.post('/server/:id/script', validateServer, (req, res) => {
   if (script === 'client-connect') {
     if (!validateIPaddress(pub) || !validateIPaddress(vpn))
       return res.sendStatus(400)
-    const entry = {name: cn, pub: pub, vpn: vpn, timestamp: moment().unix()}
-    servers[serverId].entries = servers[serverId].entries.filter((itm) => itm.name !== cn)
-    logEvent(serverId, entry, 'connect')
+    const entry = {node: cn, pub: pub, vpn: vpn, timestamp: moment().unix()}
+    servers[serverId].entries = servers[serverId].entries.filter((itm) => itm.node !== cn)
+    logEvent(Object.assign(entry, {server: serverId, event: 'connect'}))
     servers[serverId].entries.push(entry)
   } else if (script === 'client-disconnect') {
     const oLen = servers[serverId].entries.length
-    servers[serverId].entries = servers[serverId].entries.filter((itm) => itm.name !== cn)
+    servers[serverId].entries = servers[serverId].entries.filter((itm) => itm.node !== cn)
     if (oLen !== servers[serverId].entries.length)
-      logEvent(serverId, {name: cn}, 'disconnect')
+      logEvent({server: serverId, node: cn, event: 'disconnect'})
   }
   res.sendStatus(200)
 })
@@ -168,7 +164,7 @@ db.init().then(() => db.state()).then((entries) => {
     servers.forEach((server, idx) => {
       server.entries = entries.filter((entry) => entry.server === idx).map((entry) => {
         const data = {
-          name: entry.node,
+          node: entry.node,
           timestamp: entry.timestamp,
           pub: entry.pub,
           vpn: entry.vpn
