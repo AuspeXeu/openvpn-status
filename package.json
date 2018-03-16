@@ -2,7 +2,7 @@
   "name": "openvpn-status",
   "homepage": "https://github.com/AuspeXeu/openvpn-status",
   "description": "A web-based application to monitor clients connected to an openvpn server.",
-  "version": "4.0.12",
+  "version": "4.0.13",
   "license": "MIT",
   "author": {
     "name": "Christian Vaas",
