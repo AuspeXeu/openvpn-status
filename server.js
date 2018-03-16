@@ -31,7 +31,7 @@ let servers = conf.get('servers') || []
 const broadcast = (data) => clients.forEach((ws) => ws.send(JSON.stringify(data)))
 const logEvent = (data) => {
   data.timestamp = moment().unix()
-  db.Log.findOne({where: {server: data.server, node: data.node, timestamp: data.timestamp}})
+  db.Log.findOne({where: {server: data.server, node: data.node, timestamp: {[db.Op.between]: [data.timestamp - 30, data.timestamp + 30]}}})
     .then((entry) => {
       if (entry) {
         Object.assign(entry, data)
