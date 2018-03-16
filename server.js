@@ -104,18 +104,20 @@ app.post('/server/:id/script', validateServer, (req, res) => {
   if (!cn.length)
     return res.sendStatus(400)
 
+  const template = {server: serverId, node: cn, timestamp: moment().unix()}
+
   if (script === 'client-connect') {
     if (!validateIPaddress(pub) || !validateIPaddress(vpn))
       return res.sendStatus(400)
-    const entry = {node: cn, pub: pub, vpn: vpn, timestamp: moment().unix()}
+    const entry = Object.assign(template, {pub: pub, vpn: vpn, event: 'connect'})
     servers[serverId].entries = servers[serverId].entries.filter((itm) => itm.node !== cn)
-    logEvent(Object.assign(entry, {server: serverId, event: 'connect'}))
+    logEvent(entry)
     servers[serverId].entries.push(entry)
   } else if (script === 'client-disconnect') {
     const oLen = servers[serverId].entries.length
     servers[serverId].entries = servers[serverId].entries.filter((itm) => itm.node !== cn)
     if (oLen !== servers[serverId].entries.length)
-      logEvent({server: serverId, node: cn, event: 'disconnect'})
+      logEvent(Object.assign(template, {event: 'disconnect'}))
   }
   res.sendStatus(200)
 })
