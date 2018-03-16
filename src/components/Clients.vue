@@ -5,6 +5,7 @@
       :items="nodes"
       :search="search"
       hide-actions
+      :custom-sort="customSort"
       class="elevation-1"
       >
       <template slot="items" slot-scope="props">
@@ -27,6 +28,23 @@
       this.$store.dispatch('refresh')
     },
     methods: {
+      customSort(items, col, isDesc) {
+        if (!items)
+          return
+        let keys = new Map()
+        if (col === 'country_name')
+          items.forEach((itm) => keys.set(itm.node, `${itm.country_name}${itm.node}${itm.pub}`))
+        else
+          items.forEach((itm) => keys.set(itm.node, itm[col]))
+        items.sort((a,b) => {
+          if (keys.get(a.node) < keys.get(b.node))
+            return (isDesc ? 1 : -1)
+          if (keys.get(a.node) > keys.get(b.node))
+            return (isDesc ? -1 : 1)
+          return 0
+        })
+        return items
+      },
       formatTime(ts) {
         return moment(ts * 1000).format('HH:mm - DD.MM.YY')
       },
