@@ -43,10 +43,12 @@ const store = new Vuex.Store({
           timestamp: event.timestamp,
           vpn: event.vpn
         })
-      state.events = state.events.filter((itm) => itm.id !== event.id)
-      state.events.unshift(event)
-      state.events.pop()
-      state.event = event
+      if (event.node.includes(state.search)) {
+        state.events = state.events.filter((itm) => itm.id !== event.id)
+        state.events.unshift(event)
+        state.events.pop()
+        state.event = event
+      }
     },
     changeServer(state, payload) {
       state.server = payload.server
