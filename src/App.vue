@@ -95,14 +95,13 @@ export default {
             type = 'error'
             break
           case 'reconnect':
-            console.log('info')
             type = 'info'
             break
           default:
             type = 'cyan darken-2'
             break
         }
-      this.notify(`${value.node} ${value.event}ed`, (value.event === 'connect' ? 'success' : 'error'))
+      this.notify(`${value.node} ${value.event}ed`, type)
     },
     search: function (value) {
       this.$store.commit('changeSearch', {text: value || ''})

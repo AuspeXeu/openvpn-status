@@ -34,6 +34,7 @@ const logEvent = (data) => {
   db.Log.findOne({where: {server: data.server, node: data.node, timestamp: data.timestamp}})
     .then((entry) => {
       if (entry) {
+        Object.assign(entry, data)
         entry.event = 'reconnect'
         entry.save().then(() => broadcast(entry))
       } else
