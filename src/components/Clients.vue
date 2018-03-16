@@ -11,7 +11,7 @@
         <td><img :src="props.item.flag" :title="flagTitle(props.item)" /></td>
         <td class="text-xs-center">{{ props.item.node }}</td>
         <td class="text-xs-center">{{ props.item.vpn }}</td>
-        <td class="text-xs-center"><a :href="props.item.link" target="_blank">{{ props.item.pub }}</a></td>
+        <td class="text-xs-center"><a :href="`https://freegeoip.net/?q=${props.item.pub}`" target="_blank">{{ props.item.pub }}</a></td>
         <td class="text-xs-center">{{ formatTime(props.item.timestamp) }}</td>
       </template>
     </v-data-table>

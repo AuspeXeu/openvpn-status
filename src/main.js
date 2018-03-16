@@ -75,7 +75,6 @@ const store = new Vuex.Store({
       axios.get(`/entries/${store.state.server}`)
         .then((response) => {
           const nodes = response.data.map((node) => {
-            node.link = 'https://freegeoip.net/?q=' + node.pub
             node.flag = false
             node.country_name = ''
             return node
