@@ -33,10 +33,10 @@ const store = new Vuex.Store({
     },
     addEvent(state, payload) {
       const event = payload.event
-      state.nodes = state.nodes.filter((node) => node.name !== event.node)
+      state.nodes = state.nodes.filter((node) => node.node !== event.node)
       if (event.event !== 'disconnect')
         state.nodes.push({
-          name: event.node,
+          node: event.node,
           pub: event.pub,
           flag: false,
           country_name: '',
