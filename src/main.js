@@ -47,8 +47,8 @@ const store = new Vuex.Store({
         state.events = state.events.filter((itm) => itm.id !== event.id)
         state.events.unshift(event)
         state.events.pop()
-        state.event = event
       }
+      state.event = event
     },
     changeServer(state, payload) {
       state.server = payload.server
