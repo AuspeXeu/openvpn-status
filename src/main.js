@@ -65,11 +65,13 @@ const store = new Vuex.Store({
     changePage(context, opt) {
       axios.get(`/log/${store.state.server}/${opt.page}/${opt.size}/${store.state.search}`)
       .then((response) => {
-        store.commit({
+        context.commit({
           type: 'updateEvents',
           events: response.data
         })
       })
+      axios.get(`/log/${store.state.server}/size/${store.state.search}`)
+        .then((response) => store.state.total = response.data.value)
     },
     refresh(context) {
       axios.get(`/entries/${store.state.server}`)
