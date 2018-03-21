@@ -109,7 +109,7 @@ new Vue({
     }
   },
   beforeMount () {
-    axios.get('/servers')
+    axios.get('./servers')
       .then((response) => {
         store.state.servers = response.data
         store.commit('changeServer', {
