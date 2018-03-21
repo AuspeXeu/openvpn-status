@@ -9,7 +9,7 @@
       class="elevation-1"
       >
       <template slot="items" slot-scope="props">
-        <td><img :src="props.item.flag" :title="flagTitle(props.item)" /></td>
+        <td><img :src="flagImg(props.item)" :title="flagTitle(props.item)" /></td>
         <td class="text-xs-center">{{ props.item.node }}</td>
         <td class="text-xs-center">{{ props.item.vpn }}</td>
         <td class="text-xs-center"><a :href="`https://freegeoip.net/?q=${props.item.pub}`" target="_blank">{{ props.item.pub }}</a></td>
@@ -50,6 +50,9 @@
       },
       flagTitle(node) {
         return (node.country_code ? node.country_name : 'Unknown Country')
+      },
+      flagImg(node) {
+        return `./static/images/flags/${(node.country_code ? `${node.country_code}.png` : 'unknown.jpg')}`
       }
     },
     computed: {
@@ -58,14 +61,12 @@
       },
       nodes() {
         return this.$store.state.nodes.map((node) => {
-          if (!node.flag) {
-            node.flag = './static/images/flags/unknown.jpg'
+          if (!node.country_code)
             axios.get(`./country/${node.pub}`)
               .then((response) => {
                 node.country_name = response.data.country_name
-                node.flag = `./static/images/flags/${response.data.country_code}.png`
+                node.country_code = response.data.country_code
               })
-          }
           return node
         })
       },

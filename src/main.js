@@ -38,8 +38,8 @@ const store = new Vuex.Store({
         state.nodes.push({
           node: event.node,
           pub: event.pub,
-          flag: false,
-          country_name: '',
+          country_name: false,
+          country_code: false,
           timestamp: event.timestamp,
           vpn: event.vpn
         })
@@ -79,8 +79,8 @@ const store = new Vuex.Store({
       axios.get(`./entries/${store.state.server}`)
         .then((response) => {
           const nodes = response.data.map((node) => {
-            node.flag = false
-            node.country_name = ''
+            node.country_name = false,
+            node.country_code = false,
             return node
           })
           context.commit({
