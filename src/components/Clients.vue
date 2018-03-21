@@ -59,11 +59,11 @@
       nodes() {
         return this.$store.state.nodes.map((node) => {
           if (!node.flag) {
-            node.flag = '/static/images/flags/unknown.jpg'
-            axios.get(`/country/${node.pub}`)
+            node.flag = './static/images/flags/unknown.jpg'
+            axios.get(`./country/${node.pub}`)
               .then((response) => {
                 node.country_name = response.data.country_name
-                node.flag = `/static/images/flags/${response.data.country_code}.png`
+                node.flag = `./static/images/flags/${response.data.country_code}.png`
               })
           }
           return node

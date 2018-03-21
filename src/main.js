@@ -65,18 +65,18 @@ const store = new Vuex.Store({
       context.dispatch('refresh')
     },
     changePage(context, opt) {
-      axios.get(`/log/${store.state.server}/${opt.page}/${opt.size}/${store.state.search}`)
+      axios.get(`./log/${store.state.server}/${opt.page}/${opt.size}/${store.state.search}`)
       .then((response) => {
         context.commit({
           type: 'updateEvents',
           events: response.data
         })
       })
-      axios.get(`/log/${store.state.server}/size/${store.state.search}`)
+      axios.get(`./log/${store.state.server}/size/${store.state.search}`)
         .then((response) => store.state.total = response.data.value)
     },
     refresh(context) {
-      axios.get(`/entries/${store.state.server}`)
+      axios.get(`./entries/${store.state.server}`)
         .then((response) => {
           const nodes = response.data.map((node) => {
             node.flag = false
@@ -104,7 +104,7 @@ new Vue({
   },
   watch: {
     'server': (val) => {
-      axios.get(`/log/${val}/size/${store.state.search}`)
+      axios.get(`./log/${val}/size/${store.state.search}`)
         .then((response) => store.state.total = response.data.value)
     }
   },
@@ -115,10 +115,10 @@ new Vue({
         store.commit('changeServer', {
           server: response.data[0].id
         })
-        axios.get(`/log/${store.state.server}/size/${store.state.search}`)
+        axios.get(`./log/${store.state.server}/size/${store.state.search}`)
           .then((response) => store.state.total = response.data.value)
       })
-    const socket = new ReconnectingWebSocket(`${window.location.origin.replace('http','ws')}/live/log`)
+    const socket = new ReconnectingWebSocket(`${window.location.href.replace('http','ws')}live/log`)
     socket.onmessage = (event) => {
       event = JSON.parse(event.data)
       if (event.server === store.state.server)
