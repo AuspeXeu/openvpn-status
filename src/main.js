@@ -79,8 +79,8 @@ const store = new Vuex.Store({
       axios.get(`./entries/${store.state.server}`)
         .then((response) => {
           const nodes = response.data.map((node) => {
-            node.country_name = false,
-            node.country_code = false,
+            node.country_name = false
+            node.country_code = false
             return node
           })
           context.commit({
