@@ -99,24 +99,26 @@ app.post('/server/:id/script', validateServer, (req, res) => {
   const serverId = parseInt(req.params.id, 10)
   const pub = req.body.pub
   const cn = (req.body.cn || '').trim()
+  const user = (req.body.user || '').trim()
   const vpn = req.body.vpn
   const script = req.body.script.trim()
+  const name = cn || user
 
-  if (!cn.length)
+  if (!name.length)
     return res.sendStatus(400)
 
-  const template = {server: serverId, node: cn, timestamp: moment().unix()}
+  const template = {server: serverId, node: name, timestamp: moment().unix()}
 
   if (script === 'client-connect') {
     if (!validateIPaddress(pub) || !validateIPaddress(vpn))
       return res.sendStatus(400)
     const entry = Object.assign(template, {pub: pub, vpn: vpn, event: 'connect'})
-    servers[serverId].entries = servers[serverId].entries.filter((itm) => itm.node !== cn)
+    servers[serverId].entries = servers[serverId].entries.filter((itm) => itm.node !== name)
     logEvent(entry)
     servers[serverId].entries.push(entry)
   } else if (script === 'client-disconnect') {
     const oLen = servers[serverId].entries.length
-    servers[serverId].entries = servers[serverId].entries.filter((itm) => itm.node !== cn)
+    servers[serverId].entries = servers[serverId].entries.filter((itm) => itm.node !== name)
     if (oLen !== servers[serverId].entries.length)
       logEvent(Object.assign(template, {event: 'disconnect'}))
   }
