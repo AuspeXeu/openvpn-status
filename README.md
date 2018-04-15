@@ -13,6 +13,9 @@ Features
 - [x] [NodeJS](https://nodejs.org/en/download/package-manager/) 6 or higher
 - [x] npm package manager
 
+### Browser support
+Find a list of supported browsers [here](https://vuetifyjs.com/en/getting-started/quick-start#supported-browsers)
+
 # Installation
 ### 1. Get the source
 
