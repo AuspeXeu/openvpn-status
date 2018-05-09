@@ -27,6 +27,7 @@
         append-icon="search"
         single-line
         clearable
+        @keyup.esc="search = ''"
         v-model="search"
       ></v-text-field>
       </v-toolbar-items>
