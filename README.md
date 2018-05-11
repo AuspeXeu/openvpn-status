@@ -124,8 +124,8 @@ server {
 
 # Screenshots
 
-### Status panel
-![Status panel](https://raw.githubusercontent.com/AuspeXeu/openvpn-status/master/screen1.png)
+### Client panel
+![Client panel](https://raw.githubusercontent.com/AuspeXeu/openvpn-status/master/screen1.png)
 
 ### Event panel
 ![Event panel](https://raw.githubusercontent.com/AuspeXeu/openvpn-status/master/screen2.png)
