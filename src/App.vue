@@ -27,6 +27,7 @@
         append-icon="search"
         single-line
         clearable
+        ref="searchField"
         @keyup.esc="search = ''"
         v-model="search"
       ></v-text-field>
@@ -73,6 +74,15 @@ export default {
       this.snack.multi = type === 'error'
       this.snack.visible = true
     },
+    onKeyDown(ev) {
+      if (ev.keyCode === 70 && (ev.ctrlKey || ev.metaKey)) {
+        ev.preventDefault()
+        this.$refs.searchField.focus()
+      }
+    }
+  },
+  created() {
+    window.addEventListener('keydown', this.onKeyDown)
   },
   computed: {
     event() {
