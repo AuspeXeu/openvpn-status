@@ -9,7 +9,7 @@ module.exports = {
 
   // Paths
   assetsSubDirectory: 'static',
-  assetsPublicPath: './',
+  assetsPublicPath: '/',
   proxyTable: {
     '/size': {
       target: 'https://status.auspex.eu',
@@ -77,7 +77,7 @@ module.exports = {
   // Paths
   assetsRoot: path.resolve(__dirname, '../dist'),
   assetsSubDirectory: 'static',
-  assetsPublicPath: './',
+  assetsPublicPath: '/',
   externals: ['moment','ReWebSocket','axios','vuetify','vue'],
 
   /**
