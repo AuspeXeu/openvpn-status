@@ -71,6 +71,8 @@ And adjust the variables inside the `status.sh` script to match your configurati
 HOST="127.0.0.1"
 PORT="3013"
 SERVER="0"
+USERNAME="admin"
+PASSWORD="admin"
 ```
 
 Make sure the script is executable by the OpenVPN daemon.
