@@ -33,11 +33,13 @@ sudo npm install pm2 -g
 
 The configuration is handled in the ``cfg.json`` file.
 
-| Option  | Default       | Description  |
-| ------- |:-------------:| ------------ |
-| port    | ``3013``      | Port on which the server will be listening. |
-| bind    | ``127.0.0.1`` | Address to which the server will bind to. Change to ``0.0.0.0`` to make available on all interfaces. |
-| servers | ``[{"id": 0, "name": "Server"}]``        | Array of servers. |
+| Option   | Default       | Description  |
+| -------- |:-------------:| ------------ |
+| port     | `3013` | Port on which the server will be listening. |
+| bind     | `127.0.0.1` | Address to which the server will bind to. Change to `0.0.0.0` to make available on all interfaces. |
+| servers  | `[{"id": 0, "name": "Server"}]` | Array of servers. |
+| username | `admin` | User for basic HTTP authentication. Change to `''` or `false` to disable. |
+| password | `admin` | Password for basic HTTP authentication. |
 
 Example:
 ```
@@ -47,7 +49,9 @@ Example:
   "servers": [
     {"id": 0, "name": "Server A"},
     {"id": 1, "name": "Server B"}
-  ]
+  ],
+  "username": "admin",
+  "password": "YV3qSTxD"
 }
 ```
 
@@ -94,7 +98,7 @@ This makes the application available on http://127.0.0.1:3013.
 
 ## (optional) Running the service behind nginx as a reverse proxy
 
-In order to integrate the service into your webserver you might want to use nginx as a reverse proxy. The following configuration assumes that the port is set to *3013* as it is by default. The example also contains basic HTTP authentication to protect the service from unauthorised access.
+In order to integrate the service into your webserver you might want to use nginx as a reverse proxy. The following configuration assumes that the port is set to *3013* as it is by default.
 
 ```
 server {

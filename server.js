@@ -19,10 +19,25 @@ conf.defaults({
   port: 3013,
   bind: '127.0.0.1',
   servers: [{id: 0, name: 'Server'}],
-  ipFile: './GeoLite2-City.mmdb'
+  ipFile: './GeoLite2-City.mmdb',
+  username: 'admin',
+  password: 'admin'
 })
 app.use('/static', express.static(`${__dirname}/dist/static`))
 app.use(bodyParser.json())
+//HTTP authentication
+if (conf.get('username') && conf.get('username').length)
+  app.use((req, res, next) => {
+    // Parse login and password from headers
+    const b64auth = (req.headers.authorization || '').split(' ')[1] || ''
+    const [login, password] = new Buffer(b64auth, 'base64').toString().split(':')
+    // Verify login and password are set and correct
+    if (!login || !password || login !== conf.get('username') || password !== conf.get('password')) {
+      res.set('WWW-Authenticate', 'Basic realm="401"')
+      return res.status(401).send('Authentication required.')
+    }
+    next()
+  })
 const ipFile = conf.get('ipFile')
 const cityLookup = {}
 const clients = new Map()
