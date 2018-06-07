@@ -8,6 +8,7 @@
           :rows-per-page-items="[10,25,{text:'All',value:-1}]"
           :total-items="total"
           :pagination.sync="pagination"
+          :loading="loading"
           class="elevation-1"
           >
           <template slot="items" slot-scope="props">
@@ -48,6 +49,9 @@
       }
     },
     computed: {
+      loading() {
+        return this.$store.state.clientsLoading
+      },
       search() {
         return this.$store.state.search
       },

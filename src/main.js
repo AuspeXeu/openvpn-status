@@ -1,5 +1,3 @@
-// The Vue build version to load with the `import` command
-// (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
@@ -19,6 +17,8 @@ const store = new Vuex.Store({
     server: 0,
     servers: [],
     total: 0,
+    eventsLoading: true,
+    clientsLoading: true,
     search: '',
     nodes: [],
     events: [],
@@ -65,17 +65,20 @@ const store = new Vuex.Store({
       context.dispatch('refresh')
     },
     changePage(context, opt) {
-      axios.get(`./log/${store.state.server}/${opt.page}/${opt.size}/${store.state.search}`)
-      .then((response) => {
-        context.commit({
-          type: 'updateEvents',
-          events: response.data
+      store.state.eventsLoading = true
+      const p0 = axios.get(`./log/${store.state.server}/${opt.page}/${opt.size}/${store.state.search}`)
+        .then((response) => {
+          context.commit({
+            type: 'updateEvents',
+            events: response.data
+          })
         })
-      })
-      axios.get(`./log/${store.state.server}/size/${store.state.search}`)
+      const p1 = axios.get(`./log/${store.state.server}/size/${store.state.search}`)
         .then((response) => store.state.total = response.data.value)
+      Promise.all([p0,p1]).then(() => store.state.eventsLoading = false)
     },
     refresh(context) {
+      store.state.clientsLoading = true
       axios.get(`./entries/${store.state.server}`)
         .then((response) => {
           const nodes = response.data.map((node) => {
@@ -87,6 +90,7 @@ const store = new Vuex.Store({
             type: 'updateNodes',
             nodes: nodes
           })
+          store.state.clientsLoading = false
         })  
     }
   }

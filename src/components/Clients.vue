@@ -7,6 +7,7 @@
       hide-actions
       :custom-sort="customSort"
       class="elevation-1"
+      :loading="loading"
       >
       <template slot="items" slot-scope="props">
         <td><img :src="flagImg(props.item)" :title="flagTitle(props.item)" /></td>
@@ -56,6 +57,9 @@
       }
     },
     computed: {
+      loading() {
+        return this.$store.state.clientsLoading
+      },
       search() {
         return this.$store.state.search
       },
