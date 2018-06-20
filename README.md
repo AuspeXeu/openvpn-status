@@ -28,6 +28,8 @@ cd openvpn-status
 npm install
 sudo npm install pm2 -g
 ```
+#### Windows
+Download [curl](https://curl.haxx.se/download.html#Win64) and unpack the `curl.exe` in the same folder containing your OpenVPN configuration.
 
 ### 3. Configuration
 
@@ -82,6 +84,9 @@ Make sure the script is executable by the OpenVPN daemon.
 ```
 
 Afterwards restart your OpenVPN server.
+
+#### Windows
+For windows copy `status.bat` and perform the above instructions analogously.
 
 ### 5. Build
 
