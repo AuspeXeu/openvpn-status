@@ -122,7 +122,7 @@ new Vue({
         axios.get(`./log/${store.state.server}/size/${store.state.search}`)
           .then((response) => store.state.total = response.data.value)
       })
-    const socket = new ReconnectingWebSocket(`${window.location.href.replace('http','ws')}live/log`)
+    const socket = new ReconnectingWebSocket(`${window.location.origin.replace('http','ws')}/live/log`)
     socket.onmessage = (event) => {
       event = JSON.parse(event.data)
       if (event.server === store.state.server)
