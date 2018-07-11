@@ -91,7 +91,7 @@ export default {
     '$route' (to, from) {
       try {
         const srvId = parseInt(to.params.id, 10)
-        this.$store.dispatch('changeServer', {server: newServer})
+        this.$store.dispatch('changeServer', {server: srvId})
         this.drawer = false
         this.search = ''
       } catch (e) {
