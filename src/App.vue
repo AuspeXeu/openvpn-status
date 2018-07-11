@@ -52,6 +52,7 @@
 <script>
 import Clients from './components/Clients'
 import Events from './components/Events'
+import { mapState } from 'vuex'
 
 export default {
   name: 'app',
@@ -76,17 +77,11 @@ export default {
   created() {
     window.addEventListener('keydown', this.onKeyDown)
   },
-  computed: {
-    event() {
-      return this.$store.state.event
-    },
-    server() {
-      return this.$store.state.servers.find((srv) => srv.id === this.$store.state.server)
-    },
-    servers() {
-      return this.$store.state.servers
-    }
-  },
+  computed: mapState({
+    event: state => state.event,
+    server: state => state.servers.find((srv) => srv.id === state.server),
+    servers: state => state.servers
+  }),
   watch: {
     '$route' (to, from) {
       try {

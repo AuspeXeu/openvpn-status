@@ -3,6 +3,7 @@ import Vuetify from 'vuetify'
 import VueRouter from 'vue-router'
 import 'vuetify/dist/vuetify.min.css'
 import Vuex from 'vuex'
+import { mapState } from 'vuex'
 import axios from 'axios'
 import moment from 'moment'
 
@@ -58,6 +59,8 @@ const store = new Vuex.Store({
     },
     changeServer(state, payload) {
       state.server = payload.server
+      state.nodes = []
+      state.events = []
     },
     changeSearch(state, payload) {
       state.search = payload.text
@@ -108,11 +111,9 @@ new Vue({
   template: '<App/>',
   components: { App },
   store,
-  computed: {
-    server () {
-      return this.$store.state.server
-    }
-  },
+  computed: mapState({
+    server: (state) => state.server
+  }),
   watch: {
     'server': (val) => {
       axios.get(`./log/${val}/size/${store.state.search}`)
@@ -134,8 +135,8 @@ new Vue({
         })
       })
     const socket = new ReconnectingWebSocket(`${window.location.origin.replace('http','ws')}/live/log`)
-    socket.onmessage = (event) => {
-      event = JSON.parse(event.data)
+    socket.onmessage = ({data}) => {
+      const event = JSON.parse(data)
       if (event.server === store.state.server)
         store.commit({
           type: 'addEvent',
