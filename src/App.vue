@@ -87,29 +87,15 @@ export default {
       this.drawer = false
       this.search = ''
     },
-    event: function (value) {
-      let type = 'error'
-      switch (value.event) {
-          case 'connect':
-            type = 'success'
-            break
-          case 'disconnect':
-            type = 'error'
-            break
-          case 'reconnect':
-            type = 'info'
-            break
-          default:
-            type = 'cyan darken-2'
-            break
-        }
-      this.notify(`${value.node} ${value.event}ed`, type)
+    event(value) {
+      const map = new Map([['connect','success'],['disconnect','error'],['reconnect','info']])
+      this.notify(`${value.node} ${value.event}ed`, map.get(value.event) || 'cyan darken-2')
     },
-    search: function (value) {
+    search(value) {
       this.$store.commit('changeSearch', {text: value || ''})
     }
   },
-  data () {
+  data() {
     return {
       snack: {
         visible: false,

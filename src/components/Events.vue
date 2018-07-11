@@ -13,9 +13,17 @@
           >
           <template slot="items" slot-scope="props">
             <td>
-              <v-icon :title="props.item.event" :style="`color:${eventColor(props.item)};`">{{ eventIcon(props.item) }}</v-icon>
+              <v-tooltip right>
+                <v-icon slot="activator" :style="`color:${eventColor(props.item)};`">{{ eventIcon(props.item) }}</v-icon>
+                <span>{{ props.item.event }}</span>
+              </v-tooltip>
             </td>
-            <td class="text-xs-center">{{ props.item.node }}</td>
+            <td class="text-xs-center">
+              <v-tooltip bottom :disabled="!props.item.vpn">
+                <span slot="activator">{{ props.item.node }}</span>
+                <span>{{ props.item.vpn }} @ {{ props.item.pub }}</span>
+              </v-tooltip>
+            </td>
             <td class="text-xs-center">{{ eventTime(props.item) }}</td>
           </template>
         </v-data-table>
@@ -52,34 +60,26 @@ export default {
   computed: mapState({
     loading: state => state.clientsLoading,
     search: state => state.search,
-    events : state => state.events,
-    total : state => state.total,
-    server : state => state.server
+    events: state => state.events,
+    total: state => state.total,
+    server: state => state.server
   }),
   methods: {
     eventTime(event) {
       return moment(event.timestamp * 1000).format('HH:mm - DD.MM.YY')
     },
     eventIcon(event) {
-      switch (event.event) {
-        case 'connect': return 'fa-plug'
-        case 'disconnect': return 'fa-times'
-        case 'reconnect': return 'fa-repeat'
-        default: return 'fa-question'
-      }
+      const map = new Map([['connect','fa-plug'],['disconnect','fa-times'],['reconnect','fa-repeat']])
+      return map.get(event.event) || 'fa-question'
     },
     eventColor(event) {
-      switch (event.event) {
-        case 'connect': return '#28ba0e'
-        case 'disconnect': return '#c11919'
-        case 'reconnect': return '#4221a5'
-        default: return '#f27609'
-      }
+      const map = new Map([['connect','#28ba0e'],['disconnect','#c11919'],['reconnect','#4221a5']])
+      return map.get(event.event) || '#f27609'
     }
   },
   watch: {
     pagination: {
-      handler () {
+      handler() {
         const { page, rowsPerPage } = this.pagination
         this.$store.dispatch('changePage',{page:page,size:rowsPerPage})
       },
@@ -94,7 +94,7 @@ export default {
         this.debounce = false
       }, 300)
     },
-    server: function (value) {
+    server(value) {
       this.pagination.page = 1
       const { page, rowsPerPage } = this.pagination
       this.$store.dispatch('changePage',{page:page,size:rowsPerPage})

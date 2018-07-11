@@ -10,7 +10,12 @@
       :loading="loading"
       >
       <template slot="items" slot-scope="props">
-        <td><img :src="flagImg(props.item)" :title="flagTitle(props.item)" /></td>
+        <td>
+          <v-tooltip right>
+            <img :src="flagImg(props.item)" slot="activator" />
+            <span>{{ flagTitle(props.item) }}</span>
+          </v-tooltip>
+        </td>
         <td class="text-xs-center">{{ props.item.node }}</td>
         <td class="text-xs-center">{{ props.item.vpn }}</td>
         <td class="text-xs-center"><a :href="`http://geoiplookup.net/ip/${props.item.pub}`" target="_blank">{{ props.item.pub }}</a></td>
@@ -60,7 +65,7 @@ export default {
     nodes: state => {
       return state.nodes.map((node) => {
         if (!node.country_code)
-          axios.get(`./country/${node.pub}`)
+          node.country_code = axios.get(`./country/${node.pub}`)
             .then((response) => {
               node.country_name = response.data.country_name
               node.country_code = response.data.country_code

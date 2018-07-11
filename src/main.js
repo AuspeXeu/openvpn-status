@@ -115,25 +115,25 @@ new Vue({
     server: (state) => state.server
   }),
   watch: {
-    'server': (val) => {
+    server(val) {
       axios.get(`./log/${val}/size/${store.state.search}`)
         .then((response) => store.state.total = response.data.value)
     },
-    '$route' (to, from) {
+    '$route'(to, from) {
       try {
         const srvId = parseInt(to.params.id, 10)
         store.dispatch('changeServer', {server: srvId})
       } catch (e) {
-        console.log(e)
+        console.error(e)
       }
     }
   },
-  beforeMount () {
+  beforeMount() {
     let srvId
     try {
       srvId = parseInt(this.$route.params.id, 10)
     } catch (e) {
-      // nop
+      console.error(e)
     }
     axios.get('./servers')
       .then((response) => {
