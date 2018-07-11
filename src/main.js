@@ -15,7 +15,7 @@ Vue.use(Vuetify)
 Vue.use(Vuex)
 
 const router = new VueRouter({
-  routes: [{ path: '/:id', component: App }]
+  routes: [{ path: '/:id' }]
 })
 
 /* eslint-disable no-new */
@@ -118,6 +118,14 @@ new Vue({
     'server': (val) => {
       axios.get(`./log/${val}/size/${store.state.search}`)
         .then((response) => store.state.total = response.data.value)
+    },
+    '$route' (to, from) {
+      try {
+        const srvId = parseInt(to.params.id, 10)
+        store.dispatch('changeServer', {server: srvId})
+      } catch (e) {
+        console.log(e)
+      }
     }
   },
   beforeMount () {

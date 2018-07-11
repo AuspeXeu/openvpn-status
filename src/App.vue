@@ -83,15 +83,9 @@ export default {
     servers: state => state.servers
   }),
   watch: {
-    '$route' (to, from) {
-      try {
-        const srvId = parseInt(to.params.id, 10)
-        this.$store.dispatch('changeServer', {server: srvId})
-        this.drawer = false
-        this.search = ''
-      } catch (e) {
-        console.log(e)
-      }
+    server(value) {
+      this.drawer = false
+      this.search = ''
     },
     event: function (value) {
       let type = 'error'
