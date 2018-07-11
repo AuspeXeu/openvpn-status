@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuetify from 'vuetify'
+import VueRouter from 'vue-router'
 import 'vuetify/dist/vuetify.min.css'
 import Vuex from 'vuex'
 import axios from 'axios'
@@ -8,8 +9,13 @@ import moment from 'moment'
 import App from './App'
 
 Vue.config.productionTip = false
+Vue.use(VueRouter)
 Vue.use(Vuetify)
 Vue.use(Vuex)
+
+const router = new VueRouter({
+  routes: [{ path: '/:id', component: App }]
+})
 
 /* eslint-disable no-new */
 const store = new Vuex.Store({
@@ -97,6 +103,7 @@ const store = new Vuex.Store({
 })
 
 new Vue({
+  router: router,
   el: '#app',
   template: '<App/>',
   components: { App },
@@ -113,14 +120,18 @@ new Vue({
     }
   },
   beforeMount () {
+    let srvId
+    try {
+      srvId = parseInt(this.$route.params.id, 10)
+    } catch (e) {
+      // nop
+    }
     axios.get('./servers')
       .then((response) => {
         store.state.servers = response.data
-        store.commit('changeServer', {
-          server: response.data[0].id
+        store.dispatch('changeServer', {
+          server: srvId ? srvId : response.data[0].id
         })
-        axios.get(`./log/${store.state.server}/size/${store.state.search}`)
-          .then((response) => store.state.total = response.data.value)
       })
     const socket = new ReconnectingWebSocket(`${window.location.origin.replace('http','ws')}/live/log`)
     socket.onmessage = (event) => {

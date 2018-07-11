@@ -25,9 +25,6 @@
   import axios from 'axios'
   export default {
     name: 'clients',
-    created () {
-      this.$store.dispatch('refresh')
-    },
     methods: {
       customSort(items, col, isDesc) {
         if (!items)

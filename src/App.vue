@@ -16,7 +16,7 @@
       {{snack.text}}
     </v-snackbar>
     <v-toolbar fixed app dense>
-      <v-toolbar-title style="margin-left:15px;">
+      <v-toolbar-title>
         <v-toolbar-side-icon @click.native="drawer = !drawer" v-if="servers.length > 1"></v-toolbar-side-icon>
         <span>{{(server ? server.name : '')}}</span>
       </v-toolbar-title>
@@ -35,7 +35,7 @@
     </v-toolbar>
     <v-navigation-drawer temporary hide-overlay fixed v-model="drawer" class="text-xs-center" app>
       <v-list class="pt-0" dense>
-        <v-list-tile v-for="srv in servers" :key="srv.id" @click="changeServer(srv.id)">
+        <v-list-tile v-for="srv in servers" :key="srv.id" :to="`/${srv.id}`">
           <v-list-tile-action>
             <v-icon>storage</v-icon>
           </v-list-tile-action>
@@ -60,14 +60,6 @@ export default {
     Events
   },
   methods: {
-    loadData() {
-      this.$store.dispatch('refresh')
-    },
-    changeServer(newServer) {
-      this.$store.dispatch('changeServer', {server: newServer})
-      this.drawer = false
-      this.search = ''
-    },
     notify(text, type) {
       this.snack.text = text
       this.snack.color = type
@@ -96,6 +88,16 @@ export default {
     }
   },
   watch: {
+    '$route' (to, from) {
+      try {
+        const srvId = parseInt(to.params.id, 10)
+        this.$store.dispatch('changeServer', {server: newServer})
+        this.drawer = false
+        this.search = ''
+      } catch (e) {
+        console.log(e)
+      }
+    },
     event: function (value) {
       let type = 'error'
       switch (value.event) {
