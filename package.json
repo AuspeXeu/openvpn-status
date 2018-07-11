@@ -2,7 +2,7 @@
   "name": "openvpn-status",
   "homepage": "https://github.com/AuspeXeu/openvpn-status",
   "description": "A web-based application to monitor clients connected to an openvpn server.",
-  "version": "4.0.25",
+  "version": "4.0.27",
   "license": "MIT",
   "author": {
     "name": "Christian Vaas",
@@ -41,6 +41,7 @@
     "sqlite3": "^4.0.1",
     "uuid": "^3.3.2",
     "vue": "^2.5.16",
+    "vue-router": "^3.0.1",
     "vuetify": "^1.1.3",
     "vuex": "^3.0.1",
     "ws": "^5.2.1"
