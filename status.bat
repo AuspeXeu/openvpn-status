@@ -7,5 +7,5 @@ set "USERNAME=admin"
 set "PASSWORD=admin"
 
 set "JSON={\"script\":\"%script_type%\",\"pub\":\"%trusted_ip%\",\"cn\":\"%common_name%\",\"user\":\"%username%\",\"vpn\":\"%ifconfig_pool_remote_ip%\"}"
-./curl.exe -u %USERNAME%:%PASSWORD% -H "Content-Type: application/json" -X POST -d "%JSON%" "http://%HOST%:%PORT%/server/%SERVER%/script" --connect-timeout 2 -m 3
+curl.exe -u %USERNAME%:%PASSWORD% -H "Content-Type: application/json" -X POST -d "%JSON%" "http://%HOST%:%PORT%/server/%SERVER%/script" --connect-timeout 2 -m 3
 exit 0
