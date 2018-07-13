@@ -28,6 +28,7 @@ cd openvpn-status
 npm install
 sudo npm install pm2 -g
 ```
+
 #### Windows
 Download [curl](https://curl.haxx.se/download.html#Win64) and unpack the `curl.exe` in the same folder containing your OpenVPN configuration.
 
@@ -59,22 +60,13 @@ Example:
 
 ### 4. OpenVPN configuration
 
-Copy the `status.sh` file to the folder containing your OpenVPN configuration (e.g. `server.conf`). Then add the following lines to your configuration file. This will intall the `client-connect` and `client-disconnect` hooks to provide the data to the web interface. Make sure to adjust the port and ip address as you have specified in your `cfg.json`.
+#### UNIX
+Copy the `status.sh` file to the folder containing your OpenVPN configuration, e.g., `server.conf`. Add the following lines to your configuration file. This will intall the `client-connect` and `client-disconnect` hooks to provide the data to the web interface.
 
 ```
 script-security 2
 client-connect ./status.sh
 client-disconnect ./status.sh
-```
-
-And adjust the variables inside the `status.sh` script to match your configuration.
-
-```
-HOST="127.0.0.1"
-PORT="3013"
-SERVER="0"
-USERNAME="admin"
-PASSWORD="admin"
 ```
 
 Make sure the script is executable by the OpenVPN daemon.
@@ -83,15 +75,28 @@ Make sure the script is executable by the OpenVPN daemon.
 [root@server ~]# chmod +x status.sh
 ```
 
-Afterwards restart your OpenVPN server.
-
 #### Windows
-For windows copy `status.bat` and perform the above instructions analogously.  Edit your OpenVPN configuration file as such:
+Copy the `status.bat` file to the folder containing your OpenVPN configuration, e.g., `server.conf`. Add the following lines to your configuration file. This will intall the `client-connect` and `client-disconnect` hooks to provide the data to the web interface.
+
 ```
 script-security 2
 client-connect status.bat
 client-disconnect status.bat
 ```
+
+#### Adjust scripts
+And adjust the variables inside `status.sh/.bat` to match your configuration.
+
+```
+HOST="127.0.0.1" // Address of the machine running this app,
+                 // 127.0.0.1 if the machine also runs the openvpn server
+PORT="3013"      // As specified in cfg.json
+SERVER="0"       // As specified in cfg.json
+USERNAME="admin" // As specified in cfg.json
+PASSWORD="admin" // As specified in cfg.json
+```
+
+Restart your OpenVPN server.
 
 ### 5. Build
 
@@ -101,6 +106,12 @@ Before the application is ready to run, the frontend needs to be built. This is 
 
 # Run
 
+### Manually
+```
+node server.js
+```
+
+### As service
 ```
 pm2 start pm2.json
 pm2 save
