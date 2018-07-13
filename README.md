@@ -86,7 +86,12 @@ Make sure the script is executable by the OpenVPN daemon.
 Afterwards restart your OpenVPN server.
 
 #### Windows
-For windows copy `status.bat` and perform the above instructions analogously.
+For windows copy `status.bat` and perform the above instructions analogously.  Edit your OpenVPN configuration file as such:
+```
+script-security 2
+client-connect status.bat
+client-disconnect status.bat
+```
 
 ### 5. Build
 
