@@ -1,6 +1,6 @@
 echo @off
 
-set "HOST=127.0.0.1"  :: if bind is 0.0.0.0, leave this field as 127.0.0.1
+set "HOST=127.0.0.1"
 set "PORT=3013"
 set "SERVER=0"
 set "USERNAME=admin"
