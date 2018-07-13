@@ -84,8 +84,8 @@ client-connect status.bat
 client-disconnect status.bat
 ```
 
-#### Adjust scripts
-And adjust the variables inside `status.sh/.bat` to match your configuration.
+#### Adjust script variables
+And adjust the variables inside `status.sh/status.bat` to match your configuration.
 
 ```
 HOST="127.0.0.1" // Address of the machine running this app,
