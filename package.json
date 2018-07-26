@@ -42,9 +42,9 @@
     "uuid": "^3.3.2",
     "vue": "^2.5.16",
     "vue-router": "^3.0.1",
-    "vuetify": "^1.1.5",
+    "vuetify": "^1.1.8",
     "vuex": "^3.0.1",
-    "ws": "^5.2.2"
+    "ws": "^6.0.0"
   },
   "devDependencies": {
     "autoprefixer": "^8.0.0",
