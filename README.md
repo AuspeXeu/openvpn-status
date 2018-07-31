@@ -12,7 +12,6 @@ Features
 
 - [x] [NodeJS](https://nodejs.org/en/download/package-manager/) 6 or higher
 - [x] npm package manager
-- [x] curl
 
 ### Browser support
 Find a list of supported browsers [here](https://vuetifyjs.com/en/getting-started/quick-start#supported-browsers)
@@ -41,7 +40,7 @@ The configuration is handled in the ``cfg.json`` file.
 | -------- |:-------------:| ------------ |
 | port     | `3013` | Port on which the server will be listening. |
 | bind     | `127.0.0.1` | Address to which the server will bind to. Change to `0.0.0.0` to make available on all interfaces. |
-| servers  | `[{"id": 0, "name": "Server"}]` | Array of servers. |
+| servers  | `[{"name": "Server","host": "127.0.0.1","man_port": 7656}]` | Array of servers. |
 | username | `admin` | User for basic HTTP authentication. Change to `''` or `false` to disable. |
 | password | `admin` | Password for basic HTTP authentication. |
 
@@ -51,8 +50,8 @@ Example:
   "port": 3013,
   "bind": "127.0.0.1",
   "servers": [
-    {"id": 0, "name": "Server A"},
-    {"id": 1, "name": "Server B"}
+    {"id": 0, "name": "Server A", "host": "127.0.0.1","man_port": 7656},
+    {"id": 1, "name": "Server B", "host": "127.0.0.1","man_port": 6756}
   ],
   "username": "admin",
   "password": "YV3qSTxD"
@@ -61,40 +60,10 @@ Example:
 
 ### 4. OpenVPN configuration
 
-#### UNIX
-Copy the `status.sh` file to the folder containing your OpenVPN configuration, e.g., `server.conf`. Add the following lines to your configuration file. This will intall the `client-connect` and `client-disconnect` hooks to provide the data to the web interface.
+Add the following line to your configuration file, e.g., `server.conf`. This will start the management console on port `7656` and make it accessible on `127.0.0.1`, i.e. this machine.
 
 ```
-script-security 2
-client-connect ./status.sh
-client-disconnect ./status.sh
-```
-
-Make sure the script is executable by the OpenVPN daemon.
-
-```
-[root@server ~]# chmod +x status.sh
-```
-
-#### Windows
-Copy the `status.bat` file to the folder containing your OpenVPN configuration, e.g., `server.conf`. Add the following lines to your configuration file. This will intall the `client-connect` and `client-disconnect` hooks to provide the data to the web interface.
-
-```
-script-security 2
-client-connect status.bat
-client-disconnect status.bat
-```
-
-#### Adjust script variables
-And adjust the variables inside `status.sh/status.bat` to match your configuration.
-
-```
-HOST="127.0.0.1" // Address of the machine running this app,
-                 // 127.0.0.1 if the machine also runs the openvpn server
-PORT="3013"      // As specified in cfg.json
-SERVER="0"       // As specified in cfg.json
-USERNAME="admin" // As specified in cfg.json
-PASSWORD="admin" // As specified in cfg.json
+management 127.0.0.1 7656 // As specified in cfg.json for this server
 ```
 
 Restart your OpenVPN server.
