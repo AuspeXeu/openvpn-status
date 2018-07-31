@@ -28,11 +28,11 @@
         </td>
         <td>
           <v-tooltip top>
-            <v-icon style="color:#28ba0e;" slot="activator">fa-arrow-up</v-icon>
+            <v-icon :id="`${props.item.node}_sent`" style="color:#28ba0e;" slot="activator">fa-arrow-up</v-icon>
             <span>{{ formatDataVolume(props.item.sent) }} sent</span>
           </v-tooltip>
           <v-tooltip bottom>
-            <v-icon style="color:#4221a5;" slot="activator">fa-arrow-down</v-icon>
+            <v-icon :id="`${props.item.node}_received`" style="color:#4221a5;" slot="activator">fa-arrow-down</v-icon>
             <span>{{ formatDataVolume(props.item.received) }} received</span>
           </v-tooltip>
         </td>
@@ -92,13 +92,28 @@ export default {
       return `./static/images/flags/${(node.country_code ? `${node.country_code}.png` : 'unknown.jpg')}`
     }
   },
+  watch: {
+    updateNode(nVal, oVal) {
+      ['sent','received'].forEach((prop) => {
+        if (nVal[prop] === oVal[prop])
+          return
+        const el = document.getElementById(`${nVal.node}_${prop}`)
+        if (!el)
+          return
+        const restore = el.className
+        el.className += ' highlight'
+        setTimeout(() => el.className = restore, 4000)
+      })
+    }
+  },
   computed: mapState({
+    updateNode: state => state.updateNode,
     loading: state => state.clientsLoading,
     search: state => state.search,
-    nodes: state => {
+    nodes(state) {
       return state.nodes.map((node) => {
-        if (!node.country_code)
-          node.country_code = axios.get(`./country/${node.pub}`)
+        if (!this.meta[node.node])
+          this.meta[node.node] = axios.get(`./country/${node.pub}`)
             .then((response) => {
               node.country_name = response.data.country_name
               node.country_code = response.data.country_code
@@ -110,6 +125,7 @@ export default {
   }),
   data() {
     return {
+      meta: {},
       headers: [{
         sortable: true,
         value: 'country_name',
@@ -147,5 +163,16 @@ export default {
 <style scoped>
 img {
   max-width: initial;
+}
+@keyframes highlight {
+  0% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.highlight {
+  animation: highlight 1s;
 }
 </style>
