@@ -69,7 +69,7 @@ export default {
       return moment(event.timestamp * 1000).format('HH:mm - DD.MM.YY')
     },
     eventIcon(event) {
-      const map = new Map([['connect','fa-plug'],['disconnect','fa-times'],['reconnect','fa-repeat']])
+      const map = new Map([['connect','fa-plug'],['disconnect','fa-times'],['reconnect','fa-redo']])
       return map.get(event.event) || 'fa-question'
     },
     eventColor(event) {
