@@ -2,12 +2,14 @@ const EventEmitter = require('events').EventEmitter
 const net = require('net')
 
 const STATE = {idle: Symbol('idle'), status: Symbol('status')}
+let oldClients
 class client extends EventEmitter { 
   constructor(host, port) {
     super()
     this.state = STATE.idle
     this.host = host
     this.port = port
+    this.alive = false
     this.clientRes = false
     this.clientProps = []
     this.clients = new Map()
@@ -35,6 +37,8 @@ class client extends EventEmitter {
 
     data = data.toString()
     if (data.startsWith('TITLE')) {
+      oldClients = new Map(this.clients)
+      this.clients = new Map()
       this.state = STATE.status
     } else if (data.startsWith('HEADER') && this.state === STATE.status) {
       data = data.split('\t').slice(2, data.length+1)
@@ -51,6 +55,10 @@ class client extends EventEmitter {
           this.clientProps.forEach((prop, idx) => client[prop] = prepProperty(data[idx]))
       })
     } else if (data.startsWith('END') && this.state === STATE.status) {
+      oldClients.forEach((client, clientId) => {
+        if (!this.clients.has(clientId))
+          this.emit('client-disconnect', client)
+      })
       if (this.clientRes) {
         this.clientRes(Array.from(this.clients.values()))
         this.clientRes = false
@@ -81,10 +89,10 @@ class client extends EventEmitter {
     return this.connected
   }
   getClients() {
+    if (!this.alive)
+      this.alive = setInterval(() => this.getClients(), 5000)
     return this.connected.then(() => {
-      const res = new Promise((resolve) => {
-        this.clientRes = resolve
-      })
+      const res = new Promise((resolve) => this.clientRes = resolve)
       this.socket.write('status 3\r\n')
       return res
     })

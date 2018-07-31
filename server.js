@@ -48,7 +48,7 @@ const broadcast = (data) => clients.forEach((ws) => ws.send(JSON.stringify(data)
 const logEvent = (data) => {
   db.Log.findOne({where: {server: data.server, node: data.node, timestamp: {[db.op.between]: [data.timestamp - 30, data.timestamp + 30]}}})
     .then((entry) => {
-      if (entry) {
+      if (entry && data.event === 'connect') {
         Object.assign(entry, data)
         entry.event = 'reconnect'
         entry.save().then(() => broadcast(entry))
@@ -173,7 +173,7 @@ db.init().then(() => {
       client.on('client-disconnect', (client) => {
         const entry = Object.assign(clientToEntry(client), {event: 'disconnect'})
         const oLen = server.entries.length
-        server.entries = server.entries.filter((itm) => itm.node !== name)
+        server.entries = server.entries.filter((itm) => itm.node !== entry.node)
         if (oLen !== server.entries.length)
           logEvent(Object.assign({server: idx, event: 'disconnect'}, entry))
       })
