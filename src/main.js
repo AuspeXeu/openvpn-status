@@ -26,6 +26,7 @@ const store = new Vuex.Store({
     server: 0,
     servers: [],
     total: 0,
+    updateNode: false,
     eventsLoading: true,
     clientsLoading: true,
     search: '',
@@ -50,6 +51,7 @@ const store = new Vuex.Store({
         node.vpn = event.vpn
         node.ping = event.timestamp
         node.connected = event.connected
+        state.updateNode = node
       }
     },
     addEvent(state, payload) {
