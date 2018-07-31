@@ -58,9 +58,12 @@ const logEvent = (data) => {
 }
 const clientToEntry = (client) => ({
   node: client['Common Name'] || client['Username'],
+  connected: client['Connected Since (time_t)'],
   timestamp: client['Last Ref (time_t)'],
   pub: client['Real Address'].split(':')[0],
-  vpn: client['Virtual Address']
+  vpn: client['Virtual Address'],
+  received: client['Bytes Received'],
+  sent: client['Bytes Sent']
 })
 const validateIPaddress = (ipaddress) => /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ipaddress.toString())
 const validateNumber = (n) => !isNaN(parseFloat(n)) && isFinite(n)
@@ -177,7 +180,7 @@ db.init().then(() => {
         if (oLen !== server.entries.length)
           logEvent(Object.assign({server: idx, event: 'disconnect'}, entry))
       })
-      client.on('client-update', (client) => broadcast(Object.assign({server:idx, event: 'update'}, client)))
+      client.on('client-update', (client) => broadcast(Object.assign({server:idx, event: 'update'}, clientToEntry(client))))
     })
     server.listen({host: conf.get('bind'),port: conf.get('port'),exclusive: true})
   })
