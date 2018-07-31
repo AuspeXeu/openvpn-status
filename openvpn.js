@@ -52,7 +52,7 @@ class client extends EventEmitter {
       })
     } else if (data.startsWith('END') && this.state === STATE.status) {
       if (this.clientRes) {
-        this.clientRes(this.clients)
+        this.clientRes(Array.from(this.clients.values()))
         this.clientRes = false
       }
       this.state = STATE.idle
@@ -62,11 +62,12 @@ class client extends EventEmitter {
         const client = this.clients.get(clientId)
         client['Bytes Received'] = received
         client['Bytes Sent'] = sent
+        this.emit('client-update', client)
       }
     } else if (data.startsWith('>CLIENT:ESTABLISHED') && this.state === STATE.idle) {
       const [_, clientId] = data.split(',').map((itm) => parseInt(itm, 10))
       this.getClients().then((clients) => {
-        this.emit('client-connect', clients.get(clientId))
+        this.emit('client-connect', this.clients.get(clientId))
       })
     } else if (data.startsWith('>CLIENT:DISCONNECT') && this.state === STATE.idle) {
       const [_, clientId] = data.split(',').map((itm) => parseInt(itm, 10))

@@ -162,7 +162,7 @@ db.init().then(() => {
     servers.forEach((server, idx) => {
       const client = new openvpn.OpenVPNclient(server.host, server.man_port)
       client.getClients().then((clients) => {
-        server.entries = clients.values().map(clientToEntry)
+        server.entries = clients.map(clientToEntry)
       })
       client.on('client-connect', (client) => {
         const entry = clientToEntry(client)
