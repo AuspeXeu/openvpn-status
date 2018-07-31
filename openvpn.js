@@ -56,7 +56,7 @@ class client extends EventEmitter {
       })
     } else if (data.startsWith('END') && this.state === STATE.status) {
       oldClients.forEach((client, clientId) => {
-        if (!this.clients.has(clientId))
+        if (!this.clients.has(clientId) && (client['Common Name'].length || client['Username'].length))
           this.emit('client-disconnect', client)
       })
       if (this.clientRes) {
