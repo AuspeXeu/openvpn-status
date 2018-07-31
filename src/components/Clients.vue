@@ -19,7 +19,23 @@
         <td class="text-xs-center">{{ props.item.node }}</td>
         <td class="text-xs-center">{{ props.item.vpn }}</td>
         <td class="text-xs-center"><a :href="`http://geoiplookup.net/ip/${props.item.pub}`" target="_blank">{{ props.item.pub }}</a></td>
-        <td class="text-xs-center">{{ formatTime(props.item.timestamp) }}</td>
+        <td class="text-xs-center">
+          <v-tooltip bottom>
+            <span slot="activator">{{ formatTime(props.item.connected) }}</span>
+            <span>Last ping: {{ formatTime(props.item.ping) }}</br></span>
+            <span>Online: {{ onlineTime(props.item.connected) }}</span>
+          </v-tooltip>
+        </td>
+        <td>
+          <v-tooltip top>
+            <v-icon style="color:#28ba0e;" slot="activator">fa-arrow-up</v-icon>
+            <span>{{ formatDataVolume(props.item.sent) }} sent</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <v-icon style="color:#4221a5;" slot="activator">fa-arrow-down</v-icon>
+            <span>{{ formatDataVolume(props.item.received) }} received</span>
+          </v-tooltip>
+        </td>
       </template>
     </v-data-table>
   </v-container>
@@ -48,6 +64,23 @@ export default {
         return 0
       })
       return items
+    },
+    formatDataVolume(vol) {
+      vol = vol / 1000 / 1000 / 1000
+      if (vol > 1)
+        return `${vol.toFixed(2)} GB`
+      vol = vol * 1000
+      if (vol > 1)
+        return `${vol.toFixed(2)} MB`
+      vol = vol * 1000
+      if (vol > 1)
+        return `${vol.toFixed(2)} KB`
+      vol = vol * 1000
+      if (vol > 1)
+        return `${vol.toFixed(2)} B`
+    },
+    onlineTime(connected) {
+      return moment.duration(moment().diff(moment(connected * 1000))).humanize()
     },
     formatTime(ts) {
       return moment(ts * 1000).format('HH:mm - DD.MM.YY')
@@ -100,7 +133,11 @@ export default {
         text: 'Connected',
         align: 'center',
         sortable: true,
-        value: 'timestamp'
+        value: 'connected'
+      },{
+        text: 'Traffic',
+        sortable: false,
+        width: '100px'
       }]
     }
   }
