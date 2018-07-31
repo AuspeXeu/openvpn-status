@@ -11,7 +11,9 @@ import App from './App'
 
 Vue.config.productionTip = false
 Vue.use(VueRouter)
-Vue.use(Vuetify)
+Vue.use(Vuetify, {
+  iconfont: 'fa'
+})
 Vue.use(Vuex)
 
 const router = new VueRouter({
@@ -28,15 +30,27 @@ const store = new Vuex.Store({
     clientsLoading: true,
     search: '',
     nodes: [],
-    events: [],
-    event: {}
+    events: []
   },
   mutations: {
     updateEvents(state, payload) {
       state.events = payload.events
     },
     updateNodes(state, payload) {
+      payload.nodes.forEach((node) => node.ping = node.timestamp)
       state.nodes = payload.nodes
+    },
+    updateNode(state, payload) {
+      const event = payload.event
+      const node = state.nodes.find((node) => node.node === event.node)
+      if (node) {
+        node.received = event.received
+        node.sent = event.sent
+        node.pub = event.pub
+        node.vpn = event.vpn
+        node.ping = event.timestamp
+        node.connected = event.connected
+      }
     },
     addEvent(state, payload) {
       const event = payload.event
@@ -47,7 +61,8 @@ const store = new Vuex.Store({
           pub: event.pub,
           country_name: false,
           country_code: false,
-          timestamp: event.timestamp,
+          connected: event.connected,
+          ping: event.timestamp,
           vpn: event.vpn
         })
       if (event.node.includes(state.search)) {
@@ -55,7 +70,6 @@ const store = new Vuex.Store({
         state.events.unshift(event)
         state.events.pop()
       }
-      state.event = event
     },
     changeServer(state, payload) {
       state.server = payload.server
@@ -145,7 +159,14 @@ new Vue({
     const socket = new ReconnectingWebSocket(`${window.location.origin.replace('http','ws')}/live/log`)
     socket.onmessage = ({data}) => {
       const event = JSON.parse(data)
-      if (event.server === store.state.server)
+      if (event.server !== store.state.server)
+        return
+      if (event.event === 'update')
+        store.commit({
+          type: 'updateNode',
+          event: event
+        })
+      else
         store.commit({
           type: 'addEvent',
           event: event
