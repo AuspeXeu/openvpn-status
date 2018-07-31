@@ -29,6 +29,5 @@ const Log = sequelize.define('Log', {
 module.exports = {
   init: () => Log.sync(),
   Log: Log,
-  state: () => sequelize.query('select p1.* from log as p1 inner join (select max(timestamp) as timestamp, node from log group by node) as p2 on p1.node = p2.node and p1.timestamp = p2.timestamp where p1.event = \'connect\'', {model:Log}),
   op: Sequelize.Op
 }

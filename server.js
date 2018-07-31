@@ -1,6 +1,7 @@
 const zlib = require('zlib')
 const fs = require('fs')
 const http = require('http')
+const openvpn = require('./openvpn.js')
 const express = require('express')
 const app = express()
 const WebSocket = require('ws')
@@ -18,7 +19,7 @@ conf.file({file: 'cfg.json'})
 conf.defaults({
   port: 3013,
   bind: '127.0.0.1',
-  servers: [{id: 0, name: 'Server'}],
+  servers: [{id: 0, name: 'Server', host: '127.0.0.1', man_port: 7656}],
   ipFile: './GeoLite2-City.mmdb',
   username: 'admin',
   password: 'admin'
@@ -45,7 +46,6 @@ let servers = conf.get('servers') || []
 
 const broadcast = (data) => clients.forEach((ws) => ws.send(JSON.stringify(data)))
 const logEvent = (data) => {
-  data.timestamp = moment().unix()
   db.Log.findOne({where: {server: data.server, node: data.node, timestamp: {[db.op.between]: [data.timestamp - 30, data.timestamp + 30]}}})
     .then((entry) => {
       if (entry) {
@@ -56,6 +56,12 @@ const logEvent = (data) => {
         db.Log.create(data).then((entry) => broadcast(entry))
     })
 }
+const clientToEntry = (client) => ({
+  node: client['Common Name'] || client['Username'],
+  timestamp: client['Last Ref (time_t)'],
+  pub: client['Real Address'].split(':')[0],
+  vpn: client['Virtual Address']
+})
 const validateIPaddress = (ipaddress) => /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ipaddress.toString())
 const validateNumber = (n) => !isNaN(parseFloat(n)) && isFinite(n)
 const loadIPdatabase = () => {
@@ -110,35 +116,6 @@ const validateServer = (req, res, next) => {
     return res.sendStatus(404)
   next()
 }
-app.post('/server/:id/script', validateServer, (req, res) => {
-  const serverId = parseInt(req.params.id, 10)
-  const pub = req.body.pub
-  const cn = (req.body.cn || '').trim()
-  const user = (req.body.user || '').trim()
-  const vpn = req.body.vpn
-  const script = req.body.script.trim()
-  const name = cn || user
-
-  if (!name.length)
-    return res.sendStatus(400)
-
-  const template = {server: serverId, node: name, timestamp: moment().unix()}
-
-  if (script === 'client-connect') {
-    if (!validateIPaddress(pub) || !validateIPaddress(vpn))
-      return res.sendStatus(400)
-    const entry = Object.assign(template, {pub: pub, vpn: vpn, event: 'connect'})
-    servers[serverId].entries = servers[serverId].entries.filter((itm) => itm.node !== name)
-    logEvent(entry)
-    servers[serverId].entries.push(entry)
-  } else if (script === 'client-disconnect') {
-    const oLen = servers[serverId].entries.length
-    servers[serverId].entries = servers[serverId].entries.filter((itm) => itm.node !== name)
-    if (oLen !== servers[serverId].entries.length)
-      logEvent(Object.assign(template, {event: 'disconnect'}))
-  }
-  res.sendStatus(200)
-})
 app.get('/country/:ip', (req, res) => {
   if (!validateIPaddress(req.params.ip))
     return res.sendStatus(400)
@@ -180,17 +157,25 @@ wss.on('connection', (ws) => {
   })
 })
 
-db.init().then(() => db.state()).then((entries) => {
+db.init().then(() => {
   loadIPdatabase().then(() => {
     servers.forEach((server, idx) => {
-      server.entries = entries.filter((entry) => entry.server === idx).map((entry) => {
-        const data = {
-          node: entry.node,
-          timestamp: entry.timestamp,
-          pub: entry.pub,
-          vpn: entry.vpn
-        }
-        return data
+      const client = new openvpn.OpenVPNclient(server.host, server.man_port)
+      client.getClients().then((clients) => {
+        server.entries = clients.map(clientToEntry)
+      })
+      client.on('client-connect', (client) => {
+        const entry = clientToEntry(client)
+        server.entries = server.entries.filter((itm) => itm.node !== entry.node)
+        logEvent(Object.assign({server: idx, event: 'connect'}, entry))
+        server.entries.push(entry)
+      })
+      client.on('client-disconnect', (client) => {
+        const entry = Object.assign(clientToEntry(client), {event: 'disconnect'})
+        const oLen = server.entries.length
+        server.entries = server.entries.filter((itm) => itm.node !== name)
+        if (oLen !== server.entries.length)
+          logEvent(Object.assign({server: idx, event: 'disconnect'}, entry))
       })
     })
     server.listen({host: conf.get('bind'),port: conf.get('port'),exclusive: true})
