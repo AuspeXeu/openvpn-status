@@ -21,7 +21,7 @@
             <td class="text-xs-center">
               <v-tooltip bottom :disabled="!props.item.vpn">
                 <span slot="activator">{{ props.item.node }}</span>
-                <span>{{ props.item.vpn }} @ {{ props.item.pub }}</span>
+                <span>{{ props.item.pub }} > {{ props.item.vpn }}</span>
               </v-tooltip>
             </td>
             <td class="text-xs-center">{{ eventTime(props.item) }}</td>
