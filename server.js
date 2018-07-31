@@ -177,6 +177,7 @@ db.init().then(() => {
         if (oLen !== server.entries.length)
           logEvent(Object.assign({server: idx, event: 'disconnect'}, entry))
       })
+      client.on('client-update', (client) => broadcast(Object.assign({server:idx, event: 'update'}, client)))
     })
     server.listen({host: conf.get('bind'),port: conf.get('port'),exclusive: true})
   })
