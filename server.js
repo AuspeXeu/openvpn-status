@@ -154,28 +154,28 @@ wss.on('connection', (ws) => {
   })
 })
 
-db.init().then(() => {
-  loadIPdatabase().then(() => {
-    servers.forEach((server, idx) => {
-      const client = new openvpn.OpenVPNclient(server.host, server.man_port)
-      client.getClients().then((clients) => {
-        server.entries = clients.map(clientToEntry)
-      })
-      client.on('client-connect', (client) => {
-        const entry = clientToEntry(client)
-        server.entries = server.entries.filter((itm) => itm.node !== entry.node)
-        logEvent(Object.assign({server: idx, event: 'connect', timestamp: moment().unix()}, entry))
-        server.entries.push(entry)
-      })
-      client.on('client-disconnect', (client) => {
-        const entry = Object.assign(clientToEntry(client), {event: 'disconnect'})
-        const oLen = server.entries.length
-        server.entries = server.entries.filter((itm) => itm.node !== entry.node)
-        if (oLen !== server.entries.length)
-          logEvent(Object.assign({server: idx, event: 'disconnect', timestamp: moment().unix()}, entry))
-      })
-      client.on('client-update', (client) => broadcast(Object.assign(clientToEntry(client), {server:idx, event: 'update', timestamp: moment().unix()})))
+Promise.all([db.init(), loadIPdatabase()]).then(() => {
+  servers.forEach((server, idx) => {
+    const client = new openvpn.OpenVPNclient(server.host, server.man_port)
+    client.getClients().then((clients) => {
+      server.entries = clients.map(clientToEntry)
     })
-    server.listen({host: conf.get('bind'),port: conf.get('port'),exclusive: true})
+    client.on('client-connect', (client) => {
+      const entry = clientToEntry(client)
+      server.entries = server.entries.filter((itm) => itm.node !== entry.node)
+      logEvent(Object.assign({server: idx, event: 'connect', timestamp: moment().unix()}, entry))
+      server.entries.push(entry)
+    })
+    client.on('client-disconnect', (client) => {
+      const entry = Object.assign(clientToEntry(client), {event: 'disconnect'})
+      const oLen = server.entries.length
+      server.entries = server.entries.filter((itm) => itm.node !== entry.node)
+      if (oLen !== server.entries.length)
+        logEvent(Object.assign({server: idx, event: 'disconnect', timestamp: moment().unix()}, entry))
+    })
+    client.on('client-update', (client) => {
+      broadcast(Object.assign(clientToEntry(client), {server:idx, event: 'update', timestamp: moment().unix()}))
+    })
   })
+  server.listen({host: conf.get('bind'), port: conf.get('port'), exclusive: true})
 })
