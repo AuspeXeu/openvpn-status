@@ -22,7 +22,7 @@
         <td class="text-xs-center">
           <v-tooltip bottom>
             <span slot="activator">{{ formatTime(props.item.connected) }}</span>
-            <span>Last ping: {{ elabsedTime(props.item.ping) }}</br></span>
+            <span>Last seen: {{ elabsedTime(props.item.seen) }}</br></span>
             <span>Online: {{ elabsedTime(props.item.connected) }}</span>
           </v-tooltip>
         </td>

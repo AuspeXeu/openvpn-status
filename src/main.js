@@ -38,7 +38,7 @@ const store = new Vuex.Store({
       state.events = payload.events
     },
     updateNodes(state, payload) {
-      payload.nodes.forEach((node) => node.ping = node.timestamp)
+      payload.nodes.forEach((node) => node.seen = node.timestamp)
       state.nodes = payload.nodes
     },
     updateNode(state, payload) {
@@ -49,7 +49,7 @@ const store = new Vuex.Store({
         node.sent = event.sent
         node.pub = event.pub
         node.vpn = event.vpn
-        node.ping = event.timestamp
+        node.seen = event.timestamp
         node.connected = event.connected
         state.updateNode = node
       }
