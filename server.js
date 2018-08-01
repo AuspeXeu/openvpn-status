@@ -52,7 +52,7 @@ const logEvent = (data) => {
         entry.event = 'reconnect'
         entry.save().then(() => broadcast(entry))
       } else
-        db.Log.create(data).then((entry) => broadcast(entry))
+        db.Log.create(data).then((entry) => broadcast(Object.assign(entry, data)))
     })
 }
 const clientToEntry = (client) => ({
