@@ -39,17 +39,15 @@ if (conf.get('username') && conf.get('username').length)
     }
     next()
   })
-const ipFile = conf.get('ipFile')
 const cityLookup = {}
 const clients = new Map()
 let servers = conf.get('servers') || []
-
 const broadcast = (data) => clients.forEach((ws) => ws.send(JSON.stringify(data)))
 const logEvent = (data) => {
   const ts = data.timestamp % 60
   db.Log.findOne({where: {server: data.server, node: data.node, timestamp: {[db.op.between]: [data.timestamp - ts, data.timestamp + 60 - ts]}}})
     .then((entry) => {
-      if (entry && entry.event === 'disconnect' && data.event === 'connect') {
+      if (entry && data.event === 'connect') {
         Object.assign(entry, data)
         entry.event = 'reconnect'
         entry.save().then(() => broadcast(entry))
