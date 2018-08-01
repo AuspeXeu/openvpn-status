@@ -63,7 +63,7 @@ const store = new Vuex.Store({
           country_name: false,
           country_code: false,
           connected: event.connected,
-          seen: event.seen
+          seen: event.seen,
           vpn: event.vpn
         })
       if (event.node.includes(state.search)) {
