@@ -22,17 +22,17 @@
         <td class="text-xs-center">
           <v-tooltip bottom>
             <span slot="activator">{{ formatTime(props.item.connected) }}</span>
-            <span>Last ping: {{ formatTime(props.item.ping) }}</br></span>
-            <span>Online: {{ onlineTime(props.item.connected) }}</span>
+            <span>Last ping: {{ elabsedTime(props.item.ping) }}</br></span>
+            <span>Online: {{ elabsedTime(props.item.connected) }}</span>
           </v-tooltip>
         </td>
         <td>
           <v-tooltip top>
-            <v-icon :id="`${props.item.node}_sent`" style="color:#28ba0e;" slot="activator">fa-arrow-up</v-icon>
+            <v-icon :id="`${props.item.node}_sent`" slot="activator">fa-arrow-up</v-icon>
             <span>{{ formatDataVolume(props.item.sent) }} sent</span>
           </v-tooltip>
           <v-tooltip bottom>
-            <v-icon :id="`${props.item.node}_received`" style="color:#4221a5;" slot="activator">fa-arrow-down</v-icon>
+            <v-icon :id="`${props.item.node}_received`" slot="activator">fa-arrow-down</v-icon>
             <span>{{ formatDataVolume(props.item.received) }} received</span>
           </v-tooltip>
         </td>
@@ -79,8 +79,8 @@ export default {
       if (vol > 1)
         return `${vol.toFixed(2)} B`
     },
-    onlineTime(connected) {
-      return moment.duration(moment().diff(moment(connected * 1000))).humanize()
+    elabsedTime(since) {
+      return moment.duration(moment().diff(moment(since * 1000))).humanize()
     },
     formatTime(ts) {
       return moment(ts * 1000).format('HH:mm - DD.MM.YY')
@@ -101,7 +101,7 @@ export default {
         if (!el)
           return
         const restore = el.className
-        el.className += ' highlight'
+        el.className += ` high_${prop}`
         setTimeout(() => el.className = restore, 4000)
       })
     }
@@ -164,15 +164,30 @@ export default {
 img {
   max-width: initial;
 }
-@keyframes highlight {
+@keyframes sent {
   0% {
+    color:#28ba0e;
     transform: scale(1.2);
   }
   100% {
+    color: rgba(0,0,0,.54);
     transform: scale(1);
   }
 }
-.highlight {
-  animation: highlight 1s;
+@keyframes received {
+  0% {
+    color:#4221a5;
+    transform: scale(1.2);
+  }
+  100% {
+    color: rgba(0,0,0,.54);
+    transform: scale(1);
+  }
+}
+.high_sent {
+  animation: sent 1s;
+}
+.high_received {
+  animation: received 1s;
 }
 </style>
