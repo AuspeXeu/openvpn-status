@@ -38,7 +38,6 @@ const store = new Vuex.Store({
       state.events = payload.events
     },
     updateNodes(state, payload) {
-      payload.nodes.forEach((node) => node.seen = node.timestamp)
       state.nodes = payload.nodes
     },
     updateNode(state, payload) {
@@ -64,13 +63,15 @@ const store = new Vuex.Store({
           country_name: false,
           country_code: false,
           connected: event.connected,
-          ping: event.timestamp,
+          seen: event.seen
           vpn: event.vpn
         })
       if (event.node.includes(state.search)) {
+        const oLen = state.events.length
         state.events = state.events.filter((itm) => itm.id !== event.id)
         state.events.unshift(event)
-        state.events.pop()
+        if (state.events.oLen !== state.events.length)
+          state.events.pop()
       }
     },
     changeServer(state, payload) {

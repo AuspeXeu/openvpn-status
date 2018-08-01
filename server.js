@@ -60,7 +60,7 @@ const logEvent = (data) => {
 const clientToEntry = (client) => ({
   node: client['Common Name'] || client['Username'],
   connected: client['Connected Since (time_t)'],
-  timestamp: client['Last Ref (time_t)'],
+  seen: client['Last Ref (time_t)'],
   pub: client['Real Address'].split(':')[0],
   vpn: client['Virtual Address'],
   received: client['Bytes Received'],
@@ -171,7 +171,7 @@ db.init().then(() => {
       client.on('client-connect', (client) => {
         const entry = clientToEntry(client)
         server.entries = server.entries.filter((itm) => itm.node !== entry.node)
-        logEvent(Object.assign({server: idx, event: 'connect'}, entry))
+        logEvent(Object.assign({server: idx, event: 'connect', timestamp: moment().unix()}, entry))
         server.entries.push(entry)
       })
       client.on('client-disconnect', (client) => {
@@ -179,7 +179,7 @@ db.init().then(() => {
         const oLen = server.entries.length
         server.entries = server.entries.filter((itm) => itm.node !== entry.node)
         if (oLen !== server.entries.length)
-          logEvent(Object.assign({server: idx, event: 'disconnect'}, entry))
+          logEvent(Object.assign({server: idx, event: 'disconnect', timestamp: moment().unix()}, entry))
       })
       client.on('client-update', (client) => broadcast(Object.assign(clientToEntry(client), {server:idx, event: 'update', timestamp: moment().unix()})))
     })
