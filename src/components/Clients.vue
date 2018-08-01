@@ -111,6 +111,8 @@ export default {
     loading: state => state.clientsLoading,
     search: state => state.search,
     nodes(state) {
+      const inSet = new Set(state.nodes.map(n => n.node))
+      Object.keys(this.meta).filter(itm => !inSet.has(itm)).forEach(itm => this.meta[itm] = false)
       return state.nodes.map((node) => {
         if (!this.meta[node.node])
           this.meta[node.node] = axios.get(`./country/${node.pub}`)
