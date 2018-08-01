@@ -46,9 +46,10 @@ let servers = conf.get('servers') || []
 
 const broadcast = (data) => clients.forEach((ws) => ws.send(JSON.stringify(data)))
 const logEvent = (data) => {
-  db.Log.findOne({where: {server: data.server, node: data.node, timestamp: {[db.op.between]: [data.timestamp - 30, data.timestamp + 30]}}})
+  const ts = data.timestamp % 60
+  db.Log.findOne({where: {server: data.server, node: data.node, timestamp: {[db.op.between]: [data.timestamp - ts, data.timestamp + 60 - ts]}}})
     .then((entry) => {
-      if (entry && data.event === 'connect') {
+      if (entry && entry.event === 'disconnect' && data.event === 'connect') {
         Object.assign(entry, data)
         entry.event = 'reconnect'
         entry.save().then(() => broadcast(entry))
