@@ -65,39 +65,33 @@ const clientToEntry = (client) => ({
   sent: client['Bytes Sent']
 })
 const validateIPaddress = (ipaddress) => /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ipaddress.toString())
-const validateNumber = (n) => !isNaN(parseFloat(n)) && isFinite(n)
+const validateNumber = (n) => Number.isFinite(parseFloat(n, 10))
 const loadIPdatabase = () => {
+  const ipFile = conf.get('ipFile')
+  const loadFile = (res) => {
+    maxmind.open('./GeoLite2-City.mmdb', (err, lookup) => {
+      if (err)
+        return log(err)
+      cityLookup.get = (ip) => (ip ? lookup.get(ip) : false)
+      res(cityLookup)
+    })
+  }
   return new Promise((resolve) => {
     fs.stat(ipFile, (err, stat) => {
       const now = new Date().getTime()
       //Cached version to expire after a month from file date
       const expire = new Date((stat ? stat.ctime : '')).getTime() + 30 * 24 * 60 * 60 * 1000
       if (err || now > expire) {
-        const req = request('http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz')
+        const req = request('https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz')
         req.on('response', (resp) => {
           if(resp.statusCode === 200) {
             req.pipe(zlib.createGunzip()).pipe(fs.createWriteStream(ipFile))
-              .on('finish', () => {
-                maxmind.open('./GeoLite2-City.mmdb', (err, lookup) => {
-                  cityLookup.get = (ip) => (ip ? lookup.get(ip) : false)
-                  resolve(cityLookup)
-                })
-              })
+              .on('finish', () => loadFile(resolve))
           } else
-            maxmind.open('./GeoLite2-City.mmdb', (err, lookup) => {
-              if (err)
-                log(err)
-              cityLookup.get = (ip) => (ip ? lookup.get(ip) : false)
-              resolve(cityLookup)
-            })
+            loadFile(resolve)
         })
       } else
-        maxmind.open('./GeoLite2-City.mmdb', (err, lookup) => {
-          if (err)
-            log(err)
-          cityLookup.get = (ip) => (ip ? lookup.get(ip) : false)
-          resolve(cityLookup)
-        })
+        loadFile(resolve)
     })
   })
 }
@@ -110,14 +104,6 @@ new CronJob({
 
 app.get('/', (req, res) => res.sendFile(`${__dirname}/dist/index.html`))
 app.get('/servers', (req, res) => res.json(servers.map((server, idx) => ({name: server.name, id: idx}))))
-const validateServer = (req, res, next) => {
-  const serverId = req.params.id || req.params[0]
-  if (!validateNumber(serverId))
-    return res.sendStatus(400)
-  if (!servers[serverId])
-    return res.sendStatus(404)
-  next()
-}
 app.get('/country/:ip', (req, res) => {
   if (!validateIPaddress(req.params.ip))
     return res.sendStatus(400)
@@ -130,6 +116,15 @@ app.get('/country/:ip', (req, res) => {
   res.json(geo)
 })
 app.get('/entries/:id', validateServer, (req, res) => res.json(servers[req.params.id].entries))
+
+const validateServer = (req, res, next) => {
+  const serverId = req.params.id || req.params[0]
+  if (!validateNumber(serverId))
+    return res.sendStatus(400)
+  if (!servers[serverId])
+    return res.sendStatus(404)
+  next()
+}
 // /log/:id/size/:search
 app.get(/\/log\/([0-9]*)\/size\/(.*)/, validateServer, (req, res) => {
   const needle = `%${(req.params[1].trim() || '')}%`
