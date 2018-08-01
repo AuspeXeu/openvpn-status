@@ -115,7 +115,6 @@ app.get('/country/:ip', (req, res) => {
   }
   res.json(geo)
 })
-app.get('/entries/:id', validateServer, (req, res) => res.json(servers[req.params.id].entries))
 
 const validateServer = (req, res, next) => {
   const serverId = req.params.id || req.params[0]
@@ -125,6 +124,7 @@ const validateServer = (req, res, next) => {
     return res.sendStatus(404)
   next()
 }
+app.get('/entries/:id', validateServer, (req, res) => res.json(servers[req.params.id].entries))
 // /log/:id/size/:search
 app.get(/\/log\/([0-9]*)\/size\/(.*)/, validateServer, (req, res) => {
   const needle = `%${(req.params[1].trim() || '')}%`
