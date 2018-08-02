@@ -74,9 +74,11 @@ class client extends EventEmitter {
       }
     } else if (data.startsWith('>CLIENT:ESTABLISHED') && this.state === STATE.idle) {
       const [_, clientId] = data.split(',').map((itm) => parseInt(itm, 10))
-      this.getClients().then((clients) => {
-        this.emit('client-connect', this.clients.get(clientId))
-      })
+      setTimeout(() => {
+        this.getClients().then((clients) => {
+          this.emit('client-connect', this.clients.get(clientId))
+        })
+      }, 2000)
     } else if (data.startsWith('>CLIENT:DISCONNECT') && this.state === STATE.idle) {
       const [_, clientId] = data.split(',').map((itm) => parseInt(itm, 10))
       if (this.clients.has(clientId)) {
