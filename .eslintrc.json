@@ -1,0 +1,11 @@
+{
+    "extends": "airbnb-base",
+    "rules": {
+	"no-return-assign": 0,
+	"comma-dangle": ["error", "never"],
+	"nonblock-statement-body-position": ["error", "below"],
+        "curly": ["error", "multi"],
+        "semi": 0,
+        "object-curly-spacing": 0
+    }
+}

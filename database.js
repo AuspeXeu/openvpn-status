@@ -14,13 +14,13 @@ const Log = sequelize.define('Log', {
     primaryKey: true,
     autoIncrement: true
   },
-  timestamp : {type: Sequelize.INTEGER},
-  server    : {type: Sequelize.INTEGER},
-  pub       : {type: Sequelize.STRING},
-  vpn       : {type: Sequelize.STRING},
-  node      : {type: Sequelize.STRING},
-  event     : {type: Sequelize.STRING}
-},{
+  timestamp: {type: Sequelize.INTEGER},
+  server: {type: Sequelize.INTEGER},
+  pub: {type: Sequelize.STRING},
+  vpn: {type: Sequelize.STRING},
+  node: {type: Sequelize.STRING},
+  event: {type: Sequelize.STRING}
+}, {
   freezeTableName: true,
   timestamps: false,
   tableName: 'Log'
@@ -28,6 +28,6 @@ const Log = sequelize.define('Log', {
 
 module.exports = {
   init: () => Log.sync(),
-  Log: Log,
+  Log,
   op: Sequelize.Op
 }
