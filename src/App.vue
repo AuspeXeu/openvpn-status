@@ -24,10 +24,11 @@
       <v-toolbar-items>
         <v-text-field
         style="margin-top:5px;"
-        append-icon="search"
+        prepend-inner-icon="search"
         single-line
-        clearable
+        :append-icon="(search.length ? 'clear' : '')"
         ref="searchField"
+        @click:append="search = ''"
         @keyup.esc="search = ''"
         v-model="search"
       ></v-text-field>
