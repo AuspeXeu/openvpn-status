@@ -4,6 +4,7 @@
   "description": "A web-based application to monitor clients connected to an openvpn server.",
   "version": "4.1.6",
   "license": "MIT",
+  "main": "server.js",
   "author": {
     "name": "Christian Vaas",
     "email": "christianvaas@auspex.eu",
@@ -23,11 +24,10 @@
   },
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
-    "start": "npm run dev",
+    "start": "node server.js",
     "lint": "eslint database.js server.js openvpn.js",
     "build": "node build/build.js"
   },
-  "main": "./server.js",
   "dependencies": {
     "axios": "^0.18.0",
     "body-parser": "^1.18.3",
