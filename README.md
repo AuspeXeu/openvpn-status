@@ -8,6 +8,12 @@ Features
 * Full material design
 * Multi server support
 
+### Client panel
+![Client panel](https://raw.githubusercontent.com/AuspeXeu/openvpn-status/master/clients.png)
+
+### Event panel
+![Event panel](https://raw.githubusercontent.com/AuspeXeu/openvpn-status/master/events.png)
+
 ## Pre-requisites
 
 - [x] [NodeJS](https://nodejs.org/en/download/package-manager/) 6 or higher
@@ -118,11 +124,3 @@ server {
 ### GoSquared
 
 [GoSquared](https://www.gosquared.com) provides the flag icons for this project. The source for the flag icons can be found [here](https://www.gosquared.com/resources/flag-icons/).
-
-# Screenshots
-
-### Client panel
-![Client panel](https://raw.githubusercontent.com/AuspeXeu/openvpn-status/master/screen1.png)
-
-### Event panel
-![Event panel](https://raw.githubusercontent.com/AuspeXeu/openvpn-status/master/screen2.png)
