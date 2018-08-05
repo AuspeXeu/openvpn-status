@@ -16,7 +16,7 @@ Features
 
 ## Pre-requisites
 
-- [x] [NodeJS](https://nodejs.org/en/download/package-manager/) 6 or higher
+- [x] [NodeJS](https://nodejs.org/en/download/) 6 or higher
 - [x] npm package manager
 
 ### Browser support
