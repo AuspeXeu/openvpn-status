@@ -35,9 +35,6 @@ npm install
 sudo npm install pm2 -g
 ```
 
-#### Windows
-Download [curl](https://curl.haxx.se/download.html#Win64) and unpack the `curl.exe` in the same folder containing your OpenVPN configuration.
-
 ### 3. Configuration
 
 The configuration is handled in the ``cfg.json`` file.
