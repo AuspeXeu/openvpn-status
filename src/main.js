@@ -11,9 +11,7 @@ import App from './App'
 
 Vue.config.productionTip = false
 Vue.use(VueRouter)
-Vue.use(Vuetify, {
-  iconfont: 'fa'
-})
+Vue.use(Vuetify)
 Vue.use(Vuex)
 
 const router = new VueRouter({
