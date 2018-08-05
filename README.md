@@ -94,7 +94,7 @@ This makes the application available on http://127.0.0.1:3013.
 
 ## (optional) Running the service behind nginx as a reverse proxy
 
-In order to integrate the service into your webserver you might want to use nginx as a reverse proxy. The following configuration assumes that the port is set to *3013* as it is by default.
+In order to integrate the service into your webserver you might want to use nginx as a reverse proxy. The following configuration assumes that the port is set to `3013` as it is by default.
 
 ```
 server {
