@@ -23,7 +23,7 @@
     "url": "https://github.com/AuspeXeu/openvpn-status"
   },
   "scripts": {
-    "prepush": "lint",
+    "prepush": "npm run lint",
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "start": "node server.js",
     "lint": "eslint database.js server.js openvpn.js utils.js",
