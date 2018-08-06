@@ -25,7 +25,7 @@
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "start": "node server.js",
-    "lint": "eslint database.js server.js openvpn.js",
+    "lint": "eslint database.js server.js openvpn.js utils.js",
     "build": "node build/build.js"
   },
   "dependencies": {
