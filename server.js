@@ -1,33 +1,14 @@
-const zlib = require('zlib')
-const fs = require('fs')
 const http = require('http')
 const express = require('express')
-
-const app = express()
 const WebSocket = require('ws')
-const conf = require('nconf')
 const bodyParser = require('body-parser')
-const maxmind = require('maxmind')
 const moment = require('moment')
-const request = require('request')
 const uuid = require('uuid/v1')
-const CronJob = require('cron').CronJob
+const app = express()
+const {log, conf, loadIPdatabase, cityLookup} = require('./utils.js')
 const openvpn = require('./openvpn.js')
 const db = require('./database.js')
 
-const log = (...args) => console.log(...[moment().format('HH:mm - DD.MM.YY'), ...args])
-
-conf.file({file: 'cfg.json'})
-conf.defaults({
-  port: 3013,
-  bind: '127.0.0.1',
-  servers: [{
-    id: 0, name: 'Server', host: '127.0.0.1', man_port: 7656
-  }],
-  ipFile: './GeoLite2-City.mmdb',
-  username: 'admin',
-  password: 'admin'
-})
 app.use('/static', express.static(`${__dirname}/dist/static`))
 app.use(bodyParser.json())
 // HTTP authentication
@@ -43,7 +24,6 @@ if (conf.get('username') && conf.get('username').length)
     }
     next()
   })
-const cityLookup = {}
 const clients = new Map()
 const servers = conf.get('servers') || []
 const broadcast = data => clients.forEach(ws => ws.send(JSON.stringify(data)))
@@ -70,48 +50,13 @@ const clientToEntry = client => ({
 })
 const validateIPaddress = ipaddress => /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ipaddress.toString())
 const validateNumber = n => Number.isFinite(parseFloat(n, 10))
-const loadIPdatabase = () => {
-  const ipFile = conf.get('ipFile')
-  const loadFile = (res) => {
-    maxmind.open('./GeoLite2-City.mmdb', (err, lookup) => {
-      if (err)
-        return log(err)
-      cityLookup.get = ip => (ip ? lookup.get(ip) : false)
-      res(cityLookup)
-    })
-  }
-  return new Promise((resolve) => {
-    fs.stat(ipFile, (err, stat) => {
-      const now = new Date().getTime()
-      // Cached version to expire after a month from file date
-      const expire = new Date((stat ? stat.ctime : '')).getTime() + 30 * 24 * 60 * 60 * 1000
-      if (err || now > expire) {
-        const req = request('https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz')
-        req.on('response', (resp) => {
-          if (resp.statusCode === 200)
-            req.pipe(zlib.createGunzip()).pipe(fs.createWriteStream(ipFile))
-              .on('finish', () => loadFile(resolve))
-          else
-            loadFile(resolve)
-        })
-      } else
-        loadFile(resolve)
-    })
-  })
-}
-
-new CronJob({
-  cronTime: '00 10 * 10 * *',
-  onTick: loadIPdatabase,
-  start: true
-})
 
 app.get('/', (req, res) => res.sendFile(`${__dirname}/dist/index.html`))
 app.get('/servers', (req, res) => res.json(servers.map((server, idx) => ({name: server.name, id: idx}))))
 app.get('/country/:ip', (req, res) => {
   if (!validateIPaddress(req.params.ip))
     return res.sendStatus(400)
-  const loc = cityLookup.get(req.params.ip)
+  const loc = cityLookup(req.params.ip)
   const geo = {}
   if (loc) {
     geo.country_code = loc.country.iso_code
