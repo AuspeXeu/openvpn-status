@@ -20,7 +20,7 @@ Features
 - [x] npm package manager
 
 # Installation
-Installation comes in two flavours. Either from source as per the following section or you can skip to the docker setup.
+Installation comes in two flavours. Either from source as per the following section or you can skip to the [docker section](https://github.com/AuspeXeu/openvpn-status#docker).
 ### 1. Get the source
 
 ``git clone https://github.com/AuspeXeu/openvpn-status.git``
