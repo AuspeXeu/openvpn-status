@@ -19,7 +19,7 @@ class client extends EventEmitter {
       const items = data.toString().split('\r\n').filter(itm => itm.length)
       items.forEach(itm => this.procData(itm.toString()))
     })
-    this.socket.on('error', (err) => {
+    this.socket.on('error', () => {
       this.connected = false
       console.log('Could not connect to management console, retrying in 60s')
       setTimeout(() => this.connect(), 60 * 1000)
@@ -102,7 +102,7 @@ class client extends EventEmitter {
   getClients() {
     if (!this.connected)
       return
-    return this.connected.then(() => {
+    this.connected.then(() => {
       const res = new Promise(resolve => this.clientRes = resolve)
       this.socket.write('status 3\r\n')
       return res

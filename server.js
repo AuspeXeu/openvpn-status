@@ -4,6 +4,7 @@ const WebSocket = require('ws')
 const bodyParser = require('body-parser')
 const moment = require('moment')
 const uuid = require('uuid/v1')
+
 const app = express()
 const {log, conf, loadIPdatabase} = require('./utils.js')
 const openvpn = require('./openvpn.js')
@@ -16,13 +17,13 @@ if (conf.get('username') && conf.get('username').length)
   app.use((req, res, next) => {
     // Parse login and password from headers
     const b64auth = (req.headers.authorization || '').split(' ')[1] || ''
-    const [login, password] = new Buffer(b64auth, 'base64').toString().split(':')
+    const [login, password] = Buffer.from(b64auth, 'base64').toString().split(':')
     // Verify login and password are set and correct
     if (!login || !password || login !== conf.get('username') || password !== conf.get('password')) {
       res.set('WWW-Authenticate', 'Basic realm="401"')
-      return res.status(401).send('Authentication required.')
-    }
-    next()
+      res.status(401).send('Authentication required.')
+    } else
+      next()
   })
 let cityLookup
 const clients = new Map()
@@ -30,14 +31,20 @@ const servers = conf.get('servers') || []
 const broadcast = data => clients.forEach(ws => ws.send(JSON.stringify(data)))
 const logEvent = (data) => {
   const ts = data.timestamp % 60
-  db.Log.findOne({where: {server: data.server, node: data.node, timestamp: {[db.op.between]: [data.timestamp - ts, data.timestamp + 60 - ts]}}})
+  db.Log.findOne({
+    where: {
+      server: data.server,
+      node: data.node,
+      timestamp: {[db.op.between]: [data.timestamp - ts, data.timestamp + 60 - ts]}
+    }
+  })
     .then((entry) => {
       if (entry && data.event === 'connect') {
         Object.assign(entry, data)
         entry.event = 'reconnect'
         entry.save().then(() => broadcast(entry))
       } else
-        db.Log.create(data).then(entry => broadcast(Object.assign(entry, data)))
+        db.Log.create(data).then(nEntry => broadcast(Object.assign(nEntry, data)))
     })
 }
 const clientToEntry = client => ({
@@ -78,7 +85,11 @@ app.get('/entries/:id', validateServer, (req, res) => res.json(servers[req.param
 // /log/:id/size/:search
 app.get(/\/log\/([0-9]*)\/size\/(.*)/, validateServer, (req, res) => {
   const needle = `%${(req.params[1].trim() || '')}%`
-  db.Log.count({where: {server: req.params[0], node: {[db.op.like]: needle}}}).then(size => res.json({value: size}))
+  db.Log.count({
+    where: {
+      server: req.params[0], node: {[db.op.like]: needle}
+    }
+  }).then(size => res.json({value: size}))
 })
 // /log/:id/:page/:size/:search
 app.get(/\/log\/([0-9]*)\/([0-9]*)\/([-0-9]*)\/(.*)/, validateServer, (req, res) => {
@@ -93,8 +104,8 @@ app.get(/\/log\/([0-9]*)\/([0-9]*)\/([-0-9]*)\/(.*)/, validateServer, (req, res)
   query.then(data => res.json(data))
 })
 
-const server = http.createServer(app)
-const wss = new WebSocket.Server({server})
+const httpServer = http.createServer(app)
+const wss = new WebSocket.Server({httpServer})
 
 wss.on('connection', (ws) => {
   const id = uuid()
@@ -107,28 +118,28 @@ wss.on('connection', (ws) => {
 })
 
 Promise.all([loadIPdatabase(), db.init()]).then((results) => {
-  cityLookup = results[0]
+  [cityLookup] = results
   servers.forEach((server, idx) => {
     const client = new openvpn.OpenVPNclient(server.host, server.man_port)
-    client.getClients().then((clients) => {
-      server.entries = clients.map(clientToEntry)
+    client.getClients().then((clts) => {
+      server.entries = clts.map(clientToEntry)
     })
-    client.on('client-connect', (client) => {
-      const entry = clientToEntry(client)
+    client.on('client-connect', (cl) => {
+      const entry = clientToEntry(cl)
       server.entries = server.entries.filter(itm => itm.node !== entry.node)
       logEvent(Object.assign({server: idx, event: 'connect', timestamp: moment().unix()}, entry))
       server.entries.push(entry)
     })
-    client.on('client-disconnect', (client) => {
-      const entry = Object.assign(clientToEntry(client), {event: 'disconnect'})
+    client.on('client-disconnect', (cl) => {
+      const entry = Object.assign(clientToEntry(cl), {event: 'disconnect'})
       const oLen = server.entries.length
       server.entries = server.entries.filter(itm => itm.node !== entry.node)
       if (oLen !== server.entries.length)
         logEvent(Object.assign({server: idx, event: 'disconnect', timestamp: moment().unix()}, entry))
     })
-    client.on('client-update', (client) => {
-      broadcast(Object.assign(clientToEntry(client), {server: idx, event: 'update', timestamp: moment().unix()}))
+    client.on('client-update', (cl) => {
+      broadcast(Object.assign(clientToEntry(cl), {server: idx, event: 'update', timestamp: moment().unix()}))
     })
   })
-  server.listen({host: conf.get('bind'), port: conf.get('port'), exclusive: true})
+  httpServer.listen({host: conf.get('bind'), port: conf.get('port'), exclusive: true})
 })

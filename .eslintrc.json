@@ -1,11 +1,15 @@
 {
-    "extends": "airbnb-base",
-    "rules": {
-	"no-return-assign": 0,
-	"comma-dangle": ["error", "never"],
-	"nonblock-statement-body-position": ["error", "below"],
-        "curly": ["error", "multi"],
-        "semi": 0,
-        "object-curly-spacing": 0
-    }
+  "extends": "airbnb-base",
+  "rules": {
+  	"no-return-assign": 0,
+	  "comma-dangle": ["error", "never"],
+	  "nonblock-statement-body-position": ["error", "below"],
+    "curly": ["error", "multi"],
+    "semi": 0,
+    "no-console": ["error", { "allow": ["log"] }],
+    "object-curly-spacing": 0,
+    "no-unused-vars": ["error", { "varsIgnorePattern": "_" }],
+    "no-param-reassign": ["error", { "props": false }],
+    "consistent-return": 0
+  }
 }

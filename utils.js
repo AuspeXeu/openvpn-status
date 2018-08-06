@@ -29,8 +29,10 @@ if (envVars.VPN_NAME && envVars.VPN_HOST && envVars.VPN_MAN_PORT)
 const loadIPdatabase = () => {
   const ipFile = conf.get('ipFile')
   const loadFile = res => maxmind.open('./GeoLite2-City.mmdb', (err, lookup) => {
-    if (err) return log(err)
-    res(ip => (ip ? lookup.get(ip) : false))
+    if (err)
+      log(err)
+    else
+      res(ip => (ip ? lookup.get(ip) : false))
   })
   return new Promise((resolve) => {
     fs.stat(ipFile, (err, stat) => {
@@ -42,7 +44,9 @@ const loadIPdatabase = () => {
         req.on('response', (resp) => {
           if (resp.statusCode === 200)
             req.pipe(zlib.createGunzip()).pipe(fs.createWriteStream(ipFile))
-              .on('finish', () => loadFile(resolve))
+              .on('finish', () => {
+                loadFile(resolve)
+              })
           else
             loadFile(resolve)
         })
@@ -52,7 +56,7 @@ const loadIPdatabase = () => {
   })
 }
 
-new CronJob({
+const _ = new CronJob({
   cronTime: '00 10 * 10 * *',
   onTick: loadIPdatabase,
   start: true
