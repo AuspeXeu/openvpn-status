@@ -20,6 +20,7 @@ Features
 - [x] npm package manager
 
 # Installation
+Installation comes in two flavours. Either from source as per the following section or you can skip to the docker setup.
 ### 1. Get the source
 
 ``git clone https://github.com/AuspeXeu/openvpn-status.git``
@@ -107,6 +108,45 @@ server {
     proxy_read_timeout 86400;
   }
 }
+```
+
+# Docker
+### Ports
+
+- **3013**
+
+### Environment variables
+
+| Variable | Description | Type | Default value |
+| -------- | ----------- | ---- | ------------- |
+| **AUTH_USERNAME** | HTTP AUTH username | admin
+| **AUTH_PASSWORD** | HTTP AUTH password | admin
+| **VPN_NAME** | Name of the VPN | Server
+| **VPN_HOST** | Host of the VPN | openvpn
+| **VPN_MAN_PORT** | Management port | 7656
+
+### Docker-compose.yml
+
+```yml
+# Full example :
+# https://raw.githubusercontent.com/AuspeXeu/openvpn-status/master/docker-compose.sample.yml
+
+openvpn-status:
+  image: auspexeu/openvpn-status
+  container_name: openvpn-status
+  ports:
+    - 8080:3013
+  environment:
+    - AUTH_USERNAME=admin
+    - AUTH_PASSWORD=YV3qSTxD
+    - VPN_NAME="Remote employees"
+    - VPN_HOST=openvpn
+    - VPN_MAN_PORT=7656
+  links:
+    - openvpn
+  depends_on:
+    - openvpn
+  restart: "unless-stopped"
 ```
 
 ## Browser support
