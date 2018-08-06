@@ -2,7 +2,7 @@
   "name": "openvpn-status",
   "homepage": "https://github.com/AuspeXeu/openvpn-status",
   "description": "A web-based application to monitor clients connected to an openvpn server.",
-  "version": "4.1.7",
+  "version": "4.1.8",
   "license": "MIT",
   "main": "server.js",
   "author": {
@@ -26,7 +26,7 @@
     "prepush": "npm run lint",
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "start": "node server.js",
-    "lint": "eslint database.js server.js openvpn.js utils.js",
+    "lint": "eslint database.js server.js openvpn.js utils.js src/main.js",
     "build": "node build/build.js"
   },
   "dependencies": {

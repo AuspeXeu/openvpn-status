@@ -6,7 +6,7 @@
 	  "nonblock-statement-body-position": ["error", "below"],
     "curly": ["error", "multi"],
     "semi": 0,
-    "no-console": ["error", { "allow": ["log"] }],
+    "no-console": ["error", { "allow": ["log","error"] }],
     "object-curly-spacing": 0,
     "no-unused-vars": ["error", { "varsIgnorePattern": "_" }],
     "no-param-reassign": ["error", { "props": false }],

@@ -3,9 +3,7 @@ import Vuetify from 'vuetify'
 import VueRouter from 'vue-router'
 import 'vuetify/dist/vuetify.min.css'
 import Vuex from 'vuex'
-import { mapState } from 'vuex'
 import axios from 'axios'
-import moment from 'moment'
 
 import App from './App'
 
@@ -13,6 +11,8 @@ Vue.config.productionTip = false
 Vue.use(VueRouter)
 Vue.use(Vuetify)
 Vue.use(Vuex)
+
+const {mapState} = Vuex
 
 const router = new VueRouter({
   routes: [{ path: '/:id' }]
@@ -40,8 +40,8 @@ const store = new Vuex.Store({
       state.nodes = payload.nodes
     },
     updateNode(state, payload) {
-      const event = payload.event
-      const node = state.nodes.find((node) => node.node === event.node)
+      const {event} = payload
+      const node = state.nodes.find(itm => itm.node === event.node)
       if (node) {
         node.cid = event.cid
         node.received = event.received
@@ -54,9 +54,9 @@ const store = new Vuex.Store({
       }
     },
     addEvent(state, payload) {
-      const event = payload.event
+      const {event} = payload
       state.event = event
-      state.nodes = state.nodes.filter((node) => node.node !== event.node)
+      state.nodes = state.nodes.filter(itm => itm.node !== event.node)
       if (event.event !== 'disconnect')
         state.nodes.push({
           node: event.node,
@@ -69,9 +69,9 @@ const store = new Vuex.Store({
         })
       if (event.node.includes(state.search)) {
         const oLen = state.events.length
-        state.events = state.events.filter((itm) => itm.id !== event.id)
+        state.events = state.events.filter(itm => itm.id !== event.id)
         state.events.unshift(event)
-        if (state.events.oLen !== state.events.length)
+        if (oLen !== state.events.length)
           state.events.pop()
       }
     },
@@ -101,8 +101,8 @@ const store = new Vuex.Store({
           })
         })
       const p1 = axios.get(`./log/${store.state.server}/size/${store.state.search}`)
-        .then((response) => store.state.total = response.data.value)
-      Promise.all([p0,p1]).then(() => store.state.eventsLoading = false)
+        .then(response => store.state.total = response.data.value)
+      Promise.all([p0, p1]).then(() => store.state.eventsLoading = false)
     },
     refresh({commit}) {
       store.state.clientsLoading = true
@@ -113,31 +113,28 @@ const store = new Vuex.Store({
             node.country_code = false
             return node
           })
-          commit({
-            type: 'updateNodes',
-            nodes: nodes
-          })
+          commit({type: 'updateNodes', nodes})
           store.state.clientsLoading = false
-        })  
+        })
     }
   }
 })
 
 new Vue({
-  router: router,
+  router,
   el: '#app',
   template: '<App/>',
   components: { App },
   store,
   computed: mapState({
-    server: (state) => state.server
+    server: state => state.server
   }),
   watch: {
     server(val) {
       axios.get(`./log/${val}/size/${store.state.search}`)
-        .then((response) => store.state.total = response.data.value)
+        .then(response => store.state.total = response.data.value)
     },
-    '$route'(to, from) {
+    '$route'(to) {
       try {
         const srvId = parseInt(to.params.id, 10)
         store.dispatch('changeServer', {server: srvId})
