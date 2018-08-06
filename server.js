@@ -5,7 +5,7 @@ const bodyParser = require('body-parser')
 const moment = require('moment')
 const uuid = require('uuid/v1')
 const app = express()
-const {log, conf, loadIPdatabase, cityLookup} = require('./utils.js')
+const {log, conf, loadIPdatabase} = require('./utils.js')
 const openvpn = require('./openvpn.js')
 const db = require('./database.js')
 
@@ -24,6 +24,7 @@ if (conf.get('username') && conf.get('username').length)
     }
     next()
   })
+let cityLookup
 const clients = new Map()
 const servers = conf.get('servers') || []
 const broadcast = data => clients.forEach(ws => ws.send(JSON.stringify(data)))
@@ -105,7 +106,8 @@ wss.on('connection', (ws) => {
   })
 })
 
-Promise.all([db.init(), loadIPdatabase()]).then(() => {
+Promise.all([loadIPdatabase(), db.init()]).then((lookup, _) => {
+  cityLookup = lookup
   servers.forEach((server, idx) => {
     const client = new openvpn.OpenVPNclient(server.host, server.man_port)
     client.getClients().then((clients) => {

@@ -20,7 +20,6 @@ conf.defaults({
   password: 'admin'
 })
 
-let cityLookup = {}
 const envVars = process.env
 conf.set('username', envVars.AUTH_USERNAME || conf.get('username'))
 conf.set('password', envVars.AUTH_PASSWORD || conf.get('password'))
@@ -30,10 +29,8 @@ if (envVars.VPN_NAME && envVars.VPN_HOST && envVars.VPN_MAN_PORT)
 const loadIPdatabase = () => {
   const ipFile = conf.get('ipFile')
   const loadFile = res => maxmind.open('./GeoLite2-City.mmdb', (err, lookup) => {
-    if (err)
-      return log(err)
-    cityLookup = ip => (ip ? lookup.get(ip) : false)
-    res()
+    if (err) return log(err)
+    res(ip => (ip ? lookup.get(ip) : false))
   })
   return new Promise((resolve) => {
     fs.stat(ipFile, (err, stat) => {
@@ -61,9 +58,4 @@ new CronJob({
   start: true
 })
 
-module.exports = {
-  log,
-  loadIPdatabase,
-  cityLookup,
-  conf
-}
+module.exports = {log, loadIPdatabase, conf}

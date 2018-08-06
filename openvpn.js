@@ -14,16 +14,17 @@ class client extends EventEmitter {
     this.clientProps = []
     this.clients = new Map()
     this.socket = new net.Socket()
-    this.connected = new Promise((resolve) => {
-      this.socket.connect(this.port, this.host, () => {
-        this.socket.write('bytecount 5\r\n')
-        resolve()
-      })
-    })
+    this.connected = false
     this.socket.on('data', (data) => {
       const items = data.toString().split('\r\n').filter(itm => itm.length)
       items.forEach(itm => this.procData(itm.toString()))
     })
+    this.socket.on('error', (err) => {
+      this.connected = false
+      console.log('Could not connect to management console, retrying in 60s')
+      setTimeout(() => this.connect(), 60 * 1000)
+    })
+    this.connect()
   }
 
   procData(data) {
@@ -88,12 +89,19 @@ class client extends EventEmitter {
   }
 
   connect() {
-    return this.connected
+    this.connected = new Promise((resolve) => {
+      this.socket.connect(this.port, this.host, () => {
+        if (!this.alive)
+          this.alive = setInterval(() => this.getClients(), 5000)
+        this.socket.write('bytecount 5\r\n')
+        resolve()
+      })
+    })
   }
 
   getClients() {
-    if (!this.alive)
-      this.alive = setInterval(() => this.getClients(), 5000)
+    if (!this.connected)
+      return
     return this.connected.then(() => {
       const res = new Promise(resolve => this.clientRes = resolve)
       this.socket.write('status 3\r\n')
