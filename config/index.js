@@ -15,6 +15,10 @@ module.exports = {
       target: 'https://status.auspex.eu',
       changeOrigin: true
     },
+    '/server': {
+      target: 'https://status.auspex.eu',
+      changeOrigin: true
+    },
     '/servers': {
       target: 'https://status.auspex.eu',
       changeOrigin: true

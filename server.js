@@ -87,6 +87,7 @@ app.post('/server/:id/disconnect/:cid', validateServer, (req, res) => {
     return res.sendStatus(400)
   const cid = parseInt(req.params.cid, 10)
   servers[req.params.id].vpnclient.disconnect(cid)
+  res.sendStatus(200)
 })
 app.get('/entries/:id', validateServer, (req, res) => res.json(servers[req.params.id].entries))
 // /log/:id/size/:search

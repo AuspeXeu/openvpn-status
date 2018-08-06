@@ -98,7 +98,7 @@ export default {
       return `./static/images/flags/${(node.country_code ? `${node.country_code}.png` : 'unknown.jpg')}`
     },
     disconnect(cid) {
-      axios.post(`/server/${this.severId}/disconnect/cid`)
+      axios.post(`/server/${this.severId}/disconnect/${cid}`)
     }
   },
   watch: {

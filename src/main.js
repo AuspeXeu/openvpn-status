@@ -21,6 +21,7 @@ const router = new VueRouter({
 /* eslint-disable no-new */
 const store = new Vuex.Store({
   state: {
+    event: false,
     server: 0,
     servers: [],
     total: 0,
@@ -42,6 +43,7 @@ const store = new Vuex.Store({
       const event = payload.event
       const node = state.nodes.find((node) => node.node === event.node)
       if (node) {
+        node.cid = event.cid
         node.received = event.received
         node.sent = event.sent
         node.pub = event.pub
@@ -53,6 +55,7 @@ const store = new Vuex.Store({
     },
     addEvent(state, payload) {
       const event = payload.event
+      state.event = event
       state.nodes = state.nodes.filter((node) => node.node !== event.node)
       if (event.event !== 'disconnect')
         state.nodes.push({
