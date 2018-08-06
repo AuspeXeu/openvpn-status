@@ -82,17 +82,17 @@ const store = new Vuex.Store({
     }
   },
   actions: {
-    changeServer(context, payload) {
-      context.commit('changeServer', {
+    changeServer({commit, dispatch}, payload) {
+      commit('changeServer', {
         server: payload.server
       })
-      context.dispatch('refresh')
+      dispatch('refresh')
     },
-    changePage(context, opt) {
+    changePage({commit}, opt) {
       store.state.eventsLoading = true
       const p0 = axios.get(`./log/${store.state.server}/${opt.page}/${opt.size}/${store.state.search}`)
         .then((response) => {
-          context.commit({
+          commit({
             type: 'updateEvents',
             events: response.data
           })
@@ -101,7 +101,7 @@ const store = new Vuex.Store({
         .then((response) => store.state.total = response.data.value)
       Promise.all([p0,p1]).then(() => store.state.eventsLoading = false)
     },
-    refresh(context) {
+    refresh({commit}) {
       store.state.clientsLoading = true
       axios.get(`./entries/${store.state.server}`)
         .then((response) => {
@@ -110,7 +110,7 @@ const store = new Vuex.Store({
             node.country_code = false
             return node
           })
-          context.commit({
+          commit({
             type: 'updateNodes',
             nodes: nodes
           })

@@ -128,7 +128,7 @@ Promise.all([loadIPdatabase(), db.init()]).then((results) => {
   [cityLookup] = results
   servers.forEach((server, idx) => {
     const client = new openvpn.OpenVPNclient(server.host, server.man_port)
-    client.getClients().then((clts) => server.entries = clts.map(clientToEntry))
+    client.getClients().then(clts => server.entries = clts.map(clientToEntry))
     client.on('client-connect', (cl) => {
       const entry = clientToEntry(cl)
       server.entries = server.entries.filter(itm => itm.node !== entry.node)

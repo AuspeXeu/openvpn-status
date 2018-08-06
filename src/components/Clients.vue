@@ -36,6 +36,12 @@
             <span>{{ formatDataVolume(props.item.received) }} received</span>
           </v-tooltip>
         </td>
+        <td>
+          <v-tooltip left>
+            <v-icon slot="activator" style="cursor: pointer;" @click="disconnect(props.item.cid)">fa-skull</v-icon>
+            <span>Disconnect client</span>
+          </v-tooltip>
+        </td>
       </template>
     </v-data-table>
   </v-container>
@@ -90,6 +96,9 @@ export default {
     },
     flagImg(node) {
       return `./static/images/flags/${(node.country_code ? `${node.country_code}.png` : 'unknown.jpg')}`
+    },
+    disconnect(cid) {
+      axios.post(`/server/${this.severId}/disconnect/cid`)
     }
   },
   watch: {
@@ -107,6 +116,7 @@ export default {
     }
   },
   computed: mapState({
+    severId: state => state.server,
     updateNode: state => state.updateNode,
     loading: state => state.clientsLoading,
     search: state => state.search,
@@ -122,8 +132,7 @@ export default {
             })
         return node
       })
-    },
-    servers: state => state.servers
+    }
   }),
   data() {
     return {
@@ -156,6 +165,10 @@ export default {
         text: 'Traffic',
         sortable: false,
         width: '100px'
+      },{
+        text: 'Action',
+        sortable: false,
+        width: '25px'
       }]
     }
   }
