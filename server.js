@@ -106,8 +106,8 @@ wss.on('connection', (ws) => {
   })
 })
 
-Promise.all([loadIPdatabase(), db.init()]).then((lookup, _) => {
-  cityLookup = lookup
+Promise.all([loadIPdatabase(), db.init()]).then((results) => {
+  cityLookup = results[0]
   servers.forEach((server, idx) => {
     const client = new openvpn.OpenVPNclient(server.host, server.man_port)
     client.getClients().then((clients) => {
