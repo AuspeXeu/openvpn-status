@@ -99,6 +99,13 @@ class client extends EventEmitter {
     })
   }
 
+  disconnect(cid) {
+    const client = this.clients.get(cid)
+    if (!client) return
+    this.socket.write(`client-kill ${cid}`)
+    this.emit('client-disconnect', client)
+  }
+
   getClients() {
     if (!this.connected)
       return

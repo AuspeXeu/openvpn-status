@@ -48,6 +48,7 @@ const logEvent = (data) => {
     })
 }
 const clientToEntry = client => ({
+  cid: client['Client ID'],
   node: client['Common Name'] || client.Username,
   connected: client['Connected Since (time_t)'],
   seen: client['Last Ref (time_t)'],
@@ -81,6 +82,12 @@ const validateServer = (req, res, next) => {
     return res.sendStatus(404)
   next()
 }
+app.post('/server/:id/disconnect/:cid', validateServer, (req, res) => {
+  if (!validateNumber(req.params.cid))
+    return res.sendStatus(400)
+  const cid = parseInt(req.params.cid, 10)
+  servers[req.params.id].vpnclient.disconnect(cid)
+})
 app.get('/entries/:id', validateServer, (req, res) => res.json(servers[req.params.id].entries))
 // /log/:id/size/:search
 app.get(/\/log\/([0-9]*)\/size\/(.*)/, validateServer, (req, res) => {
@@ -121,9 +128,7 @@ Promise.all([loadIPdatabase(), db.init()]).then((results) => {
   [cityLookup] = results
   servers.forEach((server, idx) => {
     const client = new openvpn.OpenVPNclient(server.host, server.man_port)
-    client.getClients().then((clts) => {
-      server.entries = clts.map(clientToEntry)
-    })
+    client.getClients().then((clts) => server.entries = clts.map(clientToEntry))
     client.on('client-connect', (cl) => {
       const entry = clientToEntry(cl)
       server.entries = server.entries.filter(itm => itm.node !== entry.node)
@@ -140,6 +145,7 @@ Promise.all([loadIPdatabase(), db.init()]).then((results) => {
     client.on('client-update', (cl) => {
       broadcast(Object.assign(clientToEntry(cl), {server: idx, event: 'update', timestamp: moment().unix()}))
     })
+    server.vpnclient = client
   })
   httpServer.listen({host: conf.get('bind'), port: conf.get('port'), exclusive: true})
 })
