@@ -102,7 +102,7 @@ class client extends EventEmitter {
   getClients() {
     if (!this.connected)
       return
-    this.connected.then(() => {
+    return this.connected.then(() => {
       const res = new Promise(resolve => this.clientRes = resolve)
       this.socket.write('status 3\r\n')
       return res

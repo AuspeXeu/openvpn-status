@@ -105,7 +105,7 @@ app.get(/\/log\/([0-9]*)\/([0-9]*)\/([-0-9]*)\/(.*)/, validateServer, (req, res)
 })
 
 const httpServer = http.createServer(app)
-const wss = new WebSocket.Server({httpServer})
+const wss = new WebSocket.Server({server: httpServer})
 
 wss.on('connection', (ws) => {
   const id = uuid()
