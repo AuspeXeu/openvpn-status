@@ -38,7 +38,7 @@
         </td>
         <td>
           <v-tooltip left>
-            <v-icon slot="activator" style="cursor: pointer;" @click="disconnect(props.item.cid)">fa-skull</v-icon>
+            <v-icon slot="activator" class="disconnect" style="cursor:pointer;" @click="disconnect(props.item.cid)">fa-skull</v-icon>
             <span>Disconnect client</span>
           </v-tooltip>
         </td>
@@ -204,5 +204,8 @@ img {
 }
 .high_received {
   animation: received 1s;
+}
+.disconnect:hover {
+  color: #e83333;
 }
 </style>
