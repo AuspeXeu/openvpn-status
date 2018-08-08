@@ -8,12 +8,14 @@ const sequelize = new Sequelize('status', 'server', '!$%openvpn1', {
   operatorsAliases: false
 })
 
+const mkId = () => ({
+  type: Sequelize.INTEGER,
+  primaryKey: true,
+  autoIncrement: true
+})
+
 const Log = sequelize.define('Log', {
-  id: {
-    type: Sequelize.INTEGER,
-    primaryKey: true,
-    autoIncrement: true
-  },
+  id: mkId(),
   timestamp: {type: Sequelize.INTEGER},
   server: {type: Sequelize.INTEGER},
   pub: {type: Sequelize.STRING},
@@ -26,8 +28,17 @@ const Log = sequelize.define('Log', {
   tableName: 'Log'
 })
 
+const Client = sequelize.define('Clent', {
+  id: mkId(),
+  server: {type: Sequelize.INTEGER},
+  name: {type: Sequelize.STRING},
+  sent: {type: Sequelize.INTEGER, defaultValue: 0},
+  received: {type: Sequelize.INTEGER, defaultValue: 0}
+})
+
 module.exports = {
-  init: () => Log.sync(),
+  init: () => Promise.all([Log.sync(), Client.sync()]),
   Log,
+  Client,
   op: Sequelize.Op
 }
