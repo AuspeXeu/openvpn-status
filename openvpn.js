@@ -47,7 +47,8 @@ class client extends EventEmitter {
       const props = data.split('\t').slice(1, data.length + 1)
       const vpnClient = {}
       this.clientProps.forEach((prop, idx) => vpnClient[prop] = prepProperty(props[idx]))
-      this.clients.set(vpnClient['Client ID'], vpnClient)
+      if ((vpnClient['Common Name'] && vpnClient['Common Name'].length) || (vpnClient.Username && vpnClient.Username.length))
+        this.clients.set(vpnClient['Client ID'], vpnClient)
     } else if (data.startsWith('ROUTING_TABLE') && this.state === STATE.status) {
       const props = data.split('\t').slice(1, data.length + 1)
       this.clients.forEach((vpnClient) => {
