@@ -39,7 +39,7 @@ const logEvent = (data) => {
     }
   })
     .then((entry) => {
-      if (entry && data.event === 'connect') {
+      if (entry && servers[data.server].entries.find(cl => cl.cid === data.cid)) {
         Object.assign(entry, data)
         entry.event = 'reconnect'
         entry.save().then(() => broadcast(entry))
