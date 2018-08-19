@@ -47,32 +47,29 @@ const logEvent = (data) => {
         db.Log.create(data).then(nEntry => broadcast(Object.assign(nEntry, data)))
     })
 }
-const clientToEntry = client => ({
-  cid: client['Client ID'],
-  node: client['Common Name'] || client.Username,
-  connected: client['Connected Since (time_t)'],
-  seen: client['Last Ref (time_t)'],
-  pub: client['Real Address'].split(':')[0],
-  vpn: client['Virtual Address'],
-  received: client['Bytes Received'],
-  sent: client['Bytes Sent']
-})
-const validateIPaddress = ipaddress => /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ipaddress.toString())
+const clientToEntry = (client) => {
+  const obj = {
+    cid: client['Client ID'],
+    node: client['Common Name'] || client.Username,
+    connected: client['Connected Since (time_t)'],
+    seen: client['Last Ref (time_t)'],
+    pub: client['Real Address'].split(':')[0],
+    vpn: client['Virtual Address'],
+    received: client['Bytes Received'],
+    sent: client['Bytes Sent']
+  }
+  const loc = cityLookup(obj.pub)
+  if (loc) {
+    obj.country_code = loc.country.iso_code
+    obj.country_name = loc.country.names.en
+  }
+  return obj
+}
+
 const validateNumber = n => Number.isFinite(parseFloat(n, 10))
 
 app.get('/', (req, res) => res.sendFile(`${__dirname}/dist/index.html`))
 app.get('/servers', (req, res) => res.json(servers.map((server, idx) => ({name: server.name, id: idx}))))
-app.get('/country/:ip', (req, res) => {
-  if (!validateIPaddress(req.params.ip))
-    return res.sendStatus(400)
-  const loc = cityLookup(req.params.ip)
-  const geo = {}
-  if (loc) {
-    geo.country_code = loc.country.iso_code
-    geo.country_name = loc.country.names.en
-  }
-  res.json(geo)
-})
 
 const validateServer = (req, res, next) => {
   const serverId = req.params.id || req.params[0]
