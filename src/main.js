@@ -61,8 +61,8 @@ const store = new Vuex.Store({
         state.nodes.push({
           node: event.node,
           pub: event.pub,
-          country_name: false,
-          country_code: false,
+          country_name: event.country_name,
+          country_code: event.country_code,
           connected: event.connected,
           seen: event.seen,
           vpn: event.vpn
@@ -108,12 +108,7 @@ const store = new Vuex.Store({
       store.state.clientsLoading = true
       axios.get(`./entries/${store.state.server}`)
         .then((response) => {
-          const nodes = response.data.map((node) => {
-            node.country_name = false
-            node.country_code = false
-            return node
-          })
-          commit({type: 'updateNodes', nodes})
+          commit({type: 'updateNodes', nodes: response.data})
           store.state.clientsLoading = false
         })
     }

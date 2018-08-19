@@ -55,7 +55,6 @@ export default {
   name: 'clients',
   methods: {
     customSort(items, col, isDesc) {
-      console.log(items, col, isDesc)
       if (!items)
         return
       const keys = new Map()
@@ -117,23 +116,11 @@ export default {
     }
   },
   computed: mapState({
-    severId: state => state.server,
-    updateNode: state => state.updateNode,
-    loading: state => state.clientsLoading,
-    search: state => state.search,
-    nodes(state) {
-      const inSet = new Set(state.nodes.map(n => n.node))
-      Object.keys(this.meta).filter(itm => !inSet.has(itm)).forEach(itm => this.meta[itm] = false)
-      return state.nodes.map((node) => {
-        if (!this.meta[node.node])
-          this.meta[node.node] = axios.get(`./country/${node.pub}`)
-            .then((response) => {
-              node.country_name = response.data.country_name
-              node.country_code = response.data.country_code
-            })
-        return node
-      })
-    }
+    severId: 'server',
+    updateNode: 'updateNode',
+    loading: 'clientsLoading',
+    search: 'search',
+    nodes: 'nodes'
   }),
   data() {
     return {
