@@ -89,7 +89,23 @@ app.post('/server/:id/disconnect/:cid', validateServer, (req, res) => {
   servers[req.params.id].vpnclient.disconnect(cid)
   res.sendStatus(200)
 })
-app.get('/entries/:id', validateServer, (req, res) => res.json(servers[req.params.id].entries))
+app.get('/entries/:id', validateServer, (req, res) => {
+  const customSort = (items) => {
+    if (!items)
+      return []
+    const keys = new Map()
+    items.forEach(itm => keys.set(itm.node, `${itm.country_name}${itm.node}${itm.pub}`))
+    items.sort((a, b) => {
+      if (keys.get(a.node) < keys.get(b.node))
+        return -1
+      if (keys.get(a.node) > keys.get(b.node))
+        return 1
+      return 0
+    })
+    return items
+  }
+  res.json(customSort(servers[req.params.id].entries))
+})
 // /log/:id/size/:search
 app.get(/\/log\/([0-9]*)\/size\/(.*)/, validateServer, (req, res) => {
   const needle = `%${(req.params[1].trim() || '')}%`

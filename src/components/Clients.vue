@@ -55,9 +55,10 @@ export default {
   name: 'clients',
   methods: {
     customSort(items, col, isDesc) {
+      console.log(items, col, isDesc)
       if (!items)
         return
-      let keys = new Map()
+      const keys = new Map()
       if (col === 'country_name')
         items.forEach((itm) => keys.set(itm.node, `${itm.country_name}${itm.node}${itm.pub}`))
       else
