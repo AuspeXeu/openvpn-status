@@ -34,14 +34,14 @@ const loadIPdatabase = () => {
     else
       res(ip => (ip ? lookup.get(ip) : false))
   })
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     fs.stat(ipFile, (err, stat) => {
       const now = new Date().getTime()
       // Cached version to expire after a month from file date
       const expire = new Date((stat ? stat.ctime : '')).getTime() + 30 * 24 * 60 * 60 * 1000
       if (err || now > expire) {
         const req = request('https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz')
-        req.on('response', (resp) => {
+        req.on('response', resp => {
           if (resp.statusCode === 200)
             req.pipe(zlib.createGunzip()).pipe(fs.createWriteStream(ipFile))
               .on('finish', () => {

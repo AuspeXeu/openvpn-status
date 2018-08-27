@@ -15,7 +15,7 @@ class client extends EventEmitter {
     this.clients = new Map()
     this.socket = new net.Socket()
     this.connected = false
-    this.socket.on('data', (data) => {
+    this.socket.on('data', data => {
       const items = data.toString().split('\r\n').filter(itm => itm.length)
       items.forEach(itm => this.procData(itm.toString()))
     })
@@ -28,7 +28,7 @@ class client extends EventEmitter {
   }
 
   procData(data) {
-    const prepProperty = (val) => {
+    const prepProperty = val => {
       if (val.match(/^[0-9]+$/))
         return parseInt(val, 10)
       if (val === 'UNDEF')
@@ -51,7 +51,7 @@ class client extends EventEmitter {
         this.clients.set(vpnClient['Client ID'], vpnClient)
     } else if (data.startsWith('ROUTING_TABLE') && this.state === STATE.status) {
       const props = data.split('\t').slice(1, data.length + 1)
-      this.clients.forEach((vpnClient) => {
+      this.clients.forEach(vpnClient => {
         if (vpnClient['Real Address'] === props[this.clientProps.indexOf('Real Address')])
           this.clientProps.forEach((prop, idx) => vpnClient[prop] = prepProperty(props[idx]))
       })
@@ -90,7 +90,7 @@ class client extends EventEmitter {
   }
 
   connect() {
-    this.connected = new Promise((resolve) => {
+    this.connected = new Promise(resolve => {
       this.socket.connect(this.port, this.host, () => {
         if (!this.alive)
           this.alive = setInterval(() => this.getClients(), 5000)

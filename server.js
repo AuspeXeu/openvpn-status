@@ -29,7 +29,7 @@ let cityLookup
 const clients = new Map()
 const servers = conf.get('servers') || []
 const broadcast = data => clients.forEach(ws => ws.send(JSON.stringify(data)))
-const logEvent = (data) => {
+const logEvent = data => {
   const ts = data.timestamp % 60
   db.Log.findOne({
     where: {
@@ -38,7 +38,7 @@ const logEvent = (data) => {
       timestamp: {[db.op.between]: [data.timestamp - ts, data.timestamp + 60 - ts]}
     }
   })
-    .then((entry) => {
+    .then(entry => {
       if (entry && servers[data.server].entries.find(cl => cl.cid === data.cid)) {
         Object.assign(entry, data)
         entry.event = 'reconnect'
@@ -47,7 +47,7 @@ const logEvent = (data) => {
         db.Log.create(data).then(nEntry => broadcast(Object.assign(nEntry, data)))
     })
 }
-const clientToEntry = (client) => {
+const clientToEntry = client => {
   const obj = {
     cid: client['Client ID'],
     node: client['Common Name'] || client.Username,
@@ -87,7 +87,7 @@ app.post('/server/:id/disconnect/:cid', validateServer, (req, res) => {
   res.sendStatus(200)
 })
 app.get('/entries/:id', validateServer, (req, res) => {
-  const customSort = (items) => {
+  const customSort = items => {
     if (!items)
       return []
     const keys = new Map()
@@ -128,35 +128,35 @@ app.get(/\/log\/([0-9]*)\/([0-9]*)\/([-0-9]*)\/(.*)/, validateServer, (req, res)
 const httpServer = http.createServer(app)
 const wss = new WebSocket.Server({server: httpServer})
 
-wss.on('connection', (ws) => {
+wss.on('connection', ws => {
   const id = uuid()
   clients.set(id, ws)
   ws.on('close', () => clients.delete(id))
-  ws.on('error', (err) => {
+  ws.on('error', err => {
     log(err)
     clients.delete(id)
   })
 })
 
-Promise.all([loadIPdatabase(), db.init()]).then((results) => {
+Promise.all([loadIPdatabase(), db.init()]).then(results => {
   [cityLookup] = results
   servers.forEach((server, idx) => {
     const client = new openvpn.OpenVPNclient(server.host, server.man_port)
     client.getClients().then(clts => server.entries = clts.map(clientToEntry))
-    client.on('client-connect', (cl) => {
+    client.on('client-connect', cl => {
       const entry = clientToEntry(cl)
       server.entries = server.entries.filter(itm => itm.node !== entry.node)
       logEvent(Object.assign({server: idx, event: 'connect', timestamp: moment().unix()}, entry))
       server.entries.push(entry)
     })
-    client.on('client-disconnect', (cl) => {
+    client.on('client-disconnect', cl => {
       const entry = Object.assign(clientToEntry(cl), {event: 'disconnect'})
       const oLen = server.entries.length
       server.entries = server.entries.filter(itm => itm.node !== entry.node)
       if (oLen !== server.entries.length)
         logEvent(Object.assign({server: idx, event: 'disconnect', timestamp: moment().unix()}, entry))
     })
-    client.on('client-update', (cl) => {
+    client.on('client-update', cl => {
       broadcast(Object.assign(clientToEntry(cl), {server: idx, event: 'update', timestamp: moment().unix()}))
     })
     server.vpnclient = client
