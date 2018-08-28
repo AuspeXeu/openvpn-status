@@ -10,7 +10,8 @@ const {log, conf, loadIPdatabase} = require('./utils.js')
 const openvpn = require('./openvpn.js')
 const db = require('./database.js')
 
-app.use('/static', express.static(`${__dirname}/dist/static`))
+app.get('/', (req, res) => res.sendFile(`${__dirname}/dist/index.html`))
+app.use('/', express.static(`${__dirname}/dist`))
 app.use(bodyParser.json())
 // HTTP authentication
 if (conf.get('username') && conf.get('username').length)
@@ -68,7 +69,6 @@ const clientToEntry = client => {
 
 const validateNumber = n => Number.isFinite(parseFloat(n, 10))
 
-app.get('/', (req, res) => res.sendFile(`${__dirname}/dist/index.html`))
 app.get('/servers', (req, res) => res.json(servers.map((server, idx) => ({name: server.name, id: idx}))))
 
 const validateServer = (req, res, next) => {

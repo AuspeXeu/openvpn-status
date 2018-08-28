@@ -34,22 +34,24 @@
 
 <script>
 import moment from 'moment'
-import { mapState } from 'vuex'
+import {mapState} from 'vuex'
+import store from '../store'
+
 export default {
   name: 'events',
-  data() { 
+  data() {
     return {
       debounce: false,
       pagination: {},
       headers: [{
         sortable: false,
         width: '50px'
-      },{
+      }, {
         text: 'Node',
         align: 'center',
         sortable: false,
         value: 'node'
-      },{
+      }, {
         text: 'Time',
         align: 'center',
         sortable: false,
@@ -69,11 +71,11 @@ export default {
       return moment(event.timestamp * 1000).format('HH:mm - DD.MM.YY')
     },
     eventIcon(event) {
-      const map = new Map([['connect','fa-plug'],['disconnect','fa-times'],['reconnect','fa-redo']])
+      const map = new Map([['connect', 'fa-plug'], ['disconnect', 'fa-times'], ['reconnect', 'fa-redo']])
       return map.get(event.event) || 'fa-question'
     },
     eventColor(event) {
-      const map = new Map([['connect','#28ba0e'],['disconnect','#c11919'],['reconnect','#4221a5']])
+      const map = new Map([['connect', '#28ba0e'], ['disconnect', '#c11919'], ['reconnect', '#4221a5']])
       return map.get(event.event) || '#f27609'
     }
   },
@@ -81,23 +83,23 @@ export default {
     pagination: {
       handler() {
         const { page, rowsPerPage } = this.pagination
-        this.$store.dispatch('changePage',{page:page,size:rowsPerPage})
+        store.dispatch('changePage', {page, size: rowsPerPage})
       },
       deep: true
     },
-    search(value) {
+    search() {
       if (this.debounce)
         clearTimeout(this.debounce)
       this.debounce = setTimeout(() => {
         const { page, rowsPerPage } = this.pagination
-        this.$store.dispatch('changePage',{page:page,size:rowsPerPage})
+        store.dispatch('changePage', {page, size: rowsPerPage})
         this.debounce = false
       }, 300)
     },
-    server(value) {
+    server() {
       this.pagination.page = 1
       const { page, rowsPerPage } = this.pagination
-      this.$store.dispatch('changePage',{page:page,size:rowsPerPage})
+      store.dispatch('changePage', {page, size: rowsPerPage})
     }
   }
 }

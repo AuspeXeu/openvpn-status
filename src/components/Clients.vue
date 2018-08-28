@@ -22,7 +22,7 @@
         <td class="text-xs-center">
           <v-tooltip bottom>
             <span slot="activator">{{ formatTime(props.item.connected) }}</span>
-            <span>Last seen: {{ elabsedTime(props.item.seen) }}</br></span>
+            <span>Last seen: {{ elabsedTime(props.item.seen) }}</span><br>
             <span>Online: {{ elabsedTime(props.item.connected) }}</span>
           </v-tooltip>
         </td>
@@ -50,7 +50,8 @@
 <script>
 import moment from 'moment'
 import axios from 'axios'
-import { mapState } from 'vuex'
+import {mapState} from 'vuex'
+
 export default {
   name: 'clients',
   methods: {
@@ -59,10 +60,10 @@ export default {
         return
       const keys = new Map()
       if (col === 'country_name')
-        items.forEach((itm) => keys.set(itm.node, `${itm.country_name}${itm.node}${itm.pub}`))
+        items.forEach(itm => keys.set(itm.node, `${itm.country_name}${itm.node}${itm.pub}`))
       else
-        items.forEach((itm) => keys.set(itm.node, itm[col]))
-      items.sort((a,b) => {
+        items.forEach(itm => keys.set(itm.node, itm[col]))
+      items.sort((a, b) => {
         if (keys.get(a.node) < keys.get(b.node))
           return (isDesc ? 1 : -1)
         if (keys.get(a.node) > keys.get(b.node))
@@ -72,18 +73,18 @@ export default {
       return items
     },
     formatDataVolume(vol) {
-      vol = vol / 1000 / 1000 / 1000
-      if (vol > 1)
-        return `${vol.toFixed(2)} GB`
-      vol = vol * 1000
-      if (vol > 1)
-        return `${vol.toFixed(2)} MB`
-      vol = vol * 1000
-      if (vol > 1)
-        return `${vol.toFixed(2)} KB`
-      vol = vol * 1000
-      if (vol > 1)
-        return `${vol.toFixed(2)} B`
+      let volume = vol / 1000 / 1000 / 1000
+      if (volume > 1)
+        return `${volume.toFixed(2)} GB`
+      volume *= 1000
+      if (volume > 1)
+        return `${volume.toFixed(2)} MB`
+      volume *= 1000
+      if (volume > 1)
+        return `${volume.toFixed(2)} KB`
+      volume *= 1000
+      if (volume > 1)
+        return `${volume.toFixed(2)} B`
     },
     elabsedTime(since) {
       return moment.duration(moment().diff(moment(since * 1000))).humanize()
@@ -95,7 +96,7 @@ export default {
       return (node.country_code ? node.country_name : 'Unknown Country')
     },
     flagImg(node) {
-      return `./static/images/flags/${(node.country_code ? `${node.country_code}.png` : 'unknown.jpg')}`
+      return `/flags/${(node.country_code ? `${node.country_code}.png` : 'unknown.jpg')}`
     },
     disconnect(cid) {
       axios.post(`/server/${this.severId}/disconnect/${cid}`)
@@ -103,7 +104,7 @@ export default {
   },
   watch: {
     updateNode(nVal, oVal) {
-      ['sent','received'].forEach((prop) => {
+      ['sent', 'received'].forEach(prop => {
         if (nVal[prop] === oVal[prop])
           return
         const el = document.getElementById(`${nVal.node}_${prop}`)
@@ -129,31 +130,31 @@ export default {
         sortable: true,
         value: 'country_name',
         width: '50px'
-      },{
+      }, {
         text: 'Node',
         align: 'center',
         sortable: true,
         value: 'node'
-      },{
+      }, {
         text: 'VPN IP',
         align: 'center',
         sortable: true,
         value: 'vpn'
-      },{
+      }, {
         text: 'Public IP',
         align: 'center',
         sortable: true,
         value: 'pub'
-      },{
+      }, {
         text: 'Connected',
         align: 'center',
         sortable: true,
         value: 'connected'
-      },{
+      }, {
         text: 'Traffic',
         sortable: false,
         width: '100px'
-      },{
+      }, {
         text: 'Action',
         sortable: false,
         width: '25px'

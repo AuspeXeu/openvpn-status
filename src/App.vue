@@ -1,39 +1,5 @@
 <template>
-<div id="app">
   <v-app>
-    <v-content
-     v-touch="{
-      left: () => drawer = false,
-      right: () => drawer = servers.length > 1
-    }">
-      <clients></clients>
-      <events></events>
-    </v-content>
-    <v-snackbar
-      :timeout="snack.timeout"
-      :color="snack.color"
-      v-model="snack.visible">
-      {{snack.text}}
-    </v-snackbar>
-    <v-toolbar fixed app dense>
-      <v-toolbar-title>
-        <v-toolbar-side-icon @click.native="drawer = !drawer" v-if="servers.length > 1"></v-toolbar-side-icon>
-        <span>{{(server ? server.name : '')}}</span>
-      </v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-toolbar-items>
-        <v-text-field
-        style="margin-top:5px;"
-        prepend-inner-icon="search"
-        single-line
-        :append-icon="(search.length ? 'clear' : '')"
-        ref="searchField"
-        @click:append="search = ''"
-        @keyup.esc="search = ''"
-        v-model="search"
-      ></v-text-field>
-      </v-toolbar-items>
-    </v-toolbar>
     <v-navigation-drawer temporary hide-overlay fixed v-model="drawer" class="text-xs-center" app>
       <v-list class="pt-0" dense>
         <v-list-tile v-for="srv in servers" :key="srv.id" :to="`/${srv.id}`">
@@ -46,20 +12,56 @@
         </v-list-tile>
       </v-list>
     </v-navigation-drawer>
+    <v-toolbar fixed app>
+      <v-toolbar-title>
+        <v-toolbar-side-icon @click.stop="drawer = !drawer" v-if="servers.length > 1"></v-toolbar-side-icon>
+        <span>{{(server ? server.name : '')}}</span>
+      </v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-toolbar-items>
+        <v-text-field
+        prepend-inner-icon="search"
+        single-line
+        :append-icon="(search.length ? 'clear' : '')"
+        ref="searchField"
+        @click:append="search = ''"
+        @keyup.esc="search = ''"
+        v-model="search"
+      ></v-text-field>
+      </v-toolbar-items>
+    </v-toolbar>
+    <v-content v-touch="{
+      left: () => drawer = false,
+      right: () => drawer = servers.length > 1
+    }">
+      <clients></clients>
+      <events></events>
+    </v-content>
   </v-app>
-</div>
 </template>
 
 <script>
-import Clients from './components/Clients'
-import Events from './components/Events'
-import { mapState } from 'vuex'
+import {mapState} from 'vuex'
+import Clients from './components/Clients.vue'
+import Events from './components/Events.vue'
 
 export default {
-  name: 'app',
+  name: 'App',
   components: {
     Clients,
     Events
+  },
+  data() {
+    return {
+      snack: {
+        visible: false,
+        timeout: 3000,
+        color: 'success',
+        text: ''
+      },
+      search: '',
+      drawer: false
+    }
   },
   methods: {
     notify(text, type) {
@@ -80,36 +82,21 @@ export default {
   },
   computed: mapState({
     event: state => state.event,
-    server: state => state.servers.find((srv) => srv.id === state.server),
+    server: state => state.servers.find(srv => srv.id === state.server),
     servers: state => state.servers
   }),
   watch: {
-    server(value) {
+    server() {
       this.drawer = false
       this.search = ''
     },
     event(value) {
-      const map = new Map([['connect','success'],['disconnect','error'],['reconnect','info']])
+      const map = new Map([['connect', 'success'], ['disconnect', 'error'], ['reconnect', 'info']])
       this.notify(`${value.node} ${value.event}ed`, map.get(value.event) || 'cyan darken-2')
     },
     search(value) {
       this.$store.commit('changeSearch', {text: value || ''})
     }
-  },
-  data() {
-    return {
-      snack: {
-        visible: false,
-        timeout: 3000,
-        color: 'success',
-        text: ''
-      },
-      search: '',
-      drawer: false
-    }
   }
 }
 </script>
-
-<style>
-</style>
