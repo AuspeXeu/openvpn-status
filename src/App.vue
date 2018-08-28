@@ -30,10 +30,7 @@
       ></v-text-field>
       </v-toolbar-items>
     </v-toolbar>
-    <v-content v-touch="{
-      left: () => drawer = false,
-      right: () => drawer = servers.length > 1
-    }">
+    <v-content>
       <clients></clients>
       <events></events>
     </v-content>
