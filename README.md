@@ -117,8 +117,8 @@ server {
 
 ### Environment variables
 
-| Variable | Description | Type | Default value |
-| -------- | ----------- | ---- | ------------- |
+| Variable | Description | Default value |
+| -------- | ----------- | ------------- |
 | **AUTH_USERNAME** | HTTP AUTH username | admin
 | **AUTH_PASSWORD** | HTTP AUTH password | admin
 | **VPN_NAME** | Name of the VPN | Server
