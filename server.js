@@ -10,9 +10,6 @@ const {log, conf, loadIPdatabase} = require('./utils.js')
 const openvpn = require('./openvpn.js')
 const db = require('./database.js')
 
-app.get('/', (req, res) => res.sendFile(`${__dirname}/dist/index.html`))
-app.use('/', express.static(`${__dirname}/dist`))
-app.use(bodyParser.json())
 // HTTP authentication
 if (conf.get('username') && conf.get('username').length)
   app.use((req, res, next) => {
@@ -26,6 +23,11 @@ if (conf.get('username') && conf.get('username').length)
     } else
       next()
   })
+
+app.get('/', (req, res) => res.sendFile(`${__dirname}/dist/index.html`))
+app.use('/', express.static(`${__dirname}/dist`))
+app.use(bodyParser.json())
+
 let cityLookup
 const clients = new Map()
 const servers = conf.get('servers') || []
