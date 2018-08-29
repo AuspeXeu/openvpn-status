@@ -7,6 +7,7 @@ Features
 * Persistent event log
 * Full material design
 * Multi server support
+* Mobile friendly
 
 ### Client panel
 ![Client panel](https://raw.githubusercontent.com/AuspeXeu/openvpn-status/master/clients.png)
