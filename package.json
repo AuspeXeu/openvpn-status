@@ -30,11 +30,11 @@
   "dependencies": {
     "vue": "^2.5.17",
     "vue-router": "^3.0.1",
-    "vuetify": "^1.0.19",
+    "vuetify": "^1.2.0",
     "vuex": "^3.0.1",
     "axios": "^0.18.0",
     "body-parser": "^1.18.3",
-    "cron": "^1.4.0",
+    "cron": "^1.4.1",
     "express": "^4.16.3",
     "maxmind": "^2.7.0",
     "moment": "^2.22.2",
@@ -44,12 +44,12 @@
     "sqlite3": "^4.0.2",
     "uuid": "^3.3.2",
     "ws": "^6.0.0",
-    "@babel/polyfill": "^7.0.0-beta.49"
+    "@babel/polyfill": "^7.0.0"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.0.0",
-    "@vue/cli-plugin-eslint": "^3.0.0",
-    "@vue/cli-service": "^3.0.0",
+    "@vue/cli-plugin-babel": "^3.0.1",
+    "@vue/cli-plugin-eslint": "^3.0.1",
+    "@vue/cli-service": "^3.0.1",
     "@vue/eslint-config-airbnb": "^3.0.1",
     "vue-cli-plugin-vuetify": "^0.1.6",
     "vue-template-compiler": "^2.5.17"
