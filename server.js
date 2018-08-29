@@ -32,23 +32,33 @@ let cityLookup
 const clients = new Map()
 const servers = conf.get('servers') || []
 const broadcast = data => clients.forEach(ws => ws.send(JSON.stringify(data)))
+const eventBuffer = {}
 const logEvent = data => {
-  const ts = data.timestamp % 60
-  db.Log.findOne({
-    where: {
-      server: data.server,
-      node: data.node,
-      timestamp: {[db.op.between]: [data.timestamp - ts, data.timestamp + 60 - ts]}
-    }
-  })
-    .then(entry => {
-      if (entry && servers[data.server].entries.find(cl => cl.cid === data.cid)) {
-        Object.assign(entry, data)
-        entry.event = 'reconnect'
-        entry.save().then(() => broadcast(entry))
-      } else
-        db.Log.create(data).then(nEntry => broadcast(Object.assign(nEntry, data)))
-    })
+  const hash = `${data.server}_${data.node}_${data.timestamp}`
+  if (!eventBuffer[hash])
+    eventBuffer[hash] = 1
+  else
+    eventBuffer[hash] += 1
+  if (eventBuffer[hash] === 1)
+    setTimeout(() => {
+      db.Log.findOne({
+        where: {
+          server: data.server,
+          node: data.node,
+          timestamp: {[db.op.between]: [data.timestamp - 60, data.timestamp + 60]}
+        }
+      })
+        .then(entry => {
+          // Another event of the same node is in the buffer or we found an old event
+          if ((eventBuffer[hash] > 1 || entry) && servers[data.server].entries.find(cl => cl.cid === data.cid)) {
+            Object.assign(entry, data)
+            entry.event = 'reconnect'
+            entry.save().then(() => broadcast(entry))
+          } else
+            db.Log.create(data).then(nEntry => broadcast(Object.assign(nEntry, data)))
+          eventBuffer[hash] = 0
+        })
+    }, 2000)
 }
 const clientToEntry = client => {
   const obj = {
