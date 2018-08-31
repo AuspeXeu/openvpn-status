@@ -50,12 +50,16 @@ const logEvent = data => {
       })
         .then(entry => {
           // Another event of the same node is in the buffer or we found an old event
-          if ((eventBuffer[hash] > 1 || entry) && servers[data.server].entries.find(cl => cl.cid === data.cid)) {
+          if (!entry && eventBuffer[hash] === 1)
+            db.Log.create(data).then(nEntry => broadcast(Object.assign(nEntry, data)))
+          else if (!entry && eventBuffer[hash] > 1 && servers[data.server].entries.find(cl => cl.cid === data.cid)) {
+            data.event = 'reconnect'
+            db.Log.create(data).then(nEntry => broadcast(Object.assign(nEntry, data)))
+          } else if (entry && servers[data.server].entries.find(cl => cl.cid === data.cid)) {
             Object.assign(entry, data)
             entry.event = 'reconnect'
             entry.save().then(() => broadcast(entry))
-          } else
-            db.Log.create(data).then(nEntry => broadcast(Object.assign(nEntry, data)))
+          }
           eventBuffer[hash] = 0
         })
     }, 2000)
