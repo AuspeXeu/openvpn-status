@@ -1,4 +1,5 @@
 import '@babel/polyfill'
+import moment from 'moment'
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
@@ -38,11 +39,18 @@ new Vue({
     } catch (e) {
       console.error(e)
     }
+    store.commit('updateTime', {time: moment().unix()})
     axios.get('./servers')
       .then(response => {
         store.state.servers = response.data
         store.dispatch('changeServer', {
           server: srvId || response.data[0].id
+        })
+      })
+    axios.get('./time')
+      .then(response => {
+        store.commit('updateTime', {
+          time: response.time
         })
       })
     // eslint-disable-next-line

@@ -60,11 +60,11 @@ export default {
     }
   },
   computed: mapState({
-    loading: state => state.clientsLoading,
-    search: state => state.search,
-    events: state => state.events,
-    total: state => state.total,
-    server: state => state.server
+    loading: 'clientsLoading',
+    search: 'search',
+    events: 'events',
+    total: 'total',
+    server: 'server'
   }),
   methods: {
     eventTime(event) {

@@ -34,10 +34,20 @@
       <clients></clients>
       <events></events>
     </v-content>
+    <v-footer fixed>
+      <v-flex>
+        <v-card>
+          <v-card-actions class="justify-center">
+            {{serverTime}}
+          </v-card-actions>
+        </v-card>
+      </v-flex>
+    </v-footer>
   </v-app>
 </template>
 
 <script>
+import moment from 'moment'
 import {mapState} from 'vuex'
 import Clients from './components/Clients.vue'
 import Events from './components/Events.vue'
@@ -60,6 +70,15 @@ export default {
       drawer: false
     }
   },
+  created() {
+    window.addEventListener('keydown', this.onKeyDown)
+  },
+  computed: mapState({
+    event: 'event',
+    serverTime: state => moment(state.serverTime * 1000).format('HH:mm:ss - DD.MM.YY'),
+    server: state => state.servers.find(srv => srv.id === state.server),
+    servers: 'servers'
+  }),
   methods: {
     notify(text, type) {
       this.snack.text = text
@@ -74,14 +93,6 @@ export default {
       }
     }
   },
-  created() {
-    window.addEventListener('keydown', this.onKeyDown)
-  },
-  computed: mapState({
-    event: state => state.event,
-    server: state => state.servers.find(srv => srv.id === state.server),
-    servers: state => state.servers
-  }),
   watch: {
     server() {
       this.drawer = false

@@ -4,12 +4,14 @@ import axios from 'axios'
 
 Vue.use(Vuex)
 
+let timer
 export default new Vuex.Store({
   state: {
     event: false,
     server: 0,
     servers: [],
     total: 0,
+    serverTime: 0,
     updateNode: false,
     eventsLoading: true,
     clientsLoading: true,
@@ -59,6 +61,13 @@ export default new Vuex.Store({
         if (oLen !== state.events.length)
           state.events.pop()
       }
+    },
+    updateTime(state, payload) {
+      const {time} = payload
+      state.serverTime = time
+      if (timer)
+        clearInterval(timer)
+      timer = setInterval(() => state.serverTime++, 1000)
     },
     changeServer(state, payload) {
       state.server = payload.server
