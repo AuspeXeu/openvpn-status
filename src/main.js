@@ -50,7 +50,7 @@ new Vue({
     axios.get('./time')
       .then(response => {
         store.commit('updateTime', {
-          time: response.time
+          time: response.data.time
         })
       })
     // eslint-disable-next-line

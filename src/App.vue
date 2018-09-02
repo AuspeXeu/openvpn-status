@@ -38,7 +38,10 @@
       <v-flex>
         <v-card>
           <v-card-actions class="justify-center">
-            {{serverTime}}
+            <v-tooltip top>
+              <span slot="activator">{{serverTime}}</span>
+              <span>Server time</span>
+            </v-tooltip>
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -75,7 +78,7 @@ export default {
   },
   computed: mapState({
     event: 'event',
-    serverTime: state => moment(state.serverTime * 1000).format('HH:mm:ss - DD.MM.YY'),
+    serverTime: state => moment(state.serverTime * 1000).format('DD.MM.YY - HH:mm:ss'),
     server: state => state.servers.find(srv => srv.id === state.server),
     servers: 'servers'
   }),
