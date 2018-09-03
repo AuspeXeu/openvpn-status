@@ -30,7 +30,7 @@
       ></v-text-field>
       </v-toolbar-items>
     </v-toolbar>
-    <v-content>
+    <v-content style="padding-bottom: 25px;">
       <clients></clients>
       <events></events>
     </v-content>
