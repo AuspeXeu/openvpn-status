@@ -30,18 +30,23 @@
       ></v-text-field>
       </v-toolbar-items>
     </v-toolbar>
-    <v-content style="padding-bottom: 25px;">
+    <v-content>
       <clients></clients>
       <events></events>
     </v-content>
-    <v-footer fixed>
+    <v-footer app fixed>
       <v-flex>
         <v-card>
           <v-card-actions class="justify-center">
             <v-tooltip top>
-              <span slot="activator">{{serverTime}}</span>
+              <span slot="activator">Server time: {{serverTime}}</span>
               <span>Server time</span>
             </v-tooltip>
+            <v-spacer></v-spacer>
+            <v-btn id="btn-github" flat icon href="https://github.com/AuspeXeu/openvpn-status" target="_blank" rel="noopener" small>
+              <v-icon>fab fa-github</v-icon>
+            </v-btn>
+            <div class="noselect pr-2">© {{ new Date().getFullYear() }}</div>
           </v-card-actions>
         </v-card>
       </v-flex>
