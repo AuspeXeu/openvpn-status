@@ -8,6 +8,7 @@ Features
 * Full material design
 * Multi server support
 * Mobile friendly
+* Disconnect clients remotely
 
 ### Client panel
 ![Client panel](https://raw.githubusercontent.com/AuspeXeu/openvpn-status/master/clients.png)
