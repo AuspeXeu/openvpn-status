@@ -29,6 +29,8 @@ class client extends EventEmitter {
 
   procData(data) {
     const prepProperty = val => {
+      if (!val)
+        return undefined
       if (val.match(/^[0-9]+$/))
         return parseInt(val, 10)
       if (val === 'UNDEF')
