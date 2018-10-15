@@ -32,7 +32,7 @@ new Vue({
       }
     }
   },
-  beforeMount() {
+  mounted() {
     let srvId
     try {
       srvId = parseInt(this.$route.params.id, 10)
