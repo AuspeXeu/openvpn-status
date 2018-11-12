@@ -29,6 +29,7 @@ app.use('/', express.static(`${__dirname}/dist`))
 app.use(bodyParser.json())
 
 let cityLookup
+const clientUpdates = new Map()
 const clients = new Map()
 const servers = conf.get('servers') || []
 const broadcast = data => clients.forEach(ws => ws.send(JSON.stringify(data)))
@@ -157,6 +158,12 @@ wss.on('connection', ws => {
 
 Promise.all([loadIPdatabase(), db.init()]).then(results => {
   [cityLookup] = results
+  setInterval(() => {
+    clientUpdates.forEach(entry => {
+      broadcast(entry)
+      clientUpdates.delete(entry.cid)
+    })
+  }, 5000)
   servers.forEach((server, idx) => {
     const client = new openvpn.OpenVPNclient(server.host, server.man_port)
     client.getClients().then(clts => server.entries = clts.map(clientToEntry))
@@ -174,7 +181,8 @@ Promise.all([loadIPdatabase(), db.init()]).then(results => {
         logEvent(Object.assign({server: idx, event: 'disconnect', timestamp: moment().unix()}, entry))
     })
     client.on('client-update', cl => {
-      broadcast(Object.assign(clientToEntry(cl), {server: idx, event: 'update', timestamp: moment().unix()}))
+      const entry = Object.assign(clientToEntry(cl), {server: idx, event: 'update', timestamp: moment().unix()})
+      clientUpdates.set(entry.cid, entry)
     })
     server.vpnclient = client
   })
