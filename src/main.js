@@ -55,20 +55,26 @@ new Vue({
       })
     // eslint-disable-next-line
     const socket = new ReconnectingWebSocket(`${window.location.origin.replace('http', 'ws')}/live/log`)
-    socket.onmessage = ({data}) => {
-      const event = JSON.parse(data)
-      if (event.server !== store.state.server)
+    const handleMsg = msg => {
+      if (msg.server !== store.state.server)
         return
-      if (event.event === 'update')
+      if (msg.event === 'update')
         store.commit({
           type: 'updateNode',
-          event
+          event: msg
         })
       else
         store.commit({
           type: 'addEvent',
-          event
+          event: msg
         })
+    }
+    socket.onmessage = ({data}) => {
+      const received = JSON.parse(data)
+      if (Array.isArray(received))
+        received.forEach(msg => handleMsg(msg))
+      else
+        handleMsg(received)
     }
   }
 }).$mount('#app')

@@ -159,10 +159,8 @@ wss.on('connection', ws => {
 Promise.all([loadIPdatabase(), db.init()]).then(results => {
   [cityLookup] = results
   setInterval(() => {
-    clientUpdates.forEach(entry => {
-      broadcast(entry)
-      clientUpdates.delete(entry.cid)
-    })
+    broadcast(Array.from(clientUpdates.values()))
+    clientUpdates.clear()
   }, 5000)
   servers.forEach((server, idx) => {
     const client = new openvpn.OpenVPNclient(server.host, server.man_port)
