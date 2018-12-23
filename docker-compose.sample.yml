@@ -1,0 +1,21 @@
+openvpn:
+  image: kylemanna/openvpn
+  container_name: openvpn
+  hostname: openvpn
+  restart: "unless-stopped"
+openvpn-status:
+  image: auspexeu/openvpn-status
+  container_name: openvpn-status
+  ports:
+    - 8080:3013
+  environment:
+    - AUTH_USERNAME=admin
+    - AUTH_PASSWORD=YV3qSTxD
+    - VPN_NAME="Remote employees"
+    - VPN_HOST=openvpn
+    - VPN_MAN_PORT=7656
+  links:
+    - openvpn
+  depends_on:
+    - openvpn
+  restart: "unless-stopped"

@@ -8,27 +8,37 @@ const sequelize = new Sequelize('status', 'server', '!$%openvpn1', {
   operatorsAliases: false
 })
 
+const mkId = () => ({
+  type: Sequelize.INTEGER,
+  primaryKey: true,
+  autoIncrement: true
+})
+
 const Log = sequelize.define('Log', {
-  id: {
-    type: Sequelize.INTEGER,
-    primaryKey: true,
-    autoIncrement: true
-  },
-  timestamp : {type: Sequelize.INTEGER},
-  server    : {type: Sequelize.INTEGER},
-  pub       : {type: Sequelize.STRING},
-  vpn       : {type: Sequelize.STRING},
-  node      : {type: Sequelize.STRING},
-  event     : {type: Sequelize.STRING}
-},{
+  id: mkId(),
+  timestamp: {type: Sequelize.INTEGER},
+  server: {type: Sequelize.INTEGER},
+  pub: {type: Sequelize.STRING},
+  vpn: {type: Sequelize.STRING},
+  node: {type: Sequelize.STRING},
+  event: {type: Sequelize.STRING}
+}, {
   freezeTableName: true,
   timestamps: false,
   tableName: 'Log'
 })
 
+const Client = sequelize.define('Clent', {
+  id: mkId(),
+  server: {type: Sequelize.INTEGER},
+  name: {type: Sequelize.STRING},
+  sent: {type: Sequelize.INTEGER, defaultValue: 0},
+  received: {type: Sequelize.INTEGER, defaultValue: 0}
+})
+
 module.exports = {
-  init: () => Log.sync(),
-  Log: Log,
-  state: () => sequelize.query('select p1.* from log as p1 inner join (select max(timestamp) as timestamp, node from log group by node) as p2 on p1.node = p2.node and p1.timestamp = p2.timestamp where p1.event = \'connect\'', {model:Log}),
+  init: () => Promise.all([Log.sync(), Client.sync()]),
+  Log,
+  Client,
   op: Sequelize.Op
 }
