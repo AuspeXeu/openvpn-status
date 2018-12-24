@@ -69,19 +69,7 @@ Add the following line to your configuration file, e.g., `server.conf`. This wil
 management 127.0.0.1 7656 //As specified in cfg.json for this server
 ```
 
-<<<<<<< HEAD
-Afterwards restart your OpenVPN server.
-
-#### Windows
-For windows copy `status.bat` and perform the above instructions analogously.  Edit your OpenVPN configuration file as such:
-```
-script-security 2
-client-connect status.bat
-client-disconnect status.bat
-```
-=======
 Restart your OpenVPN server.
->>>>>>> 7736693f9961e95386d410ebe3dc0221e07829bf
 
 ### 5. Build
 
