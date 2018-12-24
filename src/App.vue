@@ -83,7 +83,7 @@ export default {
   },
   computed: mapState({
     event: 'event',
-    serverTime: state => moment(state.serverTime * 1000).format('DD.MM.YY - HH:mm:ss'),
+    serverTime: state => state.servers.find(srv => moment(state.serverTime * 1000).format(state.server.date_format)),
     server: state => state.servers.find(srv => srv.id === state.server),
     servers: 'servers'
   }),

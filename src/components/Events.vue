@@ -68,6 +68,7 @@ export default {
   }),
   methods: {
     eventTime(event) {
+      // TODO how to expose server.date_format here?
       return moment(event.timestamp * 1000).format('HH:mm - DD.MM.YY')
     },
     eventIcon(event) {

@@ -1,4 +1,4 @@
-const {CronJob} = require('cron')
+const { CronJob } = require('cron')
 const moment = require('moment')
 const request = require('request')
 const zlib = require('zlib')
@@ -8,7 +8,7 @@ const conf = require('nconf')
 
 const log = (...args) => console.log(...[moment().format('HH:mm - DD.MM.YY'), ...args])
 
-conf.file({file: 'cfg.json'})
+conf.file({ file: 'cfg.json' })
 conf.defaults({
   port: 3013,
   bind: '127.0.0.1',
@@ -17,14 +17,15 @@ conf.defaults({
   }],
   ipFile: './GeoLite2-City.mmdb',
   username: 'admin',
-  password: 'admin'
+  password: 'admin',
+  date_format: 'HH:mm - DD.MM.YY'
 })
 
 const envVars = process.env
 conf.set('username', envVars.AUTH_USERNAME || conf.get('username'))
 conf.set('password', envVars.AUTH_PASSWORD || conf.get('password'))
 if (envVars.VPN_NAME && envVars.VPN_HOST && envVars.VPN_MAN_PORT)
-  conf.set('servers', [{name: envVars.VPN_NAME, host: envVars.VPN_HOST, man_port: envVars.VPN_MAN_PORT}])
+  conf.set('servers', [{ name: envVars.VPN_NAME, host: envVars.VPN_HOST, man_port: envVars.VPN_MAN_PORT, date_format: envVars.VPN_DATE_FORMAT }])
 
 const loadIPdatabase = () => {
   const ipFile = conf.get('ipFile')
@@ -62,4 +63,4 @@ const _ = new CronJob({
   start: true
 })
 
-module.exports = {log, loadIPdatabase, conf}
+module.exports = { log, loadIPdatabase, conf }

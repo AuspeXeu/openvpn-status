@@ -14,6 +14,7 @@ openvpn-status:
     - VPN_NAME="Remote employees"
     - VPN_HOST=openvpn
     - VPN_MAN_PORT=7656
+    - VPN_DATE_FORMAT="l - LT"
   links:
     - openvpn
   depends_on:
