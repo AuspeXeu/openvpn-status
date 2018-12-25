@@ -46,6 +46,7 @@ The configuration is handled in the ``cfg.json`` file.
 | servers  | `[{"name": "Server","host": "127.0.0.1","man_port": 7656}]` | Array of servers. |
 | username | `admin` | User for basic HTTP authentication. Change to `''` or `false` to disable. |
 | password | `admin` | Password for basic HTTP authentication. |
+| date_format | `HH:mm - DD.MM.YY` | Date format on webpage ([click here for options](http://momentjs.com/docs/#/displaying/format/))
 
 Example:
 ```
@@ -57,7 +58,8 @@ Example:
     {"id": 1, "name": "Server B", "host": "127.0.0.1","man_port": 6756}
   ],
   "username": "admin",
-  "password": "YV3qSTxD"
+  "password": "YV3qSTxD",
+  "date_format": "D/M/YY - h:mm A"
 }
 ```
 
@@ -126,6 +128,7 @@ server {
 | **VPN_NAME** | Name of the VPN | Server
 | **VPN_HOST** | Host of the VPN | openvpn
 | **VPN_MAN_PORT** | Management port | 7656
+| **VPN_DATE_FORMAT** | Date format | HH:mm - DD.MM.YY
 
 ### Docker-compose.yml
 
@@ -144,6 +147,7 @@ openvpn-status:
     - VPN_NAME="Remote employees"
     - VPN_HOST=openvpn
     - VPN_MAN_PORT=7656
+    - VPN_DATE_FORMAT="HH:mm - DD.MM.YY"
   links:
     - openvpn
   depends_on:

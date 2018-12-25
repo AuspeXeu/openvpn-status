@@ -17,7 +17,8 @@ conf.defaults({
   }],
   ipFile: './GeoLite2-City.mmdb',
   username: 'admin',
-  password: 'admin'
+  password: 'admin',
+  date_format: "HH:mm - DD.MM.YY"
 })
 
 const envVars = process.env

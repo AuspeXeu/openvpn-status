@@ -59,6 +59,7 @@ import moment from 'moment'
 import {mapState} from 'vuex'
 import Clients from './components/Clients.vue'
 import Events from './components/Events.vue'
+import config from '../cfg.json'
 
 export default {
   name: 'App',
@@ -83,7 +84,7 @@ export default {
   },
   computed: mapState({
     event: 'event',
-    serverTime: state => moment(state.serverTime * 1000).format('DD.MM.YY - HH:mm:ss'),
+    serverTime: state => moment(state.serverTime * 1000).format(config.date_format),
     server: state => state.servers.find(srv => srv.id === state.server),
     servers: 'servers'
   }),

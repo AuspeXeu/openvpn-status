@@ -36,6 +36,7 @@
 import moment from 'moment'
 import {mapState} from 'vuex'
 import store from '../store'
+import config from '../../cfg.json'
 
 export default {
   name: 'events',
@@ -68,7 +69,7 @@ export default {
   }),
   methods: {
     eventTime(event) {
-      return moment(event.timestamp * 1000).format('HH:mm - DD.MM.YY')
+      return moment(event.timestamp * 1000).format(config.date_format)
     },
     eventIcon(event) {
       const map = new Map([['connect', 'fa-plug'], ['disconnect', 'fa-times'], ['reconnect', 'fa-redo']])
