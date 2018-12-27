@@ -51,7 +51,7 @@
 import moment from 'moment'
 import axios from 'axios'
 import {mapState} from 'vuex'
-import date_format from '../../cfg.json'
+import date_format from '../../public/cfg.json'
 
 export default {
   name: 'clients',

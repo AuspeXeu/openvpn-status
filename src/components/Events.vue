@@ -36,7 +36,7 @@
 import moment from 'moment'
 import {mapState} from 'vuex'
 import store from '../store'
-import date_format from '../../cfg.json'
+import date_format from '../../public/cfg.json'
 
 export default {
   name: 'events',
