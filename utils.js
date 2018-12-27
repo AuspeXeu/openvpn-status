@@ -6,8 +6,6 @@ const maxmind = require('maxmind')
 const fs = require('fs')
 const conf = require('nconf')
 
-const log = (...args) => console.log(...[moment().format('HH:mm - DD.MM.YY'), ...args])
-
 conf.file({file: 'cfg.json'})
 conf.defaults({
   port: 3013,
@@ -17,14 +15,24 @@ conf.defaults({
   }],
   ipFile: './GeoLite2-City.mmdb',
   username: 'admin',
-  password: 'admin'
+  password: 'admin',
+  web: {
+    dateFormat: 'HH:mm - DD.MM.YY'
+  }
 })
 
 const envVars = process.env
 conf.set('username', envVars.AUTH_USERNAME || conf.get('username'))
 conf.set('password', envVars.AUTH_PASSWORD || conf.get('password'))
+if (envVars.VPN_DATE_FORMAT) {
+  const web = conf.get('web')
+  web.dateFormat = envVars.VPN_DATE_FORMAT
+  conf.set('web', web)
+}
 if (envVars.VPN_NAME && envVars.VPN_HOST && envVars.VPN_MAN_PORT)
   conf.set('servers', [{name: envVars.VPN_NAME, host: envVars.VPN_HOST, man_port: envVars.VPN_MAN_PORT}])
+
+const log = (...args) => console.log(...[moment().format(conf.get('web').dateFormat), ...args])
 
 const loadIPdatabase = () => {
   const ipFile = conf.get('ipFile')

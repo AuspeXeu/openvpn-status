@@ -25,6 +25,7 @@ if (conf.get('username') && conf.get('username').length)
   })
 
 app.get('/', (req, res) => res.sendFile(`${__dirname}/dist/index.html`))
+app.get('/cfg', (req, res) => res.json(conf.get('web')))
 app.use('/', express.static(`${__dirname}/dist`))
 app.use(bodyParser.json())
 

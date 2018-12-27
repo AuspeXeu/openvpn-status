@@ -53,6 +53,10 @@ new Vue({
           time: response.data.time
         })
       })
+    axios.get('./cfg')
+      .then(response => {
+        store.commit('updateConfig', response.data)
+      })
     // eslint-disable-next-line
     const socket = new ReconnectingWebSocket(`${window.location.origin.replace('http', 'ws')}/live/log`)
     const handleMsg = msg => {
