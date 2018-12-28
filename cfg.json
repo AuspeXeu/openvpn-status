@@ -1,5 +1,8 @@
 {
   "port": 3013,
   "servers": [{"name": "Server","host": "127.0.0.1","man_port": 7656}],
-  "ipFile": "./GeoLite2-City.mmdb"
+  "ipFile": "./GeoLite2-City.mmdb",
+  "web": {
+    "dateFormat": "HH:mm - DD.MM.YY"
+  }
 }

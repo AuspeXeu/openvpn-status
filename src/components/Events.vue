@@ -60,6 +60,7 @@ export default {
     }
   },
   computed: mapState({
+    dateFormat: state => state.config.dateFormat,
     loading: 'clientsLoading',
     search: 'search',
     events: 'events',
@@ -68,7 +69,7 @@ export default {
   }),
   methods: {
     eventTime(event) {
-      return moment(event.timestamp * 1000).format('HH:mm - DD.MM.YY')
+      return moment(event.timestamp * 1000).format(this.dateFormat)
     },
     eventIcon(event) {
       const map = new Map([['connect', 'fa-plug'], ['disconnect', 'fa-times'], ['reconnect', 'fa-redo']])

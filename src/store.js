@@ -12,6 +12,9 @@ export default new Vuex.Store({
     servers: [],
     total: 0,
     serverTime: 0,
+    config: {
+      dateFormat: 'HH:mm - DD.MM.YY'
+    },
     updateNode: false,
     eventsLoading: true,
     clientsLoading: true,
@@ -61,6 +64,9 @@ export default new Vuex.Store({
         if (oLen !== state.events.length)
           state.events.pop()
       }
+    },
+    updateConfig(state, payload) {
+      state.config = payload
     },
     updateTime(state, payload) {
       const {time} = payload
