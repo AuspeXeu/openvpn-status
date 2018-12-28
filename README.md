@@ -95,7 +95,7 @@ pm2 start pm2.json
 pm2 save
 ```
 
-### As Systemd service
+### As Systemd service
 
 ```
 [Unit]
