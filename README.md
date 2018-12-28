@@ -82,19 +82,37 @@ Before the application is ready to run, the frontend needs to be built. This is 
 ``npm run build``
 
 # Run
+This makes the application available on http://127.0.0.1:3013.
 
 ### Manually
 ```
 node server.js
 ```
 
-### As service
+### As PM2 service
 ```
 pm2 start pm2.json
 pm2 save
 ```
 
-This makes the application available on http://127.0.0.1:3013.
+### As Systemd service
+
+```
+[Unit]
+Description=OpenVPN Status
+After=network.target
+
+[Service]
+User=root
+WorkingDirectory=/home/pi/backend \\ Adjust this
+ExecStart=/usr/local/bin/node server.js
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
+
+```
 
 ## (optional) Running the service behind nginx as a reverse proxy
 
