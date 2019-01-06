@@ -42,10 +42,10 @@ export default {
   methods: {
     displayNodes(nodes) {
       const points = nodes.map(node => L.latLng(node.lat, node.lon))
-      this.map.fitBounds(points)
+      this.map.fitBounds(points, {padding: [30, 30]})
       nodes.forEach(node => {
         const marker = L.marker([node.lat, node.lon])
-        marker.bindPopup(`<img src="${this.flagImg(node)}" alt="${this.flagTitle(node)}"/>${node.node}`)
+        marker.bindPopup(`<img src="${this.flagImg(node)}" alt="${this.flagTitle(node)}"/>${node.node}`, {autoPan: false})
         this.meta[node.cid] = marker
         marker.addTo(this.map)
       })
