@@ -15,6 +15,7 @@ export default new Vuex.Store({
     config: {
       dateFormat: 'HH:mm - DD.MM.YY'
     },
+    tab: 'tab-2',
     updateNode: false,
     eventsLoading: true,
     clientsLoading: true,
@@ -23,6 +24,9 @@ export default new Vuex.Store({
     events: []
   },
   mutations: {
+    updateTab(state, payload) {
+      state.tab = payload
+    },
     updateEvents(state, payload) {
       state.events = payload.events
     },

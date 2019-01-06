@@ -12,7 +12,7 @@
         </v-list-tile>
       </v-list>
     </v-navigation-drawer>
-    <v-toolbar fixed app>
+    <v-toolbar fixed app dense>
       <v-toolbar-title>
         <v-toolbar-side-icon @click.stop="drawer = !drawer" v-if="servers.length > 1"></v-toolbar-side-icon>
         <span>{{(server ? server.name : '')}}</span>
@@ -31,8 +31,44 @@
       </v-toolbar-items>
     </v-toolbar>
     <v-content>
-      <clients></clients>
-      <events></events>
+      <v-tabs
+        v-model="tab"
+        centered
+        color="blue"
+        dark
+      >
+        <v-tabs-slider color="yellow"></v-tabs-slider>
+        <v-tab href="#tab-1">
+          Clients&nbsp;
+          <v-icon>computer</v-icon>
+        </v-tab>
+
+        <v-tab href="#tab-2">
+          Map&nbsp;
+          <v-icon>place</v-icon>
+        </v-tab>
+
+        <v-tab href="#tab-3">
+          Events&nbsp;
+          <v-icon>notifications</v-icon>
+        </v-tab>
+
+        <v-tab-item value="tab-1">
+          <v-card flat>
+            <clients></clients>
+          </v-card>
+        </v-tab-item>
+        <v-tab-item value="tab-2">
+          <v-card flat>
+            <locations></locations>
+          </v-card>
+        </v-tab-item>
+        <v-tab-item value="tab-3">
+          <v-card flat>
+            <events></events>
+          </v-card>
+        </v-tab-item>
+      </v-tabs>
     </v-content>
     <v-footer app fixed>
       <v-flex>
@@ -59,12 +95,14 @@ import moment from 'moment'
 import {mapState} from 'vuex'
 import Clients from './components/Clients.vue'
 import Events from './components/Events.vue'
+import Locations from './components/Locations.vue'
 
 export default {
   name: 'App',
   components: {
     Clients,
-    Events
+    Events,
+    Locations
   },
   data() {
     return {
@@ -81,12 +119,22 @@ export default {
   created() {
     window.addEventListener('keydown', this.onKeyDown)
   },
-  computed: mapState({
-    event: 'event',
-    serverTime: state => moment(state.serverTime * 1000).format(state.config.dateFormat),
-    server: state => state.servers.find(srv => srv.id === state.server),
-    servers: 'servers'
-  }),
+  computed: {
+    tab: {
+      get() {
+        return this.$store.getters.tab
+      },
+      set(value) {
+        this.$store.commit('updateTab', value)
+      }
+    },
+    ...mapState({
+      event: 'event',
+      serverTime: state => moment(state.serverTime * 1000).format(state.config.dateFormat),
+      server: state => state.servers.find(srv => srv.id === state.server),
+      servers: 'servers'
+    })
+  },
   methods: {
     notify(text, type) {
       this.snack.text = text

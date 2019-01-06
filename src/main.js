@@ -57,7 +57,6 @@ new Vue({
       .then(response => {
         store.commit('updateConfig', response.data)
       })
-    // eslint-disable-next-line
     const socket = new ReconnectingWebSocket(`${window.location.origin.replace('http', 'ws')}/live/log`)
     const handleMsg = msg => {
       if (msg.server !== store.state.server)

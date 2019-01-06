@@ -81,6 +81,8 @@ const clientToEntry = client => {
   if (loc) {
     obj.country_code = loc.country.iso_code
     obj.country_name = loc.country.names.en
+    obj.lat = loc.location.latitude
+    obj.lon = loc.location.longitude
   }
   return obj
 }

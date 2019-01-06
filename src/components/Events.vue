@@ -5,7 +5,7 @@
         <v-data-table
           :headers="headers"
           :items="events"
-          :rows-per-page-items="[10,25,{text:'All',value:-1}]"
+          :rows-per-page-items="[25,50,{text:'All',value:-1}]"
           :total-items="total"
           :pagination.sync="pagination"
           :loading="loading"
