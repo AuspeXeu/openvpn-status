@@ -3,6 +3,10 @@ module.exports = {
   env: {
     node: true
   },
+  globals: {
+    L: true,
+    ReconnectingWebSocket: true
+  },
   extends: [
     'plugin:vue/essential',
     '@vue/airbnb'
