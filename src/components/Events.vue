@@ -5,7 +5,7 @@
         <v-data-table
           :headers="headers"
           :items="events"
-          :rows-per-page-items="[10,25,{text:'All',value:-1}]"
+          :rows-per-page-items="[25,50,{text:'All',value:-1}]"
           :total-items="total"
           :pagination.sync="pagination"
           :loading="loading"
@@ -61,12 +61,15 @@ export default {
   },
   computed: mapState({
     dateFormat: state => state.config.dateFormat,
-    loading: 'clientsLoading',
+    loading: 'eventsLoading',
     search: 'search',
     events: 'events',
     total: 'total',
     server: 'server'
   }),
+  mounted() {
+    store.dispatch('changePage', {page: 0, size: 25})
+  },
   methods: {
     eventTime(event) {
       return moment(event.timestamp * 1000).format(this.dateFormat)

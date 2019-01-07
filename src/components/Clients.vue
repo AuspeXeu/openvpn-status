@@ -51,6 +51,7 @@
 import moment from 'moment'
 import axios from 'axios'
 import {mapState} from 'vuex'
+import store from '../store'
 
 export default {
   name: 'clients',
@@ -115,6 +116,9 @@ export default {
         setTimeout(() => el.className = restore, 4000)
       })
     }
+  },
+  mounted() {
+    store.dispatch('loadClients')
   },
   computed: mapState({
     dateFormat: state => state.config.dateFormat,

@@ -2,7 +2,7 @@
   <v-app>
     <v-navigation-drawer temporary hide-overlay fixed v-model="drawer" class="text-xs-center" app>
       <v-list class="pt-0" dense>
-        <v-list-tile v-for="srv in servers" :key="srv.id" :to="`/${srv.id}`">
+        <v-list-tile v-for="srv in servers" :key="srv.id" :to="`/${srv.id}/clients`">
           <v-list-tile-action>
             <v-icon>storage</v-icon>
           </v-list-tile-action>
@@ -12,7 +12,7 @@
         </v-list-tile>
       </v-list>
     </v-navigation-drawer>
-    <v-toolbar fixed app>
+    <v-toolbar fixed app dense>
       <v-toolbar-title>
         <v-toolbar-side-icon @click.stop="drawer = !drawer" v-if="servers.length > 1"></v-toolbar-side-icon>
         <span>{{(server ? server.name : '')}}</span>
@@ -31,12 +31,54 @@
       </v-toolbar-items>
     </v-toolbar>
     <v-content>
-      <clients></clients>
-      <events></events>
+      <v-tabs
+        v-model="tabState"
+        centered
+        color="blue"
+        dark
+      >
+        <v-tabs-slider color="yellow"></v-tabs-slider>
+        <v-tab to="clients" replace>
+          Clients&nbsp;
+          <v-icon>computer</v-icon>
+        </v-tab>
+
+        <v-tab to="map" replace>
+          Map&nbsp;
+          <v-icon>place</v-icon>
+        </v-tab>
+
+        <v-tab to="events" replace>
+          Events&nbsp;
+          <v-icon>notifications</v-icon>
+        </v-tab>
+
+        <v-tab-item value="clients">
+          <v-card flat>
+            <clients></clients>
+          </v-card>
+        </v-tab-item>
+        <v-tab-item value="map">
+          <v-card flat>
+            <locations></locations>
+          </v-card>
+        </v-tab-item>
+        <v-tab-item value="events">
+          <v-card flat>
+            <events></events>
+          </v-card>
+        </v-tab-item>
+      </v-tabs>
     </v-content>
     <v-footer app fixed>
       <v-flex>
         <v-card>
+          <v-snackbar v-model="snack.visible" bottom :timeout="snack.timeout" :color="snack.color">
+            {{snack.text}}
+            <v-btn flat @click="snack.visible = false">
+              Close
+            </v-btn>
+          </v-snackbar>
           <v-card-actions class="justify-center">
             <v-tooltip top>
               <span slot="activator">Server time: {{serverTime}}</span>
@@ -59,12 +101,14 @@ import moment from 'moment'
 import {mapState} from 'vuex'
 import Clients from './components/Clients.vue'
 import Events from './components/Events.vue'
+import Locations from './components/Locations.vue'
 
 export default {
   name: 'App',
   components: {
     Clients,
-    Events
+    Events,
+    Locations
   },
   data() {
     return {
@@ -81,17 +125,27 @@ export default {
   created() {
     window.addEventListener('keydown', this.onKeyDown)
   },
-  computed: mapState({
-    event: 'event',
-    serverTime: state => moment(state.serverTime * 1000).format(state.config.dateFormat),
-    server: state => state.servers.find(srv => srv.id === state.server),
-    servers: 'servers'
-  }),
+  computed: {
+    tabState: {
+      get() {
+        return this.tab
+      },
+      set(value) {
+        this.$store.commit('updateTab', value)
+      }
+    },
+    ...mapState({
+      tab: 'tab',
+      event: 'event',
+      serverTime: state => moment(state.serverTime * 1000).format(state.config.dateFormat),
+      server: state => state.servers.find(srv => srv.id === state.server),
+      servers: 'servers'
+    })
+  },
   methods: {
     notify(text, type) {
       this.snack.text = text
       this.snack.color = type
-      this.snack.multi = type === 'error'
       this.snack.visible = true
     },
     onKeyDown(ev) {

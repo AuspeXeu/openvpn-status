@@ -34,37 +34,32 @@ const clientUpdates = new Map()
 const clients = new Map()
 const servers = conf.get('servers') || []
 const broadcast = data => clients.forEach(ws => ws.send(JSON.stringify(data)))
-const eventBuffer = {}
-const logEvent = data => {
-  const hash = `${data.server}_${data.node}_${data.timestamp}`
-  if (!eventBuffer[hash])
-    eventBuffer[hash] = 1
-  else
-    eventBuffer[hash] += 1
-  if (eventBuffer[hash] === 1)
-    setTimeout(() => {
-      db.Log.findOne({
-        where: {
-          server: data.server,
-          node: data.node,
-          timestamp: {[db.op.between]: [data.timestamp - 60, data.timestamp + 60]}
-        }
-      })
-        .then(entry => {
-          // Another event of the same node is in the buffer or we found an old event
-          if (!entry && eventBuffer[hash] === 1)
-            db.Log.create(data).then(nEntry => broadcast(Object.assign(nEntry, data)))
-          else if (!entry && eventBuffer[hash] > 1 && servers[data.server].entries.find(cl => cl.cid === data.cid)) {
-            data.event = 'reconnect'
-            db.Log.create(data).then(nEntry => broadcast(Object.assign(nEntry, data)))
-          } else if (entry && servers[data.server].entries.find(cl => cl.cid === data.cid)) {
-            Object.assign(entry, data)
-            entry.event = 'reconnect'
-            entry.save().then(() => broadcast(entry))
-          }
-          eventBuffer[hash] = 0
-        })
-    }, 2000)
+let logMutex = Promise.resolve()
+const logEvent = event => {
+  const logic = data => new Promise(resolve => {
+    db.Log.findOne({
+      where: {
+        server: data.server,
+        node: data.node,
+        timestamp: {[db.op.between]: [data.timestamp - 60, data.timestamp + 60]}
+      },
+      order: [['timestamp', 'DESC']]
+    }).then(entry => {
+      if (!entry)
+        db.Log.create(data).then(() => broadcast(data))
+      else {
+        if ((entry.event === 'disconnect' || entry.event === 'reconnect') && data.event === 'connect') {
+          entry.event = 'reconnect'
+          data.event = 'reconnect'
+          entry.timestamp = moment().unix()
+          entry.save().then(resolve)
+        } else
+          db.Log.create(data).then(resolve)
+        broadcast(data)
+      }
+    })
+  })
+  logMutex.then(() => logMutex = logic(event))
 }
 const clientToEntry = client => {
   const obj = {
@@ -81,6 +76,8 @@ const clientToEntry = client => {
   if (loc) {
     obj.country_code = loc.country.iso_code
     obj.country_name = loc.country.names.en
+    obj.lat = loc.location.latitude
+    obj.lon = loc.location.longitude
   }
   return obj
 }
