@@ -34,29 +34,32 @@ const clientUpdates = new Map()
 const clients = new Map()
 const servers = conf.get('servers') || []
 const broadcast = data => clients.forEach(ws => ws.send(JSON.stringify(data)))
-const logEvent = data => {
-  db.Log.findOne({
-    where: {
-      server: data.server,
-      node: data.node,
-      timestamp: {[db.op.between]: [data.timestamp - 60, data.timestamp + 60]}
-    },
-    order: [['timestamp', 'DESC']]
-  }).then(entry => {
-    if (!entry)
-      db.Log.create(data).then(() => broadcast(data))
-    else {
-      if ((entry.event === 'disconnect' || entry.event === 'reconnect') && data.event === 'connect') {
-        entry.event = 'reconnect'
-        data.event = 'reconnect'
-        entry.timestamp = moment().unix()
-        entry.save()
-      } else
-        db.Log.create(data)
-
-      broadcast(data)
-    }
+let logMutex = Promise.resolve()
+const logEvent = event => {
+  const logic = data => new Promise(resolve => {
+    db.Log.findOne({
+      where: {
+        server: data.server,
+        node: data.node,
+        timestamp: {[db.op.between]: [data.timestamp - 60, data.timestamp + 60]}
+      },
+      order: [['timestamp', 'DESC']]
+    }).then(entry => {
+      if (!entry)
+        db.Log.create(data).then(() => broadcast(data))
+      else {
+        if ((entry.event === 'disconnect' || entry.event === 'reconnect') && data.event === 'connect') {
+          entry.event = 'reconnect'
+          data.event = 'reconnect'
+          entry.timestamp = moment().unix()
+          entry.save().then(resolve)
+        } else
+          db.Log.create(data).then(resolve)
+        broadcast(data)
+      }
+    })
   })
+  logMutex.then(() => logMutex = logic(event))
 }
 const clientToEntry = client => {
   const obj = {
