@@ -17,7 +17,7 @@ conf.defaults({
   username: 'admin',
   password: 'admin',
   web: {
-    dateFormat: 'HH:mm - DD.MM.YY'
+    dateFormat: 'HH:mm:ss - DD.MM.YY'
   }
 })
 
