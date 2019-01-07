@@ -17,7 +17,7 @@ export default {
   },
   watch: {
     tab(nVal) {
-      if (nVal === 'tab-2' && !this.map)
+      if (nVal === 'map' && !this.map)
         setTimeout(() => {
           this.map = L.map('map')
           L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {

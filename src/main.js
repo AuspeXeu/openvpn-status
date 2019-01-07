@@ -26,6 +26,7 @@ new Vue({
     $route(to) {
       try {
         const srvId = parseInt(to.params.id, 10)
+        store.commit('changeView', {view: to.params.view})
         store.dispatch('changeServer', {server: srvId})
       } catch (e) {
         console.error(e)

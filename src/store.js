@@ -15,7 +15,7 @@ export default new Vuex.Store({
     config: {
       dateFormat: 'HH:mm - DD.MM.YY'
     },
-    tab: 'tab-2',
+    tab: 'clients',
     updateNode: false,
     eventsLoading: true,
     clientsLoading: true,
@@ -57,6 +57,8 @@ export default new Vuex.Store({
           pub: event.pub,
           country_name: event.country_name,
           country_code: event.country_code,
+          lat: event.lat,
+          lon: event.lon,
           connected: event.connected,
           seen: event.seen,
           vpn: event.vpn
@@ -86,14 +88,23 @@ export default new Vuex.Store({
     },
     changeSearch(state, payload) {
       state.search = payload.text
+    },
+    changeView(state, payload) {
+      state.view = payload.view
+      if (['events', 'map', 'clients'].indexOf(payload.view) >= 0)
+        state.tab = payload.view
+      else
+        state.tab = 'clients'
     }
   },
   actions: {
     changeServer({commit, dispatch}, payload) {
+      if (this.state.server === payload.server)
+        return
       commit('changeServer', {
         server: payload.server
       })
-      dispatch('refresh')
+      dispatch('loadClients')
     },
     changePage({commit}, opt) {
       this.state.eventsLoading = true
@@ -108,7 +119,7 @@ export default new Vuex.Store({
         .then(response => this.state.total = response.data.value)
       Promise.all([p0, p1]).then(() => this.state.eventsLoading = false)
     },
-    refresh({commit}) {
+    loadClients({commit}) {
       this.state.clientsLoading = true
       axios.get(`./entries/${this.state.server}`)
         .then(response => {

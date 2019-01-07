@@ -61,12 +61,15 @@ export default {
   },
   computed: mapState({
     dateFormat: state => state.config.dateFormat,
-    loading: 'clientsLoading',
+    loading: 'eventsLoading',
     search: 'search',
     events: 'events',
     total: 'total',
     server: 'server'
   }),
+  mounted() {
+    store.dispatch('changePage', {page: 0, size: 25})
+  },
   methods: {
     eventTime(event) {
       return moment(event.timestamp * 1000).format(this.dateFormat)
