@@ -2,7 +2,7 @@
   <v-app>
     <v-navigation-drawer temporary hide-overlay fixed v-model="drawer" class="text-xs-center" app>
       <v-list class="pt-0" dense>
-        <v-list-tile v-for="srv in servers" :key="srv.id" :to="`/${srv.id}`">
+        <v-list-tile v-for="srv in servers" :key="srv.id" :to="`/${srv.id}/clients`">
           <v-list-tile-action>
             <v-icon>storage</v-icon>
           </v-list-tile-action>
@@ -32,38 +32,38 @@
     </v-toolbar>
     <v-content>
       <v-tabs
-        v-model="tab"
+        v-model="tabState"
         centered
         color="blue"
         dark
       >
         <v-tabs-slider color="yellow"></v-tabs-slider>
-        <v-tab href="#tab-1">
+        <v-tab to="clients" replace>
           Clients&nbsp;
           <v-icon>computer</v-icon>
         </v-tab>
 
-        <v-tab href="#tab-2">
+        <v-tab to="map" replace>
           Map&nbsp;
           <v-icon>place</v-icon>
         </v-tab>
 
-        <v-tab href="#tab-3">
+        <v-tab to="events" replace>
           Events&nbsp;
           <v-icon>notifications</v-icon>
         </v-tab>
 
-        <v-tab-item value="tab-1">
+        <v-tab-item value="clients">
           <v-card flat>
             <clients></clients>
           </v-card>
         </v-tab-item>
-        <v-tab-item value="tab-2">
+        <v-tab-item value="map">
           <v-card flat>
             <locations></locations>
           </v-card>
         </v-tab-item>
-        <v-tab-item value="tab-3">
+        <v-tab-item value="events">
           <v-card flat>
             <events></events>
           </v-card>
@@ -73,6 +73,12 @@
     <v-footer app fixed>
       <v-flex>
         <v-card>
+          <v-snackbar v-model="snack.visible" bottom :timeout="snack.timeout" :color="snack.color">
+            {{snack.text}}
+            <v-btn flat @click="snack.visible = false">
+              Close
+            </v-btn>
+          </v-snackbar>
           <v-card-actions class="justify-center">
             <v-tooltip top>
               <span slot="activator">Server time: {{serverTime}}</span>
@@ -120,15 +126,16 @@ export default {
     window.addEventListener('keydown', this.onKeyDown)
   },
   computed: {
-    tab: {
+    tabState: {
       get() {
-        return this.$store.getters.tab
+        return this.tab
       },
       set(value) {
         this.$store.commit('updateTab', value)
       }
     },
     ...mapState({
+      tab: 'tab',
       event: 'event',
       serverTime: state => moment(state.serverTime * 1000).format(state.config.dateFormat),
       server: state => state.servers.find(srv => srv.id === state.server),
@@ -139,7 +146,6 @@ export default {
     notify(text, type) {
       this.snack.text = text
       this.snack.color = type
-      this.snack.multi = type === 'error'
       this.snack.visible = true
     },
     onKeyDown(ev) {
