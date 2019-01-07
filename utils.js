@@ -24,11 +24,9 @@ conf.defaults({
 const envVars = process.env
 conf.set('username', envVars.AUTH_USERNAME || conf.get('username'))
 conf.set('password', envVars.AUTH_PASSWORD || conf.get('password'))
-if (envVars.VPN_DATE_FORMAT) {
-  const web = conf.get('web')
-  web.dateFormat = envVars.VPN_DATE_FORMAT
-  conf.set('web', web)
-}
+const web = conf.get('web')
+web.dateFormat = envVars.VPN_DATE_FORMAT || web.dateFormat
+conf.set('web', web)
 if (envVars.VPN_NAME && envVars.VPN_HOST && envVars.VPN_MAN_PORT)
   conf.set('servers', [{name: envVars.VPN_NAME, host: envVars.VPN_HOST, man_port: envVars.VPN_MAN_PORT}])
 
