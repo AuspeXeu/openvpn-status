@@ -3,15 +3,19 @@
 A web-based application to monitor (multiple) [OpenVPN](https://openvpn.net/index.php/open-source/overview.html) servers.
 
 Features
-* WebSocket based real-time events
-* Persistent event log
-* Full material design
 * Multi server support
-* Mobile friendly
+* WebSocket based real-time events
+* Map view
 * Disconnect clients remotely
+* Persistent event log
+* Mobile friendly
+* Full material design
 
 ### Client panel
 ![Client panel](https://raw.githubusercontent.com/AuspeXeu/openvpn-status/master/clients.png)
+
+### Map view
+![Map view](https://raw.githubusercontent.com/AuspeXeu/openvpn-status/master/map.png)
 
 ### Event panel
 ![Event panel](https://raw.githubusercontent.com/AuspeXeu/openvpn-status/master/events.png)
@@ -46,7 +50,7 @@ The configuration is handled in the ``cfg.json`` file.
 | servers  | `[{"name": "Server","host": "127.0.0.1","man_port": 7656}]` | Array of servers. |
 | username | `admin` | User for basic HTTP authentication. Change to `''` or `false` to disable. |
 | password | `admin` | Password for basic HTTP authentication. |
-| dateFormat | `HH:mm - DD.MM.YY` | DateTime format used in the web frontend ([options](http://momentjs.com/docs/#/displaying/format/)).|
+| web.dateFormat | `HH:mm - DD.MM.YY` | DateTime format used in the web frontend ([options](http://momentjs.com/docs/#/displaying/format/)).|
 
 Example:
 ```
