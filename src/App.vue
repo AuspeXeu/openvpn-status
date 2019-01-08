@@ -34,6 +34,7 @@
       <v-tabs
         v-model="tabState"
         centered
+        touchless
         color="blue"
         dark
       >
