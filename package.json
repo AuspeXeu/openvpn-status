@@ -47,9 +47,9 @@
     "ws": "^6.1.2"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.2.2",
-    "@vue/cli-plugin-eslint": "^3.2.2",
-    "@vue/cli-service": "^3.2.3",
+    "@vue/cli-plugin-babel": "^3.3.0",
+    "@vue/cli-plugin-eslint": "^3.3.0",
+    "@vue/cli-service": "^3.3.0",
     "@vue/eslint-config-airbnb": "^4.0.0",
     "vue-cli-plugin-vuetify": "^0.4.6",
     "vue-template-compiler": "^2.5.21"
