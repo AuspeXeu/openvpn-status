@@ -46,7 +46,10 @@ const logEvent = event => {
       order: [['timestamp', 'DESC']]
     }).then(entry => {
       if (!entry)
-        db.Log.create(data).then(() => broadcast(data))
+        db.Log.create(data).then(() => {
+          broadcast(data)
+          resolve()
+        })
       else {
         if ((entry.event === 'disconnect' || entry.event === 'reconnect') && data.event === 'connect') {
           entry.event = 'reconnect'
