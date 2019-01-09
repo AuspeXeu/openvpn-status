@@ -50,7 +50,7 @@ The configuration is handled in the ``cfg.json`` file.
 | servers  | `[{"name": "Server","host": "127.0.0.1","man_port": 7656}]` | Array of servers. |
 | username | `admin` | User for basic HTTP authentication. Change to `''` or `false` to disable. |
 | password | `admin` | Password for basic HTTP authentication. |
-| web.dateFormat | `HH:mm - DD.MM.YY` | DateTime format used in the web frontend ([options](http://momentjs.com/docs/#/displaying/format/)).|
+| web.dateFormat | `HH:mm:ss - DD.MM.YY` | DateTime format used in the web frontend ([options](http://momentjs.com/docs/#/displaying/format/)).|
 
 Example:
 ```
