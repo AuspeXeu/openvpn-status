@@ -30,7 +30,7 @@
       ></v-text-field>
       </v-toolbar-items>
     </v-toolbar>
-    <v-content>
+    <v-content touchless>
       <v-tabs
         v-model="tabState"
         centered
@@ -39,33 +39,33 @@
         dark
       >
         <v-tabs-slider color="yellow"></v-tabs-slider>
-        <v-tab to="clients" replace>
+        <v-tab to="clients" replace touchless>
           Clients&nbsp;
           <v-icon>computer</v-icon>
         </v-tab>
 
-        <v-tab to="map" replace>
+        <v-tab to="map" replace touchless>
           Map&nbsp;
           <v-icon>place</v-icon>
         </v-tab>
 
-        <v-tab to="events" replace>
+        <v-tab to="events" replace touchless>
           Events&nbsp;
           <v-icon>notifications</v-icon>
         </v-tab>
 
-        <v-tab-item value="clients">
-          <v-card flat>
+        <v-tab-item value="clients" touchless>
+          <v-card flat touchless>
             <clients></clients>
           </v-card>
         </v-tab-item>
-        <v-tab-item value="map">
-          <v-card flat>
+        <v-tab-item value="map" touchless>
+          <v-card flat touchless>
             <locations></locations>
           </v-card>
         </v-tab-item>
-        <v-tab-item value="events">
-          <v-card flat>
+        <v-tab-item value="events" touchless>
+          <v-card flat touchless>
             <events></events>
           </v-card>
         </v-tab-item>
