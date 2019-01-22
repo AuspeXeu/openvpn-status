@@ -18,12 +18,9 @@
                 <span>{{ props.item.event }}</span>
               </v-tooltip>
             </td>
-            <td class="text-xs-center">
-              <v-tooltip bottom :disabled="!props.item.vpn">
-                <span slot="activator">{{ props.item.node }}</span>
-                <span>{{ props.item.pub }} > {{ props.item.vpn }}</span>
-              </v-tooltip>
-            </td>
+            <td class="text-xs-center">{{ props.item.node }}</td>
+            <td class="text-xs-center">{{ props.item.vpn }}</td>
+            <td class="text-xs-center"><a :href="`http://geoiplookup.net/ip/${props.item.pub}`" target="_blank">{{ props.item.pub }}</a></td>
             <td class="text-xs-center">{{ eventTime(props.item) }}</td>
           </template>
         </v-data-table>
@@ -51,6 +48,16 @@ export default {
         align: 'center',
         sortable: false,
         value: 'node'
+      }, {
+        text: 'VPN IP',
+        align: 'center',
+        sortable: false,
+        value: 'vpn'
+      }, {
+        text: 'Public IP',
+        align: 'center',
+        sortable: false,
+        value: 'pub'
       }, {
         text: 'Time',
         align: 'center',
