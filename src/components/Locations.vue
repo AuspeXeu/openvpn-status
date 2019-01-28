@@ -27,12 +27,16 @@ export default {
           this.displayNodes(this.nodes)
         }, 1000)
     },
+    search() {
+      this.displayNodes(this.nodes)
+    },
     nodes(nodes) {
       this.displayNodes(nodes)
     }
   },
   methods: {
-    displayNodes(nodes) {
+    displayNodes(nds) {
+      const nodes = nds.filter(nd => nd.node.indexOf(this.search) !== -1)
       this.meta.forEach(marker => this.map.removeLayer(marker))
       if (!this.map || !nodes.length)
         return
@@ -88,7 +92,8 @@ export default {
   computed: mapState({
     dateFormat: state => state.config.dateFormat,
     nodes: 'nodes',
-    tab: 'tab'
+    tab: 'tab',
+    search: 'search'
   }),
   data() {
     return {
