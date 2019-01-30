@@ -65,24 +65,15 @@ const logEvent = event => {
   logMutex.then(() => logMutex = logic(event))
 }
 const clientToEntry = client => {
-  const obj = {
-    cid: client['Client ID'],
-    node: client['Common Name'] || client.Username,
-    connected: client['Connected Since (time_t)'],
-    seen: client['Last Ref (time_t)'],
-    pub: client['Real Address'].split(':')[0],
-    vpn: client['Virtual Address'],
-    received: client['Bytes Received'],
-    sent: client['Bytes Sent']
-  }
-  const loc = cityLookup(obj.pub)
+  const loc = cityLookup(client.pub)
+  client.node = client.cn
   if (loc) {
-    obj.country_code = loc.country.iso_code
-    obj.country_name = loc.country.names.en
-    obj.lat = loc.location.latitude
-    obj.lon = loc.location.longitude
+    client.country_code = loc.country.iso_code
+    client.country_name = loc.country.names.en
+    client.lat = loc.location.latitude
+    client.lon = loc.location.longitude
   }
-  return obj
+  return client
 }
 
 const validateNumber = n => Number.isFinite(parseFloat(n, 10))
