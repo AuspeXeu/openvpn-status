@@ -74,7 +74,7 @@ class client extends EventEmitter {
           this.emit('client-disconnect', mkClient(vpnClient))
       })
       if (this.clientRes) {
-        this.clientRes(Array.from(this.clients.values()))
+        this.clientRes(Array.from(this.clients.values()).map(mkClient))
         this.clientRes = false
       }
       this.state = STATE.idle
