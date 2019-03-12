@@ -57,7 +57,7 @@
     "depcheck": "0.7.2",
     "npm-check-updates": "3.0.4",
     "@vue/cli-plugin-babel": "3.5.0",
-    "@vue/cli-plugin-eslint": "3.4.1",
+    "@vue/cli-plugin-eslint": "3.5.1",
     "@vue/cli-service": "3.5.0",
     "@vue/eslint-config-airbnb": "4.0.0",
     "vue-cli-plugin-vuetify": "0.5.0",
