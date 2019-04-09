@@ -5,6 +5,8 @@ const zlib = require('zlib')
 const maxmind = require('maxmind')
 const fs = require('fs')
 const conf = require('nconf')
+const os = require('os')
+const path = require('path')
 
 conf.file({file: 'cfg.json'})
 conf.defaults({
@@ -13,7 +15,7 @@ conf.defaults({
   servers: [{
     name: 'Server', host: '127.0.0.1', man_port: 7656
   }],
-  ipFile: './GeoLite2-City.mmdb',
+  //ipFile: './GeoLite2-City.mmdb',
   username: 'admin',
   password: 'admin',
   web: {
@@ -30,11 +32,19 @@ conf.set('web', web)
 if (envVars.VPN_NAME && envVars.VPN_HOST && envVars.VPN_MAN_PORT)
   conf.set('servers', [{name: envVars.VPN_NAME, host: envVars.VPN_HOST, man_port: envVars.VPN_MAN_PORT}])
 
+const ipFile = conf.get('ipFile')
+
+if (!ipFile) {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'openvpn-status-'))
+  if (dir)
+    conf.set('ipFile', path.join(dir, 'GeoLite2-City.mmdb'))
+}
+
 const log = (...args) => console.log(...[moment().format(conf.get('web').dateFormat), ...args])
 
 const loadIPdatabase = () => {
   const ipFile = conf.get('ipFile')
-  const loadFile = res => maxmind.open('./GeoLite2-City.mmdb', (err, lookup) => {
+  const loadFile = res => maxmind.open(ipFile, (err, lookup) => {
     if (err)
       log(err)
     else
