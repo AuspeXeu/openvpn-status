@@ -56,7 +56,7 @@
   "devDependencies": {
     "depcheck": "0.7.2",
     "npm-check-updates": "3.1.6",
-    "@vue/cli-plugin-babel": "3.5.5",
+    "@vue/cli-plugin-babel": "3.6.0",
     "@vue/cli-plugin-eslint": "3.4.1",
     "@vue/cli-service": "3.5.3",
     "@vue/eslint-config-airbnb": "4.0.0",
