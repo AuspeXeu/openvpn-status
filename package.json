@@ -35,7 +35,7 @@
     "ncu": "ncu"
   },
   "dependencies": {
-    "@babel/polyfill": "7.4.3",
+    "@babel/polyfill": "7.4.4",
     "axios": "0.18.0",
     "body-parser": "1.19.0",
     "cron": "1.7.0",
