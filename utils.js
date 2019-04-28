@@ -34,12 +34,9 @@ const log = (...args) => console.log(...[moment().format(conf.get('web').dateFor
 
 const loadIPdatabase = () => {
   const ipFile = conf.get('ipFile')
-  const loadFile = res => maxmind.open('./GeoLite2-City.mmdb', (err, lookup) => {
-    if (err)
-      log(err)
-    else
-      res(ip => (ip ? lookup.get(ip) : false))
-  })
+  const loadFile = res => maxmind.open('./GeoLite2-City.mmdb')
+    .then(lookup => res(ip => (ip ? lookup.get(ip) : false)))
+    .catch(err => log(err))
   return new Promise(resolve => {
     fs.stat(ipFile, (err, stat) => {
       const now = new Date().getTime()
