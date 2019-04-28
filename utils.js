@@ -43,9 +43,12 @@ const log = (...args) => console.log(...[moment().format(conf.get('web').dateFor
 
 const loadIPdatabase = () => {
   const ipFile = conf.get('ipFile')
-  const loadFile = res => maxmind.open(ipFile)
-    .then(lookup => res(ip => (ip ? lookup.get(ip) : false)))
-    .catch(err => log(err))
+  const loadFile = res => maxmind.open(ipFile, (err, lookup) => {
+    if (err)
+      log(err)
+    else
+      res(ip => (ip ? lookup.get(ip) : false))
+  })
   return new Promise(resolve => {
     fs.stat(ipFile, (err, stat) => {
       const now = new Date().getTime()
