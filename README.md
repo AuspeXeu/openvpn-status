@@ -22,7 +22,7 @@ Features
 
 ## Pre-requisites
 
-- [x] [NodeJS](https://nodejs.org/en/download/) 6 or higher
+- [x] [NodeJS](https://nodejs.org/en/download/) 10 or higher
 - [x] npm package manager
 
 # Installation
