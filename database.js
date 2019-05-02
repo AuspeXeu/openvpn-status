@@ -4,8 +4,7 @@ const sequelize = new Sequelize('status', 'server', '!$%openvpn1', {
   dialect: 'sqlite',
   storage: './data.sqlite',
   logging: false,
-  pool: {max: 5, min: 0, idle: 10000},
-  operatorsAliases: false
+  pool: {max: 5, min: 0, idle: 10000}
 })
 
 const mkId = () => ({
