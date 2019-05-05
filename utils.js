@@ -8,7 +8,7 @@ const conf = require('nconf')
 const os = require('os')
 const path = require('path')
 
-conf.file({file: './conf/cfg.json'})
+conf.file({file: path.join(__dirname, 'cfg.json')})
 conf.defaults({
   port: 3013,
   bind: '127.0.0.1',
@@ -27,7 +27,7 @@ if (!conf.get('ipFile')) {
   if (dir)
     conf.set('ipFile', path.join(dir, 'GeoLite2-City.mmdb'))
   else
-    conf.set('ipFile', './GeoLite2-City.mmdb')
+    conf.set('ipFile', path.join(__dirname, 'GeoLite2-City.mmdb'))
 }
 
 const log = (...args) => console.log(...[moment().format(conf.get('web').dateFormat), ...args])

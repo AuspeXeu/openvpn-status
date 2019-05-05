@@ -41,7 +41,7 @@ sudo npm install pm2 -g
 
 ### 3. Configuration
 
-The configuration is located at ``conf/cfg.json``.
+The configuration is located in ``cfg.json``.
 
 | Option   | Default       | Description  |
 | -------- |:-------------:| ------------ |
@@ -143,11 +143,6 @@ server {
 
 - **3013**
 
-### Volumes
-_Exposes the location of the `cfg.json` file on the host._
-
-- **/usr/src/app/conf**
-
 ### Docker-compose.yml
 
 ```yml
@@ -160,7 +155,7 @@ openvpn-status:
   ports:
     - 8080:3013
   volumes:
-    - ./status-cfg:/usr/src/app/conf
+    - './status-cfg/cfg.json:/usr/src/app/cfg.json'
   restart: "unless-stopped"
 ```
 
