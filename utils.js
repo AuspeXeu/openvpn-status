@@ -8,7 +8,7 @@ const conf = require('nconf')
 const os = require('os')
 const path = require('path')
 
-conf.file({file: 'cfg.json'})
+conf.file({file: './conf/cfg.json'})
 conf.defaults({
   port: 3013,
   bind: '127.0.0.1',

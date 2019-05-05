@@ -41,7 +41,7 @@ sudo npm install pm2 -g
 
 ### 3. Configuration
 
-The configuration is handled in the ``cfg.json`` file.
+The configuration is located at ``conf/cfg.json``.
 
 | Option   | Default       | Description  |
 | -------- |:-------------:| ------------ |
@@ -74,7 +74,7 @@ Example:
 Add the following line to your configuration file, e.g., `server.conf`. This will start the management console on port `7656` and make it accessible on `127.0.0.1`, i.e. this machine.
 
 ```
-management 127.0.0.1 7656 //As specified in cfg.json for this server
+management 127.0.0.1 7656 // As specified in cfg.json for this server
 ```
 
 Restart your OpenVPN server.
