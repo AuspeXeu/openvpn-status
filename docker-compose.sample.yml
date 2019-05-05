@@ -6,15 +6,10 @@ openvpn:
 openvpn-status:
   image: auspexeu/openvpn-status
   container_name: openvpn-status
+  volumes:
+    - ./status-cfg:/usr/src/app/conf
   ports:
     - 8080:3013
-  environment:
-    - AUTH_USERNAME=admin
-    - AUTH_PASSWORD=YV3qSTxD
-    - VPN_NAME="Remote employees"
-    - VPN_HOST=openvpn
-    - VPN_MAN_PORT=7656
-    - VPN_DATE_FORMAT="HH:mm - DD.MM.YY"
   links:
     - openvpn
   depends_on:
