@@ -143,21 +143,15 @@ server {
 
 - **3013**
 
-### Environment variables
+### Volumes
+_Exposes the location of the `cfg.json` file on the host._
 
-| Variable | Description | Default value |
-| -------- | ----------- | ------------- |
-| **AUTH_USERNAME** | HTTP AUTH username | admin
-| **AUTH_PASSWORD** | HTTP AUTH password | admin
-| **VPN_NAME** | Name of the VPN | Server
-| **VPN_HOST** | Host of the VPN | openvpn
-| **VPN_MAN_PORT** | Management port | 7656
-| **VPN_DATE_FORMAT** | DateTime format | HH:mm - DD.MM.YY
+- **/usr/src/app/conf**
 
 ### Docker-compose.yml
 
 ```yml
-# Full example :
+# Full example:
 # https://raw.githubusercontent.com/AuspeXeu/openvpn-status/master/docker-compose.sample.yml
 
 openvpn-status:
@@ -165,17 +159,8 @@ openvpn-status:
   container_name: openvpn-status
   ports:
     - 8080:3013
-  environment:
-    - AUTH_USERNAME=admin
-    - AUTH_PASSWORD=YV3qSTxD
-    - VPN_NAME="Remote employees"
-    - VPN_HOST=openvpn
-    - VPN_MAN_PORT=7656
-    - VPN_DATE_FORMAT="HH:mm - DD.MM.YY"
-  links:
-    - openvpn
-  depends_on:
-    - openvpn
+  volumes:
+    - ./status-cfg:/usr/src/app/conf
   restart: "unless-stopped"
 ```
 
