@@ -54,7 +54,7 @@
     "ws": "7.0.0"
   },
   "devDependencies": {
-    "depcheck": "0.7.2",
+    "depcheck": "0.8.0",
     "npm-check-updates": "3.1.9",
     "@vue/cli-plugin-babel": "3.7.0",
     "@vue/cli-plugin-eslint": "3.7.0",
