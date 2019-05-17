@@ -39,7 +39,7 @@
     "axios": "0.18.0",
     "body-parser": "1.19.0",
     "cron": "1.7.1",
-    "express": "4.16.4",
+    "express": "4.17.0",
     "maxmind": "3.0.4",
     "moment": "2.24.0",
     "nconf": "0.10.0",
