@@ -26,8 +26,8 @@
         ref="searchField"
         @click:append="search = ''"
         @keyup.esc="search = ''"
-        v-model="search"
-      ></v-text-field>
+        v-model="search">
+      </v-text-field>
       </v-toolbar-items>
     </v-toolbar>
     <v-content touchless>
@@ -36,8 +36,7 @@
         centered
         touchless
         color="blue"
-        dark
-      >
+        dark>
         <v-tabs-slider color="yellow"></v-tabs-slider>
         <v-tab to="clients" replace touchless>
           Clients&nbsp;
