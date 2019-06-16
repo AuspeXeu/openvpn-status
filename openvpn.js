@@ -67,7 +67,7 @@ class client extends EventEmitter {
         this.clients.set(vpnClient['Client ID'], vpnClient)
 
       if (this.clientRes) {
-        this.clientRes(Array.from(this.clients.values()))
+        this.clientRes(Array.from(this.clients.values()).map(itm => mkClient(itm)))
         this.clientRes = false
       }
     } else if (data.startsWith('ROUTING_TABLE') && this.state === STATE.status) {
