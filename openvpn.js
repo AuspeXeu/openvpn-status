@@ -63,12 +63,8 @@ class client extends EventEmitter {
       const props = data.split('\t').slice(1, data.length + 1)
       const vpnClient = {}
       this.clientProps.forEach((prop, idx) => vpnClient[prop] = prepProperty(props[idx]))
-      if ((vpnClient['Common Name'] && vpnClient['Common Name'].toString().length) || (vpnClient.Username && vpnClient.Username.toString().length))
+      if ((vpnClient['Common Name'] && vpnClient['Common Name'].toString().length) || (vpnClient.Username && vpnClient.Username.toString().length)) {
         this.clients.set(vpnClient['Client ID'], vpnClient)
-
-      if (this.clientRes) {
-        this.clientRes(Array.from(this.clients.values()).map(itm => mkClient(itm)))
-        this.clientRes = false
       }
     } else if (data.startsWith('ROUTING_TABLE') && this.state === STATE.status) {
       const props = data.split('\t').slice(1, data.length + 1)
@@ -81,6 +77,10 @@ class client extends EventEmitter {
         if (!this.clients.has(clientId) && (vpnClient['Common Name'].length || vpnClient.Username.length))
           this.emit('client-disconnect', mkClient(vpnClient))
       })
+      if (this.clientRes) {
+        this.clientRes(Array.from(this.clients.values()).map(mkClient))
+        this.clientRes = false
+      }
       this.state = STATE.idle
     } else if (data.startsWith('>BYTECOUNT_CLI') && this.state === STATE.idle) {
       const [_, clientId, received, sent] = data.match(/>BYTECOUNT_CLI:([0-9]+),([0-9]+),([0-9]+)/).map(itm => parseInt(itm, 10))
