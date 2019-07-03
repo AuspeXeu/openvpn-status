@@ -32,7 +32,9 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "deps": "depcheck . --ignores=\"husky,sqlite3,@vue/cli-plugin-babel,@vue/cli-plugin-eslint,@vue/eslint-config-airbnb,vue-cli-plugin-vuetify\"",
-    "ncu": "ncu"
+    "ncu": "ncu",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "dependencies": {
     "@babel/polyfill": "7.4.4",
@@ -51,7 +53,8 @@
     "vue-router": "3.0.7",
     "vuetify": "1.5.16",
     "vuex": "3.1.1",
-    "ws": "7.0.1"
+    "ws": "7.0.1",
+    "snyk": "^1.189.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "3.9.0",
@@ -82,5 +85,6 @@
       "name": "Estelle Beguin",
       "email": "beguin.stl@gmail.com"
     }
-  ]
+  ],
+  "snyk": true
 }
