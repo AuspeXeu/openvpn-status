@@ -54,7 +54,7 @@
     "ws": "7.0.1"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "3.9.0",
+    "@vue/cli-plugin-babel": "3.9.2",
     "@vue/cli-plugin-eslint": "3.9.1",
     "@vue/cli-service": "3.9.0",
     "@vue/eslint-config-airbnb": "4.0.0",
