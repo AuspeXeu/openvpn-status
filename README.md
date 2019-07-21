@@ -24,6 +24,7 @@ Features
 
 - [x] [NodeJS](https://nodejs.org/en/download/) 10 or higher
 - [x] npm package manager
+- Windows 7 is only supported on version `4.2.12` and below
 
 # Installation
 Installation comes in two flavours. Either from source as per the following section or you can skip to the [docker section](https://github.com/AuspeXeu/openvpn-status#docker).
