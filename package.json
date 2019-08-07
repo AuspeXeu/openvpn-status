@@ -48,19 +48,19 @@
     "sqlite3": "4.0.9",
     "uuid": "3.3.2",
     "vue": "2.6.10",
-    "vue-router": "3.1.0",
+    "vue-router": "3.1.1",
     "vuetify": "2.0.0",
     "vuex": "3.1.1",
     "ws": "7.1.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "3.10.0",
-    "@vue/cli-plugin-eslint": "3.9.2",
+    "@vue/cli-plugin-eslint": "3.10.0",
     "@vue/cli-service": "3.10.0",
-    "@vue/eslint-config-airbnb": "4.0.0",
+    "@vue/eslint-config-airbnb": "4.0.1",
     "depcheck": "0.8.3",
     "husky": "3.0.2",
-    "npm-check-updates": "3.1.19",
+    "npm-check-updates": "3.1.20",
     "vue-cli-plugin-vuetify": "0.6.1",
     "vue-template-compiler": "2.6.10"
   },
