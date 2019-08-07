@@ -24,6 +24,14 @@ export default {
             maxZoom: 19,
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           }).addTo(this.map)
+          const t = L.terminator()
+          t.addTo(this.map)
+          function updateTerminator(old) {
+            const t2 = L.terminator()
+            old.setLatLngs(t2.getLatLngs())
+            old.redraw()
+          }
+          setInterval(() => updateTerminator(t), 10 * 1000)
           this.displayNodes(this.nodes)
         }, 1000)
     },
