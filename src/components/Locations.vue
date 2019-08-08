@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-layout row v-resize="onResize">
-      <div id="map" :style="mapDimenstions"></div>
+      <div id="map" :style="mapDimenstions"/>
     </v-layout>
   </v-container>
 </template>
@@ -12,28 +12,27 @@ import {mapState} from 'vuex'
 
 export default {
   name: 'locations',
-  mounted() {
-    this.onResize()
-  },
   watch: {
-    tab(nVal) {
-      if (nVal === 'map' && !this.map)
-        setTimeout(() => {
-          this.map = L.map('map')
-          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          }).addTo(this.map)
-          const t = L.terminator()
-          t.addTo(this.map)
-          function updateTerminator(old) {
-            const t2 = L.terminator()
-            old.setLatLngs(t2.getLatLngs())
-            old.redraw()
-          }
-          setInterval(() => updateTerminator(t), 10 * 1000)
-          this.displayNodes(this.nodes)
-        }, 1000)
+    mapDimenstions: {
+      handler() {
+        if (!this.map)
+          setTimeout(() => {
+            this.map = L.map('map')
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              maxZoom: 19,
+              attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }).addTo(this.map)
+            const t = L.terminator()
+            t.addTo(this.map)
+            function updateTerminator(old) {
+              const t2 = L.terminator()
+              old.setLatLngs(t2.getLatLngs())
+              old.redraw()
+            }
+            setInterval(() => updateTerminator(t), 10 * 1000)
+            this.displayNodes(this.nodes)
+          }, 1000)
+      }
     },
     search() {
       this.displayNodes(this.nodes)
@@ -94,7 +93,7 @@ export default {
       return `/flags/${(node.country_code ? `${node.country_code}.png` : 'unknown.jpg')}`
     },
     onResize() {
-      this.mapDimenstions = `height: ${window.innerHeight - 183}px;`
+      this.mapDimenstions = `height: ${window.innerHeight - 208}px;`
     }
   },
   computed: mapState({

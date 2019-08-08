@@ -1,18 +1,18 @@
 import '@babel/polyfill'
 import moment from 'moment'
 import Vue from 'vue'
-import Vuex from 'vuex'
 import axios from 'axios'
-import './plugins/vuetify'
-import App from './App.vue'
+import {mapState} from 'vuex'
+import App from './components/App.vue'
 import router from './router'
 import store from './store'
+import vuetify from './plugins/vuetify'
 
 Vue.config.productionTip = false
-const {mapState} = Vuex
 
 new Vue({
   router,
+  vuetify,
   store,
   render: h => h(App),
   computed: mapState({
