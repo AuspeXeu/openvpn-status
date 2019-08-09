@@ -44,11 +44,11 @@
     "moment": "2.24.0",
     "nconf": "0.10.0",
     "request": "2.88.0",
-    "sequelize": "5.12.3",
+    "sequelize": "5.13.0",
     "sqlite3": "4.0.9",
     "uuid": "3.3.2",
     "vue": "2.6.10",
-    "vue-router": "3.1.1",
+    "vue-router": "3.1.2",
     "vuetify": "2.0.5",
     "vuex": "3.1.1",
     "ws": "7.1.1"
@@ -59,9 +59,9 @@
     "@vue/cli-service": "3.10.0",
     "@vue/eslint-config-airbnb": "4.0.1",
     "depcheck": "0.8.3",
-    "husky": "3.0.2",
+    "husky": "3.0.3",
     "npm-check-updates": "3.1.20",
-    "vue-cli-plugin-vuetify": "0.6.1",
+    "vue-cli-plugin-vuetify": "0.6.3",
     "vue-template-compiler": "2.6.10"
   },
   "engines": {
