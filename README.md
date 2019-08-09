@@ -37,7 +37,6 @@ Installation comes in two flavours. Either from source as per the following sect
 ```
 cd openvpn-status
 npm install
-sudo npm install pm2 -g
 ```
 
 ### 3. Configuration
@@ -96,6 +95,7 @@ node server.js
 
 ### As PM2 service
 ```
+sudo npm install pm2 -g
 pm2 start pm2.json
 pm2 save
 ```
@@ -109,8 +109,8 @@ After=network.target
 
 [Service]
 User=root
-WorkingDirectory=/home/pi/backend \\ Adjust this
-ExecStart=/usr/local/bin/node server.js
+WorkingDirectory=/home/pi/backend \\ Adjust this path
+ExecStart=/usr/local/bin/node server.js \\ Adjust this path
 Restart=on-failure
 RestartSec=5s
 
