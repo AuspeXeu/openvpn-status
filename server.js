@@ -155,7 +155,7 @@ Promise.all([loadIPdatabase(), db.init()]).then(results => {
     clientUpdates.clear()
   }, 5000)
   servers.forEach((server, idx) => {
-    const client = new openvpn.OpenVPNclient(server.host, server.man_port)
+    const client = new openvpn(server.host, server.man_port, server.man_pwd)
     client.getClients().then(clts => server.entries = clts.map(clientToEntry))
     client.on('client-connect', cl => {
       const entry = clientToEntry(cl)

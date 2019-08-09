@@ -15,11 +15,12 @@ const mkClient = client => ({
 const STATE = {idle: Symbol('idle'), status: Symbol('status')}
 let oldClients
 class client extends EventEmitter {
-  constructor(host, port) {
+  constructor(host, port, pwd = null) {
     super()
     this.state = STATE.idle
     this.host = host
     this.port = port
+    this.pwd = pwd
     this.alive = false
     this.clientRes = false
     this.clientProps = []
@@ -108,6 +109,8 @@ class client extends EventEmitter {
   connect() {
     this.connected = new Promise(resolve => {
       this.socket.connect(this.port, this.host, () => {
+        if (this.pwd)
+          this.socket.write(`${this.pwd}\r\n`)
         if (!this.alive)
           this.alive = setInterval(() => this.getClients(), 5000)
 
@@ -139,6 +142,4 @@ class client extends EventEmitter {
   }
 }
 
-module.exports = {
-  OpenVPNclient: client
-}
+module.exports = client

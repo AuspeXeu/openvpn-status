@@ -48,7 +48,7 @@ The configuration is located in ``cfg.json``.
 | -------- |:-------------:| ------------ |
 | port     | `3013` | Port on which the server will be listening. |
 | bind     | `127.0.0.1` | Address to which the server will bind to. Change to `0.0.0.0` to make available on all interfaces. |
-| servers  | `[{"name": "Server","host": "127.0.0.1","man_port": 7656}]` | Array of servers. |
+| servers  | `[{"name": "Server","host": "127.0.0.1","man_port": 7656, "man_pwd": "1337"}]` | Array of servers. `man_pwd` is only needed if a password is set as per the [documentation](https://openvpn.net/community-resources/reference-manual-for-openvpn-2-0/) |
 | username | `admin` | User for basic HTTP authentication. Change to `''` or `false` to disable. |
 | password | `admin` | Password for basic HTTP authentication. |
 | web.dateFormat | `HH:mm:ss - DD.MM.YY` | DateTime format used in the web frontend ([options](http://momentjs.com/docs/#/displaying/format/)).|
@@ -72,7 +72,7 @@ Example:
 
 ### 4. OpenVPN configuration
 
-Add the following line to your configuration file, e.g., `server.conf`. This will start the management console on port `7656` and make it accessible on `127.0.0.1`, i.e. this machine.
+Add the following line to your configuration file, e.g., `server.conf`. This will start the management console on port `7656` and make it accessible on `127.0.0.1`, i.e. this machine. Optionally, a password file can be specified as per the openvpn [manual](https://openvpn.net/community-resources/reference-manual-for-openvpn-2-0/).
 
 ```
 management 127.0.0.1 7656 // As specified in cfg.json for this server
