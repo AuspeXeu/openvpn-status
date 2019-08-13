@@ -70,7 +70,11 @@ class client extends EventEmitter {
       const props = data.split('\t').slice(1, data.length + 1)
       this.clients.forEach(vpnClient => {
         if (vpnClient['Real Address'] === props[this.clientProps.indexOf('Real Address')])
-          this.clientProps.forEach((prop, idx) => vpnClient[prop] = prepProperty(props[idx]))
+          this.clientProps.forEach((prop, idx) => {
+            if(prop !== 'Virtual Address') {
+              vpnClient[prop] = prepProperty(props[idx])
+            }
+          })
       })
     } else if (data.startsWith('END') && this.state === STATE.status) {
       oldClients.forEach((vpnClient, clientId) => {
