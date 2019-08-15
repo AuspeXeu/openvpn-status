@@ -44,8 +44,8 @@ const loadIPdatabase = () => {
       const expire = new Date((stat ? stat.ctime : '')).getTime() + 30 * 24 * 60 * 60 * 1000
       if (err || now > expire) {
         const req = request('https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz')
-        req.on('error', err => {
-          console.error(err)
+        req.on('error', reqerr => {
+          console.error(reqerr)
           loadFile(resolve)
         })
         req.on('response', resp => {
