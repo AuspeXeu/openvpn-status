@@ -44,7 +44,7 @@
     "moment": "2.24.0",
     "nconf": "0.10.0",
     "request": "2.88.0",
-    "sequelize": "5.19.8",
+    "sequelize": "5.21.0",
     "sqlite3": "4.1.0",
     "uuid": "3.3.3",
     "vue": "2.6.10",
