@@ -33,7 +33,7 @@ class client extends EventEmitter {
     })
     this.socket.on('error', () => {
       this.connected = false
-      console.log('Could not connect to management console, retrying in 10s')
+      console.log(`Could not connect to management console @ ${this.host}:${this.port}, retrying in 10s`)
       setTimeout(() => this.connect(), 10 * 1000)
     })
     this.connect()
@@ -118,7 +118,7 @@ class client extends EventEmitter {
           this.alive = setInterval(() => this.getClients(), 5000)
 
         this.socket.write('bytecount 5\r\n')
-        console.log('Connected to management console')
+        console.log(`Connected to management console @ ${this.host}:${this.port}`)
         resolve()
       })
     })
