@@ -1,6 +1,0 @@
-FROM kylemanna/openvpn
-
-EXPOSE 7656
-
-ADD ./bin /usr/local/bin
-RUN chmod a+x /usr/local/bin/*
