@@ -1,8 +1,22 @@
-openvpn-status:
-  image: auspexeu/openvpn-status
-  container_name: openvpn-status
-  volumes:
-    - './status-cfg/cfg.json:/usr/src/app/cfg.json'
-  ports:
-    - 8080:3013
-  restart: "unless-stopped"
+version: '2'
+services:
+  openvpn-status:
+    image: auspexeu/openvpn-status
+    container_name: openvpn-status
+    volumes:
+      - './status-cfg/cfg.json:/usr/src/app/cfg.json'
+    ports:
+      - 8080:3013
+    links:
+      - openvpn-server
+    restart: "unless-stopped"
+  openvpn-server:
+    cap_add:
+     - NET_ADMIN
+    image: auspexeu/openvpn-server
+    container_name: openvpn-server
+    ports:
+     - "1194:1194/udp"
+    volumes:
+      - ./openvpn-data/conf:/etc/openvpn
+    restart: "unless-stopped"
