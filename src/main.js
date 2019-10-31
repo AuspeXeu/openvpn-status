@@ -1,4 +1,3 @@
-import '@babel/polyfill'
 import moment from 'moment'
 import Vue from 'vue'
 import axios from 'axios'

@@ -35,7 +35,6 @@
     "ncu": "ncu"
   },
   "dependencies": {
-    "@babel/polyfill": "7.6.0",
     "axios": "0.19.0",
     "body-parser": "1.19.0",
     "cron": "1.7.2",
@@ -55,9 +54,7 @@
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "4.0.5",
-    "@vue/cli-plugin-eslint": "4.0.5",
     "@vue/cli-service": "4.0.5",
-    "@vue/eslint-config-airbnb": "4.0.1",
     "depcheck": "0.8.4",
     "husky": "3.0.9",
     "npm-check-updates": "3.1.26",
