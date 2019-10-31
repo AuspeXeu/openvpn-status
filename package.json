@@ -12,7 +12,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-push": "npm run deps && npm run ncu"
+      "pre-push": "npm run deps && npm run ncu && npm run lint"
     }
   },
   "keywords": [
@@ -31,7 +31,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "deps": "depcheck . --ignores=\"husky,sqlite3,@vue/cli-plugin-babel,@vue/cli-plugin-eslint,@vue/eslint-config-airbnb,vue-cli-plugin-vuetify\"",
+    "deps": "depcheck . --ignores=\"husky,sqlite3,@vue/*\"",
     "ncu": "ncu"
   },
   "dependencies": {
@@ -53,22 +53,58 @@
     "ws": "7.2.0"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "4.0.5",
-    "@vue/cli-service": "4.0.5",
+    "@vue/cli-plugin-eslint": "3.12.0",
+    "@vue/cli-service": "3.12.0",
+    "@vue/eslint-config-prettier": "5.0.0",
+    "babel-eslint": "10.0.1",
+    "eslint": "5.16.0",
+    "eslint-plugin-prettier": "3.1.0",
+    "eslint-plugin-vue": "5.0.0",
+    "prettier": "1.18.2",
+    "vue-template-compiler": "2.6.10",
     "depcheck": "0.8.4",
     "husky": "3.0.9",
-    "npm-check-updates": "3.1.26",
-    "vue-cli-plugin-vuetify": "1.1.1",
-    "vue-template-compiler": "2.6.10"
+    "npm-check-updates": "3.1.26"
   },
-  "engines": {
-    "node": ">= 10.0.0",
-    "npm": ">= 3.0.0"
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "@vue/prettier"
+    ],
+    "rules": {
+      "no-mixed-operators": 0,
+      "max-len": 0,
+      "no-plusplus": 0,
+      "no-return-assign": 0,
+      "arrow-parens": ["error", "as-needed"],
+      "comma-dangle": ["error", "never"],
+      "nonblock-statement-body-position": ["error", "below"],
+      "curly": ["error", "multi"],
+      "no-new-require": 0,
+      "new-cap": 0,
+      "semi": 0,
+      "no-console": ["error", { "allow": ["log", "error"] }],
+      "object-curly-spacing": 0,
+      "no-unused-vars": ["error", { "varsIgnorePattern": "_" }],
+      "no-param-reassign": ["error", { "props": false }],
+      "consistent-return": 0
+    },
+    "parserOptions": {
+      "parser": "babel-eslint"
+    }
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
   },
   "browserslist": [
     "> 1%",
-    "last 2 versions",
-    "not ie <= 8"
+    "last 2 versions"
   ],
   "maintainers": [
     {
