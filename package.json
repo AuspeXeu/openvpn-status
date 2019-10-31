@@ -31,7 +31,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "deps": "depcheck . --ignores=\"husky,sqlite3,@vue/*\"",
+    "deps": "depcheck . --ignores=\"husky,sqlite3,@vue/*,eslint-plugin-import,babel-eslint,vue-template-compiler\"",
     "ncu": "ncu"
   },
   "dependencies": {
