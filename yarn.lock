@@ -5386,10 +5386,10 @@ npm-bundled@^1.0.1:
   resolved "https://registry.yarnpkg.com/npm-bundled/-/npm-bundled-1.0.6.tgz#e7ba9aadcef962bb61248f91721cd932b3fe6bdd"
   integrity sha512-8/JCaftHwbd//k6y2rEWp6k1wxVfpFzB6t1p825+cUb7Ym2XQfhwIC5KwhrvzZRJu+LtDE585zVaS32+CGtf0g==
 
-npm-check-updates@3.1.26:
-  version "3.1.26"
-  resolved "https://registry.yarnpkg.com/npm-check-updates/-/npm-check-updates-3.1.26.tgz#506d6d9e06b3d433bbc0ade37dd8a4686cb28ba9"
-  integrity sha512-TQSMJgS7AdbdPsK5TsCNMa+7vdL7HLQrXKrwLMxPLiJtrnye9HEqJZK+U8VdbSq+qrjdt5lgm0g5vRmSSSOcvw==
+npm-check-updates@3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/npm-check-updates/-/npm-check-updates-3.2.0.tgz#7ce8b8b721025fb28cdcd43029c18fa50aced11c"
+  integrity sha512-Gqxd6Fv+EoGNKg2thclx3LPs9dHa1Tp/R+/59iYAgbliJ5NsDd/D6j6kjhnLtKh+7XMX7co3gTrVzsSqTPNRAg==
   dependencies:
     chalk "^2.4.2"
     cint "^8.2.1"
