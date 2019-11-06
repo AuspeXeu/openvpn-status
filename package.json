@@ -59,7 +59,7 @@
     "babel-eslint": "10.0.3",
     "depcheck": "0.9.0",
     "eslint": "6.6.0",
-    "eslint-plugin-vue": "5.2.3",
+    "eslint-plugin-vue": "6.0.0",
     "husky": "3.0.9",
     "npm-check-updates": "3.2.0",
     "vue-template-compiler": "2.6.10"
