@@ -58,7 +58,7 @@
     "@vue/eslint-config-airbnb": "5.0.0",
     "babel-eslint": "10.0.3",
     "depcheck": "0.9.1",
-    "eslint": "6.7.0",
+    "eslint": "6.7.1",
     "eslint-plugin-vue": "6.0.1",
     "husky": "3.1.0",
     "npm-check-updates": "3.2.2",
