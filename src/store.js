@@ -67,8 +67,6 @@ export default new Vuex.Store({
         const oLen = state.events.length
         state.events = state.events.filter(itm => itm.id !== event.id)
         state.events.unshift(event)
-        if (oLen !== state.events.length)
-          state.events.pop()
       }
     },
     updateConfig(state, payload) {
