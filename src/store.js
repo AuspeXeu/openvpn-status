@@ -64,7 +64,6 @@ export default new Vuex.Store({
           vpn: event.vpn
         })
       if (event.node.includes(state.search)) {
-        const oLen = state.events.length
         state.events = state.events.filter(itm => itm.id !== event.id)
         state.events.unshift(event)
       }

@@ -160,7 +160,9 @@ Promise.all([loadIPdatabase(), db.init()]).then(results => {
     client.on('client-connect', cl => {
       const entry = clientToEntry(cl)
       server.entries = server.entries.filter(itm => itm.node !== entry.node)
-      logEvent(Object.assign({server: idx, event: 'connect', timestamp: moment().unix()}, entry))
+      logEvent({
+        server: idx, event: 'connect', timestamp: moment().unix(), ...entry
+      })
       server.entries.push(entry)
     })
     client.on('client-disconnect', cl => {
@@ -168,7 +170,9 @@ Promise.all([loadIPdatabase(), db.init()]).then(results => {
       const oLen = server.entries.length
       server.entries = server.entries.filter(itm => itm.node !== entry.node)
       if (oLen !== server.entries.length)
-        logEvent(Object.assign({server: idx, event: 'disconnect', timestamp: moment().unix()}, entry))
+        logEvent({
+          server: idx, event: 'disconnect', timestamp: moment().unix(), ...entry
+        })
     })
     client.on('client-update', cl => {
       const entry = Object.assign(clientToEntry(cl), {server: idx, event: 'update', timestamp: moment().unix()})
