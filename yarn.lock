@@ -208,12 +208,12 @@
   resolved "https://registry.yarnpkg.com/@vue/cli-overlay/-/cli-overlay-4.1.1.tgz#d4559c12e50075a4817ac977cc0bde504520d9de"
   integrity sha512-y5fBtw/aXUem3B/xVb37xB71gq2hNAZsbhW0t4DIGuNConS+Tps41MKWb7dbxq4TLyH7MWX3aJbDzuUGanBMqQ==
 
-"@vue/cli-plugin-eslint@4.1.1":
-  version "4.1.1"
-  resolved "https://registry.yarnpkg.com/@vue/cli-plugin-eslint/-/cli-plugin-eslint-4.1.1.tgz#ad09b71f94dc7518a6c83debacd39e34f6d5a71e"
-  integrity sha512-7bb5idaWcXREaxVYmQ9NK31gy26Qms6cQ9ENovXQurFpsSd29+Fmqc/EkAhHhWn82gModvypIoJyOhKt21jxKg==
+"@vue/cli-plugin-eslint@4.1.2":
+  version "4.1.2"
+  resolved "https://registry.yarnpkg.com/@vue/cli-plugin-eslint/-/cli-plugin-eslint-4.1.2.tgz#173d2a40beb7debc03a217db3bb4c67cbf255bd6"
+  integrity sha512-j6Z6tyhas7AFBwSvQ8JdKPLfaakZbwmK0+Xk8H6BK1/GrEpSCsb8pzBV8faStbKCPUO9vlKEuO319kHypUTJ1g==
   dependencies:
-    "@vue/cli-shared-utils" "^4.1.1"
+    "@vue/cli-shared-utils" "^4.1.2"
     eslint-loader "^2.1.2"
     globby "^9.2.0"
     webpack "^4.0.0"
@@ -312,6 +312,24 @@
     request-promise-native "^1.0.8"
     semver "^6.1.0"
     string.prototype.padstart "^3.0.0"
+    strip-ansi "^6.0.0"
+
+"@vue/cli-shared-utils@^4.1.2":
+  version "4.1.2"
+  resolved "https://registry.yarnpkg.com/@vue/cli-shared-utils/-/cli-shared-utils-4.1.2.tgz#d33984c8790ad869ef77f5229abd3e8e584fe58b"
+  integrity sha512-uQAVqxCWdL5ipZ0TPu6SVsdokQp4yHt8SzzpUGhq8TkW4vwalGddJAAJrqZHMl91ZTIJ4p4ixofmCaaJo5rSRA==
+  dependencies:
+    "@hapi/joi" "^15.0.1"
+    chalk "^2.4.2"
+    execa "^1.0.0"
+    launch-editor "^2.2.1"
+    lru-cache "^5.1.1"
+    node-ipc "^9.1.1"
+    open "^6.3.0"
+    ora "^3.4.0"
+    request "^2.87.0"
+    request-promise-native "^1.0.8"
+    semver "^6.1.0"
     strip-ansi "^6.0.0"
 
 "@vue/component-compiler-utils@^3.0.0", "@vue/component-compiler-utils@^3.0.2":
@@ -517,7 +535,7 @@ accepts@~1.3.4, accepts@~1.3.5, accepts@~1.3.7:
     mime-types "~2.1.24"
     negotiator "0.6.2"
 
-acorn-jsx@^5.0.0, acorn-jsx@^5.1.0:
+acorn-jsx@^5.1.0:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/acorn-jsx/-/acorn-jsx-5.1.0.tgz#294adb71b57398b0680015f0a38c563ee1db5384"
   integrity sha512-tMUqwBWfLFbJbizRmEcWSLw6HnFzfdJs2sOJEOwwtVPMoH/0Ay+E703oZz78VSXZiiDcZrQ5XKjPIUQixhmgVw==
@@ -2649,14 +2667,14 @@ eslint-plugin-import@^2.18.2:
     read-pkg-up "^2.0.0"
     resolve "^1.11.0"
 
-eslint-plugin-vue@6.0.1:
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-vue/-/eslint-plugin-vue-6.0.1.tgz#166d3eb24cf290f3ff24d44fe9fca496f3924fc2"
-  integrity sha512-5tgFPcxGDKjfVB/6Yi56bKiWxygUibfZmzSh26Np3kuwAk/lfaGbVld+Yt+MPgD84ppvcachtiL4/winsXLjXA==
+eslint-plugin-vue@6.1.1:
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-vue/-/eslint-plugin-vue-6.1.1.tgz#183c4c8b54880e81b585d2f3dd5c183598e73664"
+  integrity sha512-WsJcndi3iOtKF+Wkrw7mWiKT3GdGYUM8onbWYX7sBgggiFKoxHyx8VciA5letkx6iKzoW4B7XrBeVdTukmrtpg==
   dependencies:
-    vue-eslint-parser "^6.0.5"
+    vue-eslint-parser "^7.0.0"
 
-eslint-scope@^4.0.0, eslint-scope@^4.0.3:
+eslint-scope@^4.0.3:
   version "4.0.3"
   resolved "https://registry.yarnpkg.com/eslint-scope/-/eslint-scope-4.0.3.tgz#ca03833310f6889a3264781aa82e63eb9cfe7848"
   integrity sha512-p7VutNr1O/QrxysMo3E45FjYDTeXBy0iTltPFNSqKAIfjDSXC+4dj+qfyuD8bfAXrW/y6lW3O76VaYNPKfpKrg==
@@ -2726,15 +2744,6 @@ eslint@6.8.0:
     table "^5.2.3"
     text-table "^0.2.0"
     v8-compile-cache "^2.0.3"
-
-espree@^5.0.0:
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/espree/-/espree-5.0.1.tgz#5d6526fa4fc7f0788a5cf75b15f30323e2f81f7a"
-  integrity sha512-qWAZcWh4XE/RwzLJejfcofscgMc9CamR6Tn1+XRXNzrvUSSbiAjGOI/fggztjIi7y9VLPqnICMIPiGyr8JaZ0A==
-  dependencies:
-    acorn "^6.0.7"
-    acorn-jsx "^5.0.0"
-    eslint-visitor-keys "^1.0.0"
 
 espree@^6.1.2:
   version "6.1.2"
@@ -8298,17 +8307,17 @@ vm-browserify@^1.0.1:
   resolved "https://registry.yarnpkg.com/vm-browserify/-/vm-browserify-1.1.2.tgz#78641c488b8e6ca91a75f511e7a3b32a86e5dda0"
   integrity sha512-2ham8XPWTONajOR0ohOKOHXkm3+gaBmGut3SRuu75xLd/RRaY6vqgh8NBYYk7+RW3u5AtzPQZG8F10LHkl0lAQ==
 
-vue-eslint-parser@^6.0.5:
-  version "6.0.5"
-  resolved "https://registry.yarnpkg.com/vue-eslint-parser/-/vue-eslint-parser-6.0.5.tgz#c1c067c2755748e28f3872cd42e8c1c4c1a8059f"
-  integrity sha512-Bvjlx7rH1Ulvus56KHeLXOjEi3JMOYTa1GAqZr9lBQhd8weK8mV7U7V2l85yokBZEWHJQjLn6X3nosY8TzkOKg==
+vue-eslint-parser@^7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/vue-eslint-parser/-/vue-eslint-parser-7.0.0.tgz#a4ed2669f87179dedd06afdd8736acbb3a3864d6"
+  integrity sha512-yR0dLxsTT7JfD2YQo9BhnQ6bUTLsZouuzt9SKRP7XNaZJV459gvlsJo4vT2nhZ/2dH9j3c53bIx9dnqU2prM9g==
   dependencies:
     debug "^4.1.1"
-    eslint-scope "^4.0.0"
-    eslint-visitor-keys "^1.0.0"
-    espree "^5.0.0"
+    eslint-scope "^5.0.0"
+    eslint-visitor-keys "^1.1.0"
+    espree "^6.1.2"
     esquery "^1.0.1"
-    lodash "^4.17.11"
+    lodash "^4.17.15"
 
 vue-hot-reload-api@^2.3.0:
   version "2.3.4"
