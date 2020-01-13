@@ -167,7 +167,8 @@ Find a list of supported browsers [here](https://vuetifyjs.com/en/getting-starte
 
 ### Maxmind
 
-[Maxmind](http://dev.maxmind.com/geoip/geoip2/geolite2/) provides all of the IP information used in this project to determine where the VPN clients are connecting from.
+This product includes GeoLite2 data created by MaxMind, available from
+<a href="https://www.maxmind.com">https://www.maxmind.com</a>.
 
 ### GoSquared
 
