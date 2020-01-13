@@ -2,7 +2,7 @@
   "name": "openvpn-status",
   "homepage": "https://github.com/AuspeXeu/openvpn-status",
   "description": "A web-based application to monitor clients connected to an openvpn server.",
-  "version": "4.2.22",
+  "version": "4.2.21",
   "license": "MIT",
   "main": "server.js",
   "author": {
@@ -60,7 +60,7 @@
     "depcheck": "0.9.1",
     "eslint": "6.8.0",
     "eslint-plugin-vue": "6.1.2",
-    "husky": "4.0.7",
+    "husky": "4.0.6",
     "npm-check-updates": "4.0.1",
     "vue-template-compiler": "2.6.11"
   },
