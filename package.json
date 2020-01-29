@@ -35,7 +35,7 @@
     "ncu": "ncu"
   },
   "dependencies": {
-    "axios": "0.19.1",
+    "axios": "0.19.2",
     "body-parser": "1.19.0",
     "express": "4.17.1",
     "maxmind": "4.1.0",
@@ -46,7 +46,7 @@
     "uuid": "3.4.0",
     "vue": "2.6.11",
     "vue-router": "3.1.5",
-    "vuetify": "2.2.4",
+    "vuetify": "2.2.8",
     "vuex": "3.1.2",
     "ws": "7.2.1"
   },
@@ -58,7 +58,7 @@
     "depcheck": "0.9.1",
     "eslint": "6.8.0",
     "eslint-plugin-vue": "6.1.2",
-    "husky": "4.0.10",
+    "husky": "4.2.1",
     "npm-check-updates": "4.0.1",
     "vue-template-compiler": "2.6.11"
   },
