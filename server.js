@@ -3,7 +3,7 @@ const express = require('express')
 const WebSocket = require('ws')
 const bodyParser = require('body-parser')
 const moment = require('moment')
-const uuid = require('uuid/v1')
+const {v4: uuid} = require('uuid')
 
 const app = express()
 const {log, conf, loadIPdatabase} = require('./utils.js')
