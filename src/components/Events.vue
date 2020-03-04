@@ -18,7 +18,7 @@
           <template #item.time="{item}">
             {{ eventTime(item) }}
           </template>
-          <template #item.icon:body="{item}">
+          <template #item.icon="{item}">
             <v-tooltip right>
               <template v-slot:activator="{on}">
                 <v-icon v-on="on" :style="`color:${eventColor(item)};`">{{ eventIcon(item) }}</v-icon>
