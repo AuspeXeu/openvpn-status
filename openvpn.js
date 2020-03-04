@@ -81,16 +81,15 @@ class client extends EventEmitter {
       }
     } else if (data.startsWith('ROUTING_TABLE') && this.state === STATE.status) {
       const props = data.split('\t').slice(1, data.length + 1)
-      this.clients.forEach(client => {
-        const [pub, port] = props[this.clientProps.indexOf('Real Address')].split(':')
-        if (client.pub === pub && client.port === port)
-          this.clientProps.forEach((prop, idx) => {
-            const vpnClient = {}
-            if (prop !== 'Virtual Address')
-              vpnClient[prop] = prepProperty(props[idx])
-            client = mkClient(vpnClient, client)
-          })
-      })
+      const [pub, port] = props[this.clientProps.indexOf('Real Address')].split(':')
+      const client = Array.from(this.clients.values()).find((client) => client.pub === pub && client.port === port)
+      if (client) {
+        const vpnClient = this.clientProps.reduce((acc, prop, idx) => {
+          acc[prop] = prepProperty(props[idx])
+          return acc
+        }, {})
+        mkClient(vpnClient, client)
+      }
     } else if (data.startsWith('END') && this.state === STATE.status) {
       this.oldClients.forEach((client, key) => {
         if (!this.clients.has(key))
