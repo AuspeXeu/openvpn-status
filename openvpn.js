@@ -16,7 +16,11 @@ const mkClient = (data, original = {}) => {
   }
   const patch = {}
   Object.keys(candidate).forEach((key) => {
-    if (candidate[key]) {
+    const type = typeof candidate[key]
+    if (type === 'string') {
+      candidate[key] = candidate[key].trim()
+    }
+    if (candidate[key] && ((type === 'string' && candidate[key].length > 0) || type !== 'string')) {
       patch[key] = candidate[key]
     }
   })
