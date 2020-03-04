@@ -3,7 +3,7 @@ const express = require('express')
 const WebSocket = require('ws')
 const bodyParser = require('body-parser')
 const moment = require('moment')
-const {v4: uuid} = require('uuid')
+const uuid = require('uuid/v1')
 
 const app = express()
 const {log, conf, loadIPdatabase} = require('./utils.js')
@@ -24,8 +24,8 @@ if (conf.get('username') && conf.get('username').length)
       next()
   })
 
-app.get('/', (_, res) => res.sendFile(`${__dirname}/dist/index.html`))
-app.get('/cfg', (_, res) => res.json(conf.get('web')))
+app.get('/', (req, res) => res.sendFile(`${__dirname}/dist/index.html`))
+app.get('/cfg', (req, res) => res.json(conf.get('web')))
 app.use('/', express.static(`${__dirname}/dist`))
 app.use(bodyParser.json())
 
@@ -155,6 +155,7 @@ Promise.all([loadIPdatabase(), db.init()]).then(results => {
     clientUpdates.clear()
   }, 5000)
   servers.forEach((server, idx) => {
+    server.entries = []
     const client = new openvpn(server.host, server.man_port, server.man_pwd)
     client.getClients().then(clts => server.entries = clts.map(clientToEntry))
     client.on('client-connect', cl => {

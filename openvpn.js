@@ -1,19 +1,29 @@
 const {EventEmitter} = require('events')
 const net = require('net')
 
-const mkClient = client => ({
-  cid: client['Client ID'],
-  cn: client['Common Name'] || client.Username,
-  connected: client['Connected Since (time_t)'],
-  seen: client['Last Ref (time_t)'],
-  pub: client['Real Address'].split(':')[0],
-  vpn: client['Virtual Address'],
-  received: client['Bytes Received'],
-  sent: client['Bytes Sent']
-})
+const mkClient = (data, original = {}) => {
+  const candidate = {
+    key: data['Common Name'] || data.Username || data['Client ID'],
+    clientId: data['Client ID'],
+    cn: data['Common Name'] || data.Username,
+    connected: data['Connected Since (time_t)'],
+    seen: data['Last Ref (time_t)'],
+    pub: (data['Real Address'] || ':').split(':')[0],
+    port: (data['Real Address'] || ':').split(':')[1],
+    vpn: data['Virtual Address'],
+    received: data['Bytes Received'],
+    sent: data['Bytes Sent']
+  }
+  const patch = {}
+  Object.keys(candidate).forEach((key) => {
+    if (candidate[key]) {
+      patch[key] = candidate[key]
+    }
+  })
+  return Object.assign(original, patch)
+}
 
 const STATE = {idle: Symbol('idle'), status: Symbol('status')}
-let oldClients
 class client extends EventEmitter {
   constructor(host, port, pwd = null) {
     super()
@@ -25,6 +35,7 @@ class client extends EventEmitter {
     this.clientRes = false
     this.clientProps = []
     this.clients = new Map()
+    this.oldClients = new Map()
     this.socket = new net.Socket()
     this.connected = false
     this.socket.on('data', data => {
@@ -54,7 +65,7 @@ class client extends EventEmitter {
     }
 
     if (data.startsWith('TITLE')) {
-      oldClients = new Map(this.clients)
+      this.oldClients = new Map(this.clients)
       this.clients = new Map()
       this.state = STATE.status
     } else if (data.startsWith('HEADER') && this.state === STATE.status) {
@@ -64,48 +75,50 @@ class client extends EventEmitter {
       const props = data.split('\t').slice(1, data.length + 1)
       const vpnClient = {}
       this.clientProps.forEach((prop, idx) => vpnClient[prop] = prepProperty(props[idx]))
-      if (((vpnClient['Common Name'] && vpnClient['Common Name'].toString().length) || (vpnClient.Username && vpnClient.Username.toString().length)) && vpnClient['Client ID'])
-        this.clients.set(vpnClient['Client ID'], vpnClient)
+      const client = mkClient(vpnClient)
+      if (client.key && client.key.trim().length > 0) {
+        this.clients.set(client.key, client)
+      }
     } else if (data.startsWith('ROUTING_TABLE') && this.state === STATE.status) {
       const props = data.split('\t').slice(1, data.length + 1)
-      this.clients.forEach(vpnClient => {
-        if (vpnClient['Real Address'] === props[this.clientProps.indexOf('Real Address')])
+      this.clients.forEach(client => {
+        const [pub, port] = props[this.clientProps.indexOf('Real Address')].split(':')
+        if (client.pub === pub && client.port === port)
           this.clientProps.forEach((prop, idx) => {
+            const vpnClient = {}
             if (prop !== 'Virtual Address')
               vpnClient[prop] = prepProperty(props[idx])
+            client = mkClient(vpnClient, client)
           })
       })
     } else if (data.startsWith('END') && this.state === STATE.status) {
-      oldClients.forEach((vpnClient, clientId) => {
-        if (!this.clients.has(clientId) && (vpnClient['Common Name'].length || vpnClient.Username.length))
-          this.emit('client-disconnect', mkClient(vpnClient))
+      this.oldClients.forEach((client, key) => {
+        if (!this.clients.has(key))
+          this.emit('client-disconnect', client)
+      })
+      this.clients.forEach((client, key) => {
+        if (!this.oldClients.has(key)) {
+          this.emit('client-connect', client)
+          this.oldClients.set(key, client)
+        }
       })
       if (this.clientRes) {
-        this.clientRes(Array.from(this.clients.values()).map(mkClient))
+        this.clientRes(Array.from(this.clients.values()))
         this.clientRes = false
       }
       this.state = STATE.idle
     } else if (data.startsWith('>BYTECOUNT_CLI') && this.state === STATE.idle) {
       const [_, clientId, received, sent] = data.match(/>BYTECOUNT_CLI:([0-9]+),([0-9]+),([0-9]+)/).map(itm => parseInt(itm, 10))
-      if (this.clients.has(clientId)) {
-        const vpnClient = this.clients.get(clientId)
-        vpnClient['Bytes Received'] = received
-        vpnClient['Bytes Sent'] = sent
-        this.emit('client-update', mkClient(vpnClient))
+      const client = Array.from(this.clients.values()).find((client) => client.clientId === clientId)
+      if (client) {
+        client.received = received
+        client.sent = sent
+        this.emit('client-update', client)
       }
     } else if (data.startsWith('>CLIENT:ESTABLISHED') && this.state === STATE.idle) {
-      const [_, clientId] = data.split(',').map(itm => parseInt(itm, 10))
-      setTimeout(() => {
-        this.getClients().then(() => {
-          this.emit('client-connect', mkClient(this.clients.get(clientId)))
-        })
-      }, 2000)
+      this.getClients()
     } else if (data.startsWith('>CLIENT:DISCONNECT') && this.state === STATE.idle) {
-      const [_, clientId] = data.split(',').map(itm => parseInt(itm, 10))
-      if (this.clients.has(clientId)) {
-        this.emit('client-disconnect', mkClient(this.clients.get(clientId)))
-        this.clients.delete(clientId)
-      }
+      this.getClients()
     }
   }
 
@@ -125,12 +138,12 @@ class client extends EventEmitter {
   }
 
   disconnect(cid) {
-    const clt = this.clients.get(cid)
-    if (!clt)
+    const client = Array.from(this.clients.values()).find((client) => client.clientId === clientId)
+    if (!client)
       return
 
     this.socket.write(`client-kill ${cid}`)
-    this.emit('client-disconnect', mkClient(clt))
+    this.emit('client-disconnect', client)
   }
 
   getClients() {
