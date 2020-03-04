@@ -52,7 +52,7 @@
           <v-card>
             <v-card-actions>
               <v-tooltip top>
-                <template v-slot:activator="{on}">
+                <template #activator="{on}">
                   <span v-on="on">Server time: {{serverTime}}</span>
                 </template>
                 <span>Server time</span>

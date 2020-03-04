@@ -12,23 +12,19 @@
           @pagination="updatePagination"
           :loading="loading"
           class="elevation-1">
-          <template v-slot:body="{items}">
-            <tbody>
-              <tr v-for="item in items" :key="item.id">
-                <td>
-                  <v-tooltip right>
-                    <template v-slot:activator="{on}">
-                      <v-icon v-on="on" :style="`color:${eventColor(item)};`">{{ eventIcon(item) }}</v-icon>
-                    </template>
-                    <span>{{ item.event }}</span>
-                  </v-tooltip>
-                </td>
-                <td class="text-xs-center">{{ item.node }}</td>
-                <td class="text-xs-center">{{ item.vpn }}</td>
-                <td class="text-xs-center"><a :href="`http://geoiplookup.net/ip/${item.pub}`" target="_blank">{{ item.pub }}</a></td>
-                <td class="text-xs-center">{{ eventTime(item) }}</td>
-              </tr>
-            </tbody>
+          <template #item.pub="{value}">
+            <a :href="`http://geoiplookup.net/ip/${value}`" target="_blank">{{ value }}</a>
+          </template>
+          <template #item.time="{item}">
+            {{ eventTime(item) }}
+          </template>
+          <template #item.icon:body="{item}">
+            <v-tooltip right>
+              <template v-slot:activator="{on}">
+                <v-icon v-on="on" :style="`color:${eventColor(item)};`">{{ eventIcon(item) }}</v-icon>
+              </template>
+              <span>{{ item.event }}</span>
+            </v-tooltip>
           </template>
         </v-data-table>
       </v-flex>
@@ -48,6 +44,7 @@ export default {
       debounce: false,
       pagination: null,
       headers: [{
+        value: 'icon',
         sortable: false,
         width: '50px'
       }, {
