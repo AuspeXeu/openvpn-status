@@ -80,7 +80,7 @@ class client extends EventEmitter {
       const vpnClient = {}
       this.clientProps.forEach((prop, idx) => vpnClient[prop] = prepProperty(props[idx]))
       const client = mkClient(vpnClient)
-      if (client.key && client.key.trim().length > 0) {
+      if (client.key) {
         this.clients.set(client.key, client)
       }
     } else if (data.startsWith('ROUTING_TABLE') && this.state === STATE.status) {
