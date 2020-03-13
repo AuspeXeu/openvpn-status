@@ -1,10 +1,10 @@
 version: '2'
 services:
   openvpn-status:
-  image: auspexeu/openvpn-status
-  container_name: openvpn-status
-  volumes:
-    - './status-cfg/cfg.json:/usr/src/app/cfg.json'
-  ports:
-    - 8080:3013
-  restart: "unless-stopped"
+    image: auspexeu/openvpn-status
+    container_name: openvpn-status
+    volumes:
+      - './status-cfg/cfg.json:/usr/src/app/cfg.json'
+    ports:
+      - 8080:3013
+    restart: "unless-stopped"
