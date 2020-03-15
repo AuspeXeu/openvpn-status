@@ -20,7 +20,7 @@ const mkClient = (data, original = {}) => {
     if (type === 'string') {
       candidate[key] = candidate[key].trim()
     }
-    if (candidate[key] && ((type === 'string' && candidate[key].length > 0) || type !== 'string')) {
+    if (candidate[key] && ((type === 'string' && candidate[key].trim().length > 0) || type !== 'string')) {
       patch[key] = candidate[key]
     }
   })
