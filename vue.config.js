@@ -1,5 +1,5 @@
 module.exports = {
   devServer: {
-    proxy: 'https://status.auspex.eu'
+    proxy: 'http://localhost:3013'
   }
 }
