@@ -42,7 +42,8 @@ export default {
   data() {
     return {
       debounce: false,
-      pagination: null,
+      page: 1,
+      itemsPerPage: 25,
       headers: [{
         value: 'icon',
         sortable: false,
@@ -79,17 +80,17 @@ export default {
     server: 'server'
   }),
   mounted() {
-    store.dispatch('changePage', {page: 0, size: 25})
+    store.dispatch('changePage', {page: this.page, size: this.itemsPerPage})
   },
   methods: {
     updatePagination(val) {
-      this.pagination = val
-    },
-    changePage(pagination) {
-      if (!pagination)
+      if (!val)
         return
-      const { page, itemsPerPage } = pagination
-      store.dispatch('changePage', {page: page || 1, size: itemsPerPage || 25})
+      if (val.page !== this.page || val.itemsPerPage !== this.itemsPerPage) {
+        this.page = val.page
+        this.itemsPerPage = val.itemsPerPage
+        store.dispatch('changePage', {page: this.page, size: this.itemsPerPage})
+      }
     },
     eventTime(event) {
       return moment(event.timestamp * 1000).format(this.dateFormat)
@@ -104,22 +105,17 @@ export default {
     }
   },
   watch: {
-    pagination: {
-      handler(nVal) {
-        this.changePage(nVal)
-      },
-      immediate: true
-    },
     search() {
       if (this.debounce)
         clearTimeout(this.debounce)
       this.debounce = setTimeout(() => {
-        this.changePage(this.pagination)
+        store.dispatch('changePage', {page: this.page, size: this.itemsPerPage})
         this.debounce = false
       }, 300)
     },
     server() {
-      this.pagination = { page: 1, rowsPerPage: 25 }
+      this.page = 1
+      this.itemsPerPage = 25
     }
   }
 }
