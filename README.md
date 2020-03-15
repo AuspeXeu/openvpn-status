@@ -62,7 +62,7 @@ Example:
     {"id": 1, "name": "Server B", "host": "127.0.0.1","man_port": 6756}
   ],
   "username": "admin",
-  "password": "YV3qSTxD",
+  "password": "CHANGE THIS - DO NOT USE ANY DEFAULT HERE",
   "web": {
     "dateFormat": "HH:mm - DD.MM.YY"
   }
@@ -140,9 +140,22 @@ server {
 ```
 
 # Docker
+### Server configurations
+As shown in the `docker-compose.yml` below, the folder server will be mounted to the host's file system. Upon boot, `openvpn-status` scans that folder for `.json` files and adds them as servers. An example of such a file is.
+
+```
+{"name": "Server","host": "127.0.0.1","man_port": 7656}
+```
+
 ### Ports
 
 - **3013**
+
+### Environment Variables
+
+- STATUS_USERNAME
+- STATUS_PASSWORD
+- STATUS_WEB_FORMAT
 
 ### Docker-compose.yml
 
@@ -150,14 +163,21 @@ server {
 # Full example:
 # https://raw.githubusercontent.com/AuspeXeu/openvpn-status/master/docker-compose.sample.yml
 
-openvpn-status:
-  image: auspexeu/openvpn-status
-  container_name: openvpn-status
-  ports:
-    - 8080:3013
-  volumes:
-    - './status-cfg/cfg.json:/usr/src/app/cfg.json'
-  restart: "unless-stopped"
+version: '2'
+services:
+  openvpn-status:
+    image: auspexeu/openvpn-status
+    container_name: openvpn-status
+    environment:
+      - STATUS_USERNAME=admin
+      - STATUS_PASSWORD=<CHANGE THIS - DO NOT USE ANY DEFAULT HERE>
+      - STATUS_WEB_FORMAT='HH:mm:ss - DD.MM.YY'
+    volumes:
+      - ./servers:/usr/src/app/servers'
+    ports:
+      - 8080:3013
+    restart: "unless-stopped"
+
 ```
 
 ## Browser support
