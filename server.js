@@ -78,8 +78,8 @@ const clientToEntry = client => {
 
 const validateNumber = n => Number.isFinite(parseFloat(n, 10))
 
-app.get('/time', (req, res) => res.json({time: moment().unix()}))
-app.get('/servers', (req, res) => res.json(servers.map((server, idx) => ({name: server.name, id: idx}))))
+app.get('/time', (_, res) => res.json({time: moment().unix()}))
+app.get('/servers', (_, res) => res.json(servers.map((server, idx) => ({name: server.name, id: idx}))))
 
 const validateServer = (req, res, next) => {
   const serverId = req.params.id || req.params[0]
