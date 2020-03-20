@@ -141,7 +141,7 @@ class client extends EventEmitter {
   }
 
   disconnect(cid) {
-    const client = Array.from(this.clients.values()).find((client) => client.clientId === clientId)
+    const client = Array.from(this.clients.values()).find((client) => client.clientId === cid)
     if (!client)
       return
 
