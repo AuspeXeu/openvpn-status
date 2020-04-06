@@ -47,7 +47,7 @@ The configuration is located in ``cfg.json``.
 | -------- |:-------------:| ------------ |
 | port     | `3013` | Port on which the server will be listening. |
 | bind     | `127.0.0.1` | Address to which the server will bind to. Change to `0.0.0.0` to make available on all interfaces. |
-| servers  | `[{"name": "Server","host": "127.0.0.1","man_port": 7656, "man_pwd": "1337"}]` | Array of servers. `man_pwd` is only needed if a password is set as per the [documentation](https://openvpn.net/community-resources/reference-manual-for-openvpn-2-0/) |
+| servers  | `[{"name": "Server","host": "127.0.0.1","man_port": 7656, "man_pwd": "1337", "netmask": "0.0.0.0/0"}]` | Array of servers. `man_pwd` is only needed if a password is set as per the [documentation](https://openvpn.net/community-resources/reference-manual-for-openvpn-2-0/, `netmask` is only needed if connecing networks to filter entries) |
 | username | `admin` | User for basic HTTP authentication. Change to `''` or `false` to disable. |
 | password | `admin` | Password for basic HTTP authentication. |
 | web.dateFormat | `HH:mm:ss - DD.MM.YY` | DateTime format used in the web frontend ([options](http://momentjs.com/docs/#/displaying/format/)).|
