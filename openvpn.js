@@ -38,7 +38,13 @@ class client extends EventEmitter {
     this.pwd = pwd
     this.netmask = new Netmask ('0.0.0.0/0')
     if (netmask != null) {
-            this.netmask = new Netmask(netmask);
+        try {
+          const nm = new Netmask(netmask);
+          this.netmask = nm;
+        } catch (error) {
+          console.log(`Could not parse netmask ${netmask}`);
+          console.log(error);
+        }
     }
     this.alive = false
     this.clientRes = false
