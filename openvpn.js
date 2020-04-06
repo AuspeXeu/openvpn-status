@@ -1,5 +1,6 @@
 const {EventEmitter} = require('events')
 const net = require('net')
+const Netmask = require('netmask').Netmask
 
 const mkClient = (data, original = {}) => {
   const candidate = {
@@ -29,12 +30,16 @@ const mkClient = (data, original = {}) => {
 
 const STATE = {idle: Symbol('idle'), status: Symbol('status')}
 class client extends EventEmitter {
-  constructor(host, port, pwd = null) {
+  constructor(host, port, pwd = null, netmask = null) {
     super()
     this.state = STATE.idle
     this.host = host
     this.port = port
     this.pwd = pwd
+    this.netmask = new Netmask ('0.0.0.0/0')
+    if (netmask != null) {
+            this.netmask = new Netmask(netmask);
+    }
     this.alive = false
     this.clientRes = false
     this.clientProps = []
@@ -86,7 +91,7 @@ class client extends EventEmitter {
     } else if (data.startsWith('ROUTING_TABLE') && this.state === STATE.status) {
       const props = data.split('\t').slice(1, data.length + 1)
       const [pub, port] = props[this.clientProps.indexOf('Real Address')].split(':')
-      const client = Array.from(this.clients.values()).find((client) => client.pub === pub && client.port === port)
+      const client = Array.from(this.clients.values()).find((client) => client.pub === pub && client.port === port && this.netmask.contains(client.pub))
       if (client) {
         const vpnClient = this.clientProps.reduce((acc, prop, idx) => {
           acc[prop] = prepProperty(props[idx])
