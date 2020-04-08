@@ -60,7 +60,6 @@ class client extends EventEmitter {
           this.procData(itm.toString());
         } catch (error) {
           console.log(`Could not process data item ${itm.toString()}`);
-          console.log(itm);
           console.log(error);
         }});
     })
