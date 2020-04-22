@@ -67,6 +67,9 @@ const logEvent = event => {
 const clientToEntry = client => {
   const loc = cityLookup(client.pub)
   client.node = client.cn
+  if (client.node === undefined) {
+    client.node = "Unknown_" + client.pub;
+  }
   if (loc) {
     client.country_code = loc.country.iso_code
     client.country_name = loc.country.names.en
