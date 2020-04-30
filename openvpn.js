@@ -104,7 +104,7 @@ class client extends EventEmitter {
       const props = data.split('\t').slice(1, data.length + 1)
       const realAddressIndex = this.clientProps.indexOf('Real Address');
       if (realAddressIndex < props.length) {
-        const [pub, port] = props[realAddressIndex].split(':')
+        const [pub, port] = (props[realAddressIndex] || ':').split(':')
         const client = Array.from(this.clients.values()).find((client) => client.pub === pub && client.port === port && this.netmask.contains(client.pub))
         if (client) {
           const vpnClient = this.clientProps.reduce((acc, prop, idx) => {
