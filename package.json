@@ -39,17 +39,17 @@
     "body-parser": "1.19.0",
     "express": "4.17.1",
     "maxmind": "4.1.1",
-    "moment": "2.24.0",
+    "moment": "2.25.3",
     "nconf": "0.10.0",
     "netmask": "1.0.6",
     "sequelize": "5.21.7",
     "sqlite3": "4.2.0",
-    "uuid": "7.0.3",
+    "uuid": "8.0.0",
     "vue": "2.6.11",
     "vue-router": "3.1.6",
     "vuetify": "2.2.26",
     "vuex": "3.3.0",
-    "ws": "7.2.3"
+    "ws": "7.2.5"
   },
   "devDependencies": {
     "@vue/cli-plugin-eslint": "4.3.1",
