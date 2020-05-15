@@ -60,7 +60,7 @@
     "eslint": "7.0.0",
     "eslint-plugin-vue": "6.2.2",
     "husky": "4.2.5",
-    "npm-check-updates": "5.0.0",
+    "npm-check-updates": "6.0.0",
     "vue-template-compiler": "2.6.11"
   },
   "eslintConfig": {
