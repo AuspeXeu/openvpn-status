@@ -28,7 +28,7 @@
           v-model="search"/>
       </v-flex>
     </v-app-bar>
-    <v-content>
+    <v-main>
       <v-tabs v-model="tabState" centered>
         <v-tabs-slider color="yellow"/>
         <v-tab to="clients" replace>
@@ -72,7 +72,7 @@
           Close
         </v-btn>
       </v-snackbar>
-    </v-content>
+    </v-main>
   </v-app>
 </template>
 
